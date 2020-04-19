@@ -24,20 +24,18 @@ void display()
 	reflect_camera.set_yp(reflect_yp);
 	glm::vec4 none = glm::vec4(0.0, 1.0, 0.0, 2000.0);
 
-	 float aspect_ratio = float(w) / float(h);
-	 glm::vec3 test1 = main_camera.get_camera_position();
+	float aspect_ratio = float(w) / float(h);
+	glm::vec3 test1 = main_camera.get_camera_position();
 
-	// std::cout << test1.x << "   " << test1.y << "   " << test1.z << "   " << std::endl;
 
    //clear the screen
    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
    glEnable(GL_CLIP_DISTANCE0);
 
    ///////////////////////////////////////////////////
-// Begin pass 1: render reflection to texture.
-///////////////////////////////////////////////////  
+   // Begin pass 1: render reflection to texture.
+   ///////////////////////////////////////////////////  
 
    glBindFramebuffer(GL_FRAMEBUFFER, fbo); // Render to FBO.
    glDrawBuffer(GL_COLOR_ATTACHMENT0);
@@ -88,22 +86,6 @@ void display()
     // need change
    render_scene(3, glm::vec4(0.0, 1.0, 0.0, 2000.0), main_camera);
 
-   ///////////////////////////////////////////////////
-// Begin pass 4: layered rendering to dynamic cube map
-/////////////////////////////////////////////////// 
-
-  // glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-  // glDrawBuffer(GL_COLOR_ATTACHMENT4);
-  //// bind renderbuffer here
-  // glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-  // glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, w, h);
-  // glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rbo);
-
-  // glViewport(0, 0, w, h);
-
-  // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  // render_scene(5, none , main_camera);
-   //std::cout << crystal->cubemap_id << std::endl;
 
    ///////////////////////////////////////////////////
    // Begin pass 5: render scene
@@ -150,8 +132,6 @@ void idle()
 		logo_on = false;
 	}
 
-
-   //int time_loc = glGetUniformLocation(shader_program, "time");
 }
 
 // Display info about the OpenGL implementation provided by the graphics driver.
@@ -173,11 +153,11 @@ void initOpenGl()
 	aspect_ratio = float(w) / float(h);
 	std::cout << aspect_ratio << std::endl;
 	P = glm::perspective(3.141592f / 4.0f, aspect_ratio, near_clip, far_clip);
-   //Initialize glew so that new OpenGL function names can be used
-   glewInit();
+    //Initialize glew so that new OpenGL function names can be used
+    glewInit();
 
-   //load data
-   load();
+    //load data
+    load();
 
 
    float aspect_ratio = float(w) / float(h);
@@ -193,6 +173,7 @@ void initOpenGl()
    glEnable(GL_DEPTH_TEST);
 
 }
+
 // glut callbacks need to send keyboard and mouse events to imgui
 void keyboard(unsigned char key, int x, int y)
 {
@@ -227,13 +208,7 @@ void keyboard(unsigned char key, int x, int y)
    }
 
    glm::vec3 position = main_camera.get_camera_position();
-  // std::cout << position.x << " " << position.y << " " << position.z << std::endl;
    const int time_ms = glutGet(GLUT_ELAPSED_TIME);
-
-   //if (state == GLUT_DOWN && button == GLUT_LEFT_BUTTON && creating_mode)
-   //{
-
-   //}
 }
 
 void special_keyboard(int key, int x, int y)
@@ -255,15 +230,6 @@ void special_up(int key, int x, int y)
 void special(int key, int x, int y)
 {
    ImGui_ImplGlut_SpecialCallback(key);
-   /*
-   switch (key)
-   {
-   case GLUT_KEY_F2:
-	   pause = !pause;
-	   break;
-
-   }
-   */
 }
 
 void motion(int x, int y)
@@ -273,8 +239,6 @@ void motion(int x, int y)
 
 void pasive_motion(int x, int y)
 {
-	//std::cout << x << "    " << y << std::endl;
-	
 
 	ImGui_ImplGlut_PassiveMouseMotionCallback(x, y);
 	if (!pause)
@@ -286,9 +250,6 @@ void pasive_motion(int x, int y)
 		main_camera.turn_camera(-dx, -dy);
 	}
 
-	//
-	
-
 	const int h = glutGet(GLUT_WINDOW_HEIGHT);
 	GLubyte buffer[4];
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
@@ -297,9 +258,7 @@ void pasive_motion(int x, int y)
 	glReadPixels(x, h - y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	currentId = int(buffer[0]) / 255;
-	//std::cout << int(buffer[0]) << "    " << int(buffer[1]) << "    " << int(buffer[2]) << std::endl;
 	terrainpos = glm::vec3(float(buffer[0]) / float(256), float(buffer[1]) / float(256), float(buffer[2]) / float(256));
-	// to clip space
 	for (int i = 0; i < 3; i++)
 	{
 		terrainpos[i] = terrainpos[i] * 2.0 - 1.0;
@@ -309,15 +268,6 @@ void pasive_motion(int x, int y)
 	P = glm::perspective(3.141592f / 4.0f, aspect_ratio, near_clip, far_clip);
 	glm::vec4 worldPos = glm::inverse(P)*ClipPos;
 	worldPos = glm::inverse(V)*worldPos;
-	//std::cout << worldPos.x << "    " << worldPos.y << "    " << worldPos.z << std::endl;
-	//if (buffer[1] != 0)
-	//{
-	//	currentId = 1000;
-	//}
-	//if (currentId < tree_nums)
-	//{
-	//	lastID = currentId;
-	//}
 	mousepicker->update(x, y,&main_camera,main_terrain);
 	glm::vec3 a = mousepicker->getCurrentRay();
 	glm::vec3 test_pos = mousepicker->getCurrentTerrainPoint();
@@ -327,9 +277,6 @@ void pasive_motion(int x, int y)
 						0.0,
 						1
 	};
-	//test_mesh->test_pos();
-	//std::cout << "test transorm     " << test_transform.translate.x << "       " << test_transform.translate.y << "        " << test_transform.translate.z << std::endl;
-	//std::cout << "mouse ray" << a.x << "    " << a.y << "    " << a.z << std::endl;
 
 }
 
@@ -337,13 +284,6 @@ void mouse(int button, int state, int x, int y)
 {
 	// read the color into the buffer 
 	ImGui_ImplGlut_MouseButtonCallback(button, state);
-
-
-
-   //std::cout << lastID << std::endl;
-   //std::cout << currentId <<"    "<< int(buffer[0]) << std::endl;
-   //std::cout << currentId << "    "<< int(buffer[0])<<"   " <<int(buffer[1] )<< "   " << int(buffer[2] )<< "   " << int(buffer[3] )<< "   " << std::endl;
-
 }
 
 int main (int argc, char **argv)
@@ -360,7 +300,6 @@ int main (int argc, char **argv)
    glutInitWindowPosition (5, 5);
    glutInitWindowSize (1280, 720);
    int win = glutCreateWindow ("Mini Game Engine");
-   //how to set the cursor to none?
    glutSetCursor(GLUT_CURSOR_NONE);
 
    printGlInfo();
@@ -375,10 +314,10 @@ int main (int argc, char **argv)
    glutMouseFunc(mouse);
    glutMotionFunc(motion);
    glutPassiveMotionFunc(pasive_motion);
-
    glutIdleFunc(idle);
 
    initOpenGl();
+
    ImGui_ImplGlut_Init(); // initialize the imgui system
 
    //Enter the glut event loop.
@@ -433,9 +372,6 @@ void render_scene(int pass, glm::vec4 plane, camera camera)
 		   main_sun->draw_sun(P);
 		   main_terrain->draw_terrain(shading_mode, M, V, P, texture_id, pass, plane, cameraPos);
 
-		   //glUniformMatrix4fv(UniformLoc::MUpdate_loc, 1, false, glm::value_ptr(M_update));
-		   //int tree_number = tree_list.size();
-		   //int mesh_types = mesh_list.size();
 		   for (int i = 0; i < 6; i++)
 		   {
 			   int mesh_number = mesh_list.at(i).size();
@@ -450,11 +386,7 @@ void render_scene(int pass, glm::vec4 plane, camera camera)
 	   //render terrain pos to textures
 	   else if (pass == 3)
 	   {
-		   //for (int i = 0; i < tree_nums; i++)
-		   //{
-			  // tree_list.at(i)->draw_mesh(shading_mode, lastID, V, P, plane, cameraPos, pass,&dl, &f,mesh_line_mode, tess_level, tree_colors);
-		   //}
-		      main_terrain->draw_terrain(shading_mode, M, V, P, texture_id, pass, plane, cameraPos);
+		     main_terrain->draw_terrain(shading_mode, M, V, P, texture_id, pass, plane, cameraPos);
 		   
 	   }
 	   // render to dynamic cube map
@@ -503,7 +435,6 @@ void render_scene(int pass, glm::vec4 plane, camera camera)
 				   display_list.at(displaymesh_id).draw_mesh(shading_mode, lastID, V, P, plane, cameraPos, pass, &dl, &f, mesh_line_mode, tess_level, mesh_colors.at(displaymesh_id), time_sec, &display_trasnform);//&display_transform_list.at(displaymesh_id));
 			   }
 			 
-			   //test_mesh->draw_mesh(shading_mode, lastID, V, P, plane, cameraPos,  pass, &dl, &f, mesh_line_mode, tess_level , mesh_colors.at(i), time_sec);
 			   if (water_linemode)
 			   {
 				   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -514,19 +445,6 @@ void render_scene(int pass, glm::vec4 plane, camera camera)
 			   
 
 
-		   }
-		   //just for testing
-		   else
-		   {
-			   //testui->drawUI();
-			   //main_sun->draw_sun(P);
-			   /*main_sky->draw_sky( skybox_id, V, P, pass);
-			   if (water_linemode)
-			   {
-				   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-			   }
-			   main_water->draw_water(shading_mode,test, M2, V, P, waterTexture_id, pass, float(time_ms), cameraPos);
-			   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);*/
 		   }
 	   }
 
@@ -543,7 +461,6 @@ void update()
 	main_terrain->update(clip_distance, &tP, &qP, &f, &dl);
 	main_sun->update(&main_camera, &sP);
 	main_lensflare->update(main_sun->get_screen_coord(P), &sP,&lP);
-	//mesh::update_light(&dl);
 
 	int mesh_nums;
 
@@ -572,7 +489,6 @@ void init_shader()
 	sun::init_shader();
 	lensFlare::init_window_wh(w, h);
 	layeredRenderingMesh::init_shader();
-	//mesh_shader = InitShader("Shaders/mesh_vs.glsl", "Shaders/mesh_gs.glsl", "Shaders/mesh_fs.glsl");
 }
 
 void draw_gui()
@@ -588,7 +504,6 @@ void draw_gui()
 	{
 		const int filename_len = 256;
 		static char video_filename[filename_len] = "capture.mp4";
-		//ImGui::SliderInt("precise", &precise, 0, 100);
 		ImGui::InputText("Video filename", video_filename, filename_len);
 		ImGui::SliderFloat("time per frame(ms)", &time_per_frame, 0.0f, +1000.0f);
 		if (ImGui::Button("Reload_Shader"))
@@ -637,15 +552,6 @@ void draw_gui()
 			}
 		}
 	}
-
-	//terrain parameters
-	/*
-	if (ImGui::CollapsingHeader("terrain"))
-	{
-		ImGui::SliderInt2("random", random, 4000, 9999999);// is there a way to do that?
-	}
-	*/
-
 	
 	// shading mode
 	// water parameters
@@ -718,7 +624,6 @@ void draw_gui()
 					{
 
 						int n = mesh_list.at(i).size();
-						//std::cout << n << "   " << n2 << "   " << std::endl;
 
 						for (int j = 0; j < n; j++)
 						{
@@ -883,7 +788,6 @@ void draw_gui()
 			ImGui::SliderFloat3("Ld", glm::value_ptr(p.Ld), 0.0f, 1.0f);
 			ImGui::SliderFloat("Ks", &p.Ks, 0.0f, +1.0f);
 			ImGui::SliderFloat3("Ls", glm::value_ptr(p.Ls), 0.0f, 1.0f);
-			//ImGui::SliderFloat("shiness", &wP.shineness, 0.01f, +30.0f);
 			ImGui::SliderFloat3("LightPos", glm::value_ptr(p.lightPos), -100.0f, 100.0f);
 
 		}
@@ -908,11 +812,7 @@ void draw_gui()
 
 void init_render_class()
 {
-	//for (int i = 0; i < 2; i++)
-	//{
-	//	tree_transform.push_back(t[i]);
-	//}
-	
+
 	//Initialize camearas
 	main_camera = camera(mainC);
 	reflect_camera = camera(mainC);
@@ -931,7 +831,6 @@ void init_render_class()
 	main_water = new water(clip_distance, &p, &f, &wP, &qP, depth_camera, &tP);
 	main_terrain = new terrain(clip_distance, &tP, &qP,  &dl, &f, depth_camera);
 	main_sky = new skybox();
-	//crystal = new layeredRenderingMesh("Meshes/tree_blue.3ds", 3, &f, &p, &t[0]);
 	
 	for (int i = 0; i < 6; i++)
 	{
@@ -967,7 +866,6 @@ void init_render_class()
 		for (int j = 0; j < mesh_number; j++)
 		{
 			mesh new_mesh = mesh(mesh_filenames[i], i, &f, &p, &dl, &transform_list.at(i).at(j), tess_level);
-			// mesh* tree = new mesh("Meshes/SJX.3ds", i, &f, &p, &t[i]);
 			list1.push_back(new_mesh);
 		}
 		mesh_list.push_back(list1);
@@ -975,7 +873,6 @@ void init_render_class()
 	}
 
 	//initialize all display meshes;
-	//test_mesh = new mesh("Meshes/tree_blue.3ds", 0, &f, &p, &dl, &test_transform, tess_level);
 	int types = 6;
 	for (int i = 0; i < types; i++)
 	{
@@ -1049,15 +946,6 @@ void init_textures()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	// initialzie the dynamic cubemap;
-	//glGenTextures(1, &crystal->cubemap_id);
-
-
-
-	/* bind texture to unit 2 (the same unit used in the fragmentshader to show the cubemap) */
-   // glBindTextureUnit(2, );
-
-
 	/* setup framebuffer with cubemap attached */;
 
 
@@ -1071,7 +959,6 @@ void init_textures()
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, waterTexture_id[1], 0);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, terrainpostexture_id, 0);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, waterTexture_id[4], 0);
-	//glFramebufferTexture(GL_FRAMEBUFFER,   GL_COLOR_ATTACHMENT4,  crystal->cubemap_id, 0);
 
 	//unbind the fbo
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
