@@ -66,7 +66,7 @@ void display()
 	//std::cout << main_camera.get_py().y << std::endl;
    glm::vec4 refraction_clip_plane = glm::vec4(0.0, -1.0, 0.0, main_water->w.water_height);
    render_scene(2,refraction_clip_plane,main_camera);
-   
+ 
  
    
  ///////////////////////////////////////////////////
@@ -117,8 +117,8 @@ void display()
    glutSwapBuffers();
  
 }
-// glut idle callback.
-//This function gets called between frames
+
+// glut idle callback. This function gets called between frames
 void idle()
 {
 	glutPostRedisplay();
@@ -127,10 +127,6 @@ void idle()
     time_sec = 0.001f*time_ms;
 	time_per_frame = time_ms - last_time;
 	last_time = time_ms;
-	if (time_sec > 15.0)
-	{
-		logo_on = false;
-	}
 
 }
 
@@ -146,7 +142,6 @@ void printGlInfo()
 
 void initOpenGl()
 {
-	std::cout << "start init" << std::endl;
     //initialize window width and height.
 	w = glutGet(GLUT_WINDOW_WIDTH);
 	h = glutGet(GLUT_WINDOW_HEIGHT);
@@ -157,22 +152,16 @@ void initOpenGl()
     glewInit();
 
     //load data
-	std::cout << "start init load" << std::endl;
     load();
-
 
    float aspect_ratio = float(w) / float(h);
    texture_width = w;
    texture_height = h;
 
-   //Initialize mesh shader (static)
-   std::cout << "start init shader" << std::endl;
+   //Initialize shader, render class and textures
    init_shader();
-   std::cout << "start init render class" << std::endl;
    init_render_class();
-   std::cout << "start init textures" << std::endl;
    init_textures();
-  
 
    glEnable(GL_DEPTH_TEST);
 
@@ -191,20 +180,6 @@ void keyboard(unsigned char key, int x, int y)
    {
    case ' ':
 	   pause = !pause;
-	   break;
-   case 'f':
-		/*
-	   glm::vec3 pos = mousepicker->getCurrentTerrainPoint();
-	   transform this_transform = { pos,
-					   glm::vec3(create_scale.at(displaymesh_id)),
-					   0.0,
-					   1
-	   };
-	   transform_list.at(displaymesh_id).push_back(this_transform);
-	   mesh m = mesh(mesh_filenames[displaymesh_id], 0, &f, &p, &dl, &this_transform, tess_level);
-	   mesh_list.at(displaymesh_id).push_back(m);
-	   std::cout << "created" << std::endl;
-	   */
 	   break;
    }
    if (key == (char)13)
@@ -273,17 +248,6 @@ void pasive_motion(int x, int y)
 	P = glm::perspective(3.141592f / 4.0f, aspect_ratio, near_clip, far_clip);
 	glm::vec4 worldPos = glm::inverse(P)*ClipPos;
 	worldPos = glm::inverse(V)*worldPos;
-	/*
-	mousepicker->update(x, y,&main_camera,main_terrain);
-	glm::vec3 a = mousepicker->getCurrentRay();
-	glm::vec3 test_pos = mousepicker->getCurrentTerrainPoint();
-	display_trasnform =  {
-						test_pos,
-						glm::vec3(create_scale.at(displaymesh_id)),
-						0.0,
-						1
-	};
-	*/
 
 }
 
@@ -336,27 +300,12 @@ int main (int argc, char **argv)
 void render_scene(int pass, glm::vec4 plane, camera camera)
 {
 	
-   if (logo_on)
-   {
-	   logo->drawUI(glm::vec2(w, h), glm::vec2(0.5*w, 0.5*h), logo_texture_id, 1.0, 1.0);
-   } 
-   else if (logo2_on)
-   {
-	   logo2->drawUI(glm::vec2(w, h), glm::vec2(0.5*w, 0.5*h), logo2_texture_id, 1.0, 1.0);
-   }
-
-   else
-   {
 	   glm::mat4 R = glm::rotate(0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-	   //glm::mat4 T = glm::translate(glm::vec3(-main_terrain->get_terrain_wh().x / 2.0, 0.0, -main_terrain->get_terrain_wh().y / 2.0));
 	   glm::mat4 S = glm::scale(glm::vec3(10.0));
-	   //glm::mat4 M = R * S * T;
 	   glm::mat4 V = camera.get_view_matrice();
 	   
-	   //glm::mat4 T2 = glm::translate(glm::vec3(-main_terrain->get_terrain_wh().x / 2.0, main_water->w.water_height, -main_terrain->get_terrain_wh().y / 2.0));
-	   //glm::mat4 M2 = R *  T2*S;
+
 	   glm::vec3 hard_code = glm::vec3(-1500, 0, -1500);
-	   //std::cout << "x: " << hard_code.x << " y: " << hard_code.y << " z: " << hard_code.z << std::endl;
 	   glm::mat4 M_water = R * glm::translate(glm::vec3(hard_code.x, main_water->w.water_height, hard_code.z))*S;
 	   glm::vec3 cameraPos = main_camera.get_camera_position();
 	   glm::mat4 M_tree = R * glm::scale(glm::vec3(3.0)) *glm::translate(glm::vec3(0.0));
@@ -379,30 +328,9 @@ void render_scene(int pass, glm::vec4 plane, camera camera)
 
 		  
 		   main_sun->draw_sun(P);
-		   //main_terrain->draw_terrain(shading_mode, M, V, P, texture_id, pass, plane, cameraPos);
-
-		   for (int i = 0; i < 6; i++)
-		   {
-			   int mesh_number = mesh_list.at(i).size();
-			   for (int j = 0; j < mesh_number; j++)
-			   {
-				   mesh_list.at(i).at(j).draw_mesh(shading_mode, lastID, V, P, plane, cameraPos, pass, &dl, &f, mesh_line_mode, tess_level, mesh_colors.at(i), time_sec,&transform_list.at(i).at(j));
-			   }
-			   
-		   }
 
 	   }
-	   //render terrain pos to textures
-	   else if (pass == 3)
-	   {
-		     //main_terrain->draw_terrain(shading_mode, M, V, P, texture_id, pass, plane, cameraPos);
-		   
-	   }
-	   // render to dynamic cube map
-	   else if (pass == 5)
-	   {
-		       //main_terrain->draw_terrain(shading_mode, M, V, P, texture_id, pass, plane, cameraPos);
-	   }
+
 	   //render scene
 	   else if (pass == 4)
 	   {
@@ -426,18 +354,8 @@ void render_scene(int pass, glm::vec4 plane, camera camera)
 			   {
 				   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			   }
-			   //main_terrain->draw_terrain(shading_mode, M, V, P, texture_id, pass, plane, cameraPos);
-			   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-			   int mesh_types = 6;
-			   for (int i = 0; i < mesh_types; i++)
-			   {
-				   int mesh_number = mesh_list.at(i).size();
-				   for (int j = 0; j < mesh_number; j++)
-				   {
-					   mesh_list.at(i).at(j).draw_mesh(shading_mode, lastID, V, P, plane, cameraPos, pass, &dl, &f, mesh_line_mode, tess_level, mesh_colors.at(i), time_sec, &transform_list.at(i).at(j));
-				   }
-			   }
+			   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 			 
 			   if (water_linemode)
@@ -453,17 +371,13 @@ void render_scene(int pass, glm::vec4 plane, camera camera)
 		   }
 	   }
 
-   }
-
-	
 		
 }
 
 void update()
 {
-	display_list.at(displaymesh_id).update(&f, &p, &dl, &display_trasnform);
+
 	main_water->update(clip_distance,&p, &f, &wP, &qP,&tP);
-	//main_terrain->update(clip_distance, &tP, &qP, &f, &dl);
 	main_sun->update(&main_camera, &sP);
 	main_lensflare->update(main_sun->get_screen_coord(P), &sP,&lP);
 
@@ -822,24 +736,18 @@ void init_render_class()
 	main_camera = camera(mainC);
 	reflect_camera = camera(mainC);
 	depth_camera = camera(mainC);
-	//testui = new screenUI(w,h,,glm::vec2( 0.5*w, 0.5*h ),0);
 	logo = new screenUI(w, h, glm::vec2(w, h), glm::vec2(0.5*w, 0.5*h), logo_texture_id);
 	logo2 = new screenUI(w, h, glm::vec2(w, h), glm::vec2(0.5*w, 0.5*h), logo2_texture_id);
 	tsky = new screenUI(w, h, glm::vec2(w, h), glm::vec2(0.5*w, 0.5*h), tsky_texture_id);
 	main_sun = new sun(glm::vec2(w, h), &sP, &main_camera);
 	main_lensflare = new lensFlare(main_sun->get_screen_coord(P), &sP, &lP);
-	//mousepicker = new mousePicking(w,h,&main_camera,main_terrain->get_scale(), P);
 
 
-	std::cout << "start init water" << std::endl;
 	// intit all the render class
 	main_water = new water(clip_distance, &p, &f, &wP, &qP, depth_camera, &tP);
-	std::cout << "start init terrain, skybox" << std::endl;
-	//main_terrain = new terrain(clip_distance, &tP, &qP,  &dl, &f, depth_camera);
-	std::cout << "start init skybox" << std::endl;
 	main_sky = new skybox();
 	
-	std::cout << "start init transform" << std::endl;
+
 	for (int i = 0; i < 6; i++)
 	{
 		transform t = {
@@ -863,38 +771,6 @@ void init_render_class()
 		create_scale.push_back(0.05);
 	}
 
-
-	std::cout << "start init meshes" << std::endl;
-	//initialize all meshes;
-	for (int i = 0; i < 6; i++)
-	{
-		std::vector<mesh> list1;
-		
-		int mesh_number = transform_list.at(i).size();
-		for (int j = 0; j < mesh_number; j++)
-		{
-			mesh new_mesh = mesh(mesh_filenames[i], i, &f, &p, &dl, &transform_list.at(i).at(j), tess_level);
-			list1.push_back(new_mesh);
-		}
-		mesh_list.push_back(list1);
-
-	}
-
-	std::cout << "start init display meshes" << std::endl;
-	//initialize all display meshes;
-	int types = 6;
-	for (int i = 0; i < types; i++)
-	{
-		transform temp = {
-						glm::vec3(-20.0,0.0,20.0),
-						glm::vec3(0.05),
-						0.0,
-						1
-		};
-			mesh new_mesh = mesh(mesh_filenames[i], 0, &f, &p, &dl, &temp, tess_level);
-			display_list.push_back(new_mesh);
-	}
-	
 
 }
 
