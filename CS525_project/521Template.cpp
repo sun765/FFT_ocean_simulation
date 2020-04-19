@@ -25,67 +25,9 @@ void display()
 	glm::vec4 none = glm::vec4(0.0, 1.0, 0.0, 2000.0);
 
 	float aspect_ratio = float(w) / float(h);
-	glm::vec3 test1 = main_camera.get_camera_position();
 
-
-   //clear the screen
-   //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
    glEnable(GL_CLIP_DISTANCE0);
-
-   ///////////////////////////////////////////////////
-   // Begin pass 1: render reflection to texture.
-   ///////////////////////////////////////////////////  
-
-   glBindFramebuffer(GL_FRAMEBUFFER, fbo); // Render to FBO.
-   glDrawBuffer(GL_COLOR_ATTACHMENT0);
-   //bind renderbuffer here
-   glBindFramebuffer(GL_FRAMEBUFFER,fbo);
-   glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, w, h);
-   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rbo);
-   glViewport(0, 0, w,h);
-   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-   glm::vec4 reflection_clip_plane = glm::vec4(0.0,1.0,0.0,-main_water->w.water_height);
-   render_scene(1, reflection_clip_plane,reflect_camera);
-
-
- ///////////////////////////////////////////////////
-// Begin pass 2: render refraction to texture.
-/////////////////////////////////////////////////// 
-   glBindFramebuffer(GL_FRAMEBUFFER, fbo); 
-   glDrawBuffers(2,refraction_buffers);
-   //bind renderbuffer here
-   glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-   glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, w, h);
-   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rbo);
-
-   glViewport(0, 0, w, h);
-
-   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//std::cout << main_camera.get_py().y << std::endl;
-   glm::vec4 refraction_clip_plane = glm::vec4(0.0, -1.0, 0.0, main_water->w.water_height);
-   render_scene(2,refraction_clip_plane,main_camera);
- 
- 
-   
- ///////////////////////////////////////////////////
-// Begin pass 3: render movable objects to pick texture.
-/////////////////////////////////////////////////// 
-
-   glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-   glDrawBuffer(GL_COLOR_ATTACHMENT2);
-   //bind renderbuffer here
-   glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-   glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, w, h);
-   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rbo);
-
-   glViewport(0, 0, w, h);
-
-   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    // need change
-   render_scene(3, glm::vec4(0.0, 1.0, 0.0, 2000.0), main_camera);
-
 
    ///////////////////////////////////////////////////
    // Begin pass 5: render scene
@@ -148,6 +90,7 @@ void initOpenGl()
 	aspect_ratio = float(w) / float(h);
 	std::cout << aspect_ratio << std::endl;
 	P = glm::perspective(3.141592f / 4.0f, aspect_ratio, near_clip, far_clip);
+
     //Initialize glew so that new OpenGL function names can be used
     glewInit();
 
