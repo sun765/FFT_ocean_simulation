@@ -1,0 +1,299 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="shaders">
+      <UniqueIdentifier>{3658eb7d-63ce-48aa-9a33-df7a8b8c7edb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Not used">
+      <UniqueIdentifier>{54d65631-a59e-4671-aa54-e495f65d8b70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders\mesh">
+      <UniqueIdentifier>{8e7e4215-2360-4ed9-989d-e94d7b4c00f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders\skybox">
+      <UniqueIdentifier>{d9757d73-cb21-4d72-b804-521b662ad3a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders\terrain">
+      <UniqueIdentifier>{c4f5ea88-e8fb-4855-b7a8-6b0c5932c1b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders\water">
+      <UniqueIdentifier>{5b2148ca-6b4e-4f44-bf04-99a85a45ebb1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders\layer rendering">
+      <UniqueIdentifier>{876ef489-7bd6-4842-8d0e-f9f86b8b7435}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders\sun">
+      <UniqueIdentifier>{c16854bb-2f32-41a1-92f1-b4e162ee6537}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders\lens flare">
+      <UniqueIdentifier>{076f3fc8-e621-45f4-b374-3e8b9ef98fe8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders\gui">
+      <UniqueIdentifier>{6a3f81b8-f665-4355-8221-9d643963e390}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rendering classes">
+      <UniqueIdentifier>{d6851dbe-727c-40b6-a53a-2859b547ef38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rendering classes\skybox">
+      <UniqueIdentifier>{d44a4de4-eb14-4b11-934d-18d1d38e3ce8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rendering classes\sun">
+      <UniqueIdentifier>{6f6c1a85-1ecb-41f5-869e-c3b0300acb7b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rendering classes\meshes">
+      <UniqueIdentifier>{a827524c-9ce1-42ac-a0ef-9d5289d977b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rendering classes\lens flare">
+      <UniqueIdentifier>{c7fcc64c-c5d1-4852-992b-261aae108a89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rendering classes\terrain">
+      <UniqueIdentifier>{c464c6b5-3c0d-4af8-aa82-6fc4448a6642}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rendering classes\water">
+      <UniqueIdentifier>{ad21361a-b9f6-4a03-8449-57dd1801d898}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rendering classes\gui">
+      <UniqueIdentifier>{122be1a9-a49c-4c9b-90aa-c610f074448f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rendering classes\layered rendering meshes">
+      <UniqueIdentifier>{fc47d7f1-a1e9-4535-9375-09464bc7022a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="521Template.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="InitShader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadTexture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VAO.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadMesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugCallback.cpp">
+      <Filter>Not used</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui.cpp">
+      <Filter>Not used</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_demo.cpp">
+      <Filter>Not used</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_draw.cpp">
+      <Filter>Not used</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_impl_glut.cpp">
+      <Filter>Not used</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_widgets.cpp">
+      <Filter>Not used</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoMux.cpp">
+      <Filter>Not used</Filter>
+    </ClCompile>
+    <ClCompile Include="screenUI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="query.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="water.cpp">
+      <Filter>rendering classes\water</Filter>
+    </ClCompile>
+    <ClCompile Include="sun.cpp">
+      <Filter>rendering classes\sun</Filter>
+    </ClCompile>
+    <ClCompile Include="skybox.cpp">
+      <Filter>rendering classes\skybox</Filter>
+    </ClCompile>
+    <ClCompile Include="terrain.cpp">
+      <Filter>rendering classes\terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="mesh.cpp">
+      <Filter>rendering classes\meshes</Filter>
+    </ClCompile>
+    <ClCompile Include="lensFlare.cpp">
+      <Filter>rendering classes\lens flare</Filter>
+    </ClCompile>
+    <ClCompile Include="gui.cpp">
+      <Filter>rendering classes\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="layeredRenderingMesh.cpp">
+      <Filter>rendering classes\layered rendering meshes</Filter>
+    </ClCompile>
+    <ClCompile Include="mousePicking.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="InitShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadTexture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="location.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VAO.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GlobalVariables.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadMesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="structs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="imconfig.h">
+      <Filter>Not used</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui.h">
+      <Filter>Not used</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_impl_glut.h">
+      <Filter>Not used</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_internal.h">
+      <Filter>Not used</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_rectpack.h">
+      <Filter>Not used</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_textedit.h">
+      <Filter>Not used</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_truetype.h">
+      <Filter>Not used</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugCallback.h">
+      <Filter>Not used</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoMux.h">
+      <Filter>Not used</Filter>
+    </ClInclude>
+    <ClInclude Include="screenUI.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="query.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="skybox.h">
+      <Filter>rendering classes\skybox</Filter>
+    </ClInclude>
+    <ClInclude Include="sun.h">
+      <Filter>rendering classes\sun</Filter>
+    </ClInclude>
+    <ClInclude Include="terrain.h">
+      <Filter>rendering classes\terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="water.h">
+      <Filter>rendering classes\water</Filter>
+    </ClInclude>
+    <ClInclude Include="gui.h">
+      <Filter>rendering classes\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="lensFlare.h">
+      <Filter>rendering classes\lens flare</Filter>
+    </ClInclude>
+    <ClInclude Include="mesh.h">
+      <Filter>rendering classes\meshes</Filter>
+    </ClInclude>
+    <ClInclude Include="layeredRenderingMesh.h">
+      <Filter>rendering classes\layered rendering meshes</Filter>
+    </ClInclude>
+    <ClInclude Include="mousePicking.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\lensflare_fs.glsl">
+      <Filter>shaders\lens flare</Filter>
+    </None>
+    <None Include="Shaders\lensflare_vs.glsl">
+      <Filter>shaders\lens flare</Filter>
+    </None>
+    <None Include="Shaders\sun_fs.glsl">
+      <Filter>rendering classes\sun</Filter>
+    </None>
+    <None Include="Shaders\sun_vs.glsl">
+      <Filter>rendering classes\sun</Filter>
+    </None>
+    <None Include="Shaders\skybox_fs.glsl">
+      <Filter>rendering classes\skybox</Filter>
+    </None>
+    <None Include="Shaders\skybox_vs.glsl">
+      <Filter>rendering classes\skybox</Filter>
+    </None>
+    <None Include="Shaders\terrain_fs.glsl">
+      <Filter>rendering classes\terrain</Filter>
+    </None>
+    <None Include="Shaders\terrain_gs.glsl">
+      <Filter>rendering classes\terrain</Filter>
+    </None>
+    <None Include="Shaders\terrain_vs.glsl">
+      <Filter>rendering classes\terrain</Filter>
+    </None>
+    <None Include="Shaders\mesh_fs.glsl">
+      <Filter>rendering classes\meshes</Filter>
+    </None>
+    <None Include="Shaders\mesh_gs.glsl">
+      <Filter>rendering classes\meshes</Filter>
+    </None>
+    <None Include="Shaders\mesh_vs.glsl">
+      <Filter>rendering classes\meshes</Filter>
+    </None>
+    <None Include="Shaders\water_fs.glsl">
+      <Filter>rendering classes\water</Filter>
+    </None>
+    <None Include="Shaders\water_gs.glsl">
+      <Filter>rendering classes\water</Filter>
+    </None>
+    <None Include="Shaders\water_vs.glsl">
+      <Filter>rendering classes\water</Filter>
+    </None>
+    <None Include="Shaders\gui_fs.glsl">
+      <Filter>rendering classes\gui</Filter>
+    </None>
+    <None Include="Shaders\gui_vs.glsl">
+      <Filter>rendering classes\gui</Filter>
+    </None>
+    <None Include="Shaders\layered_mesh_fs.glsl">
+      <Filter>rendering classes\layered rendering meshes</Filter>
+    </None>
+    <None Include="Shaders\mesh_tc.glsl">
+      <Filter>rendering classes\meshes</Filter>
+    </None>
+    <None Include="Shaders\mesh_te.glsl">
+      <Filter>rendering classes\meshes</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="data.txt" />
+  </ItemGroup>
+</Project>

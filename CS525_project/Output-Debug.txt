@@ -1,0 +1,133 @@
+﻿'term_project.exe' (Win32): Loaded 'E:\purdue\CGT521\final_project\term_project\term_project\Debug\term_project.exe'. Symbols loaded.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\ntdll.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\kernel32.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\KernelBase.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\user32.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\win32u.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\gdi32.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\gdi32full.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\msvcp_win.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\ucrtbase.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\imm32.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'E:\purdue\CGT521\final_project\term_project\term_project\Assimp32.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'E:\purdue\CGT521\final_project\term_project\term_project\avcodec-57.dll'. Module was built without symbols.
+'term_project.exe' (Win32): Unloaded 'E:\purdue\CGT521\final_project\term_project\term_project\avcodec-57.dll'
+'term_project.exe' (Win32): Loaded 'E:\purdue\CGT521\final_project\term_project\term_project\avformat-57.dll'. Module was built without symbols.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\advapi32.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\msvcrt.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\sechost.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\rpcrt4.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\sspicli.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\cryptbase.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\bcryptprimitives.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\ws2_32.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'E:\purdue\CGT521\final_project\term_project\term_project\avutil-55.dll'. Module was built without symbols.
+'term_project.exe' (Win32): Unloaded 'E:\purdue\CGT521\final_project\term_project\term_project\avutil-55.dll'
+'term_project.exe' (Win32): Loaded 'E:\purdue\CGT521\final_project\term_project\term_project\freeglut.dll'. Module was built without symbols.
+'term_project.exe' (Win32): Unloaded 'E:\purdue\CGT521\final_project\term_project\term_project\freeglut.dll'
+'term_project.exe' (Win32): Loaded 'E:\purdue\CGT521\final_project\term_project\term_project\FreeImage.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Unloaded 'E:\purdue\CGT521\final_project\term_project\term_project\FreeImage.dll'
+'term_project.exe' (Win32): Loaded 'E:\purdue\CGT521\final_project\term_project\term_project\glew32.dll'. Module was built without symbols.
+'term_project.exe' (Win32): Loaded 'E:\purdue\CGT521\final_project\term_project\term_project\swresample-2.dll'. Module was built without symbols.
+'term_project.exe' (Win32): Unloaded 'E:\purdue\CGT521\final_project\term_project\term_project\swresample-2.dll'
+'term_project.exe' (Win32): Loaded 'E:\purdue\CGT521\final_project\term_project\term_project\swscale-4.dll'. Module was built without symbols.
+'term_project.exe' (Win32): Unloaded 'E:\purdue\CGT521\final_project\term_project\term_project\swscale-4.dll'
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\opengl32.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\msvcp140d.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Unloaded 'C:\Windows\SysWOW64\msvcp140d.dll'
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\vcruntime140d.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\ucrtbased.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Unloaded 'C:\Windows\SysWOW64\ucrtbased.dll'
+'term_project.exe' (Win32): Loaded 'C:\Windows\WinSxS\x86_microsoft.vc90.crt_1fc8b3b9a1e18e3b_9.0.30729.9415_none_508df7e2bcbccb90\msvcp90.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\WinSxS\x86_microsoft.vc90.crt_1fc8b3b9a1e18e3b_9.0.30729.9415_none_508df7e2bcbccb90\msvcr90.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\secur32.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\winmm.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\glu32.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\winmmbase.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\cfgmgr32.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'E:\purdue\CGT521\final_project\term_project\term_project\avcodec-57.dll'. Module was built without symbols.
+'term_project.exe' (Win32): Loaded 'E:\purdue\CGT521\final_project\term_project\term_project\avutil-55.dll'. Module was built without symbols.
+'term_project.exe' (Win32): Loaded 'E:\purdue\CGT521\final_project\term_project\term_project\freeglut.dll'. Module was built without symbols.
+'term_project.exe' (Win32): Loaded 'E:\purdue\CGT521\final_project\term_project\term_project\FreeImage.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'E:\purdue\CGT521\final_project\term_project\term_project\swresample-2.dll'. Module was built without symbols.
+'term_project.exe' (Win32): Loaded 'E:\purdue\CGT521\final_project\term_project\term_project\swscale-4.dll'. Module was built without symbols.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\msvcp140d.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\ucrtbased.dll'. Cannot find or open the PDB file.
+The thread 0x4770 has exited with code 0 (0x0).
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\uxtheme.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\combase.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\msctf.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\oleaut32.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\dwmapi.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\System32\DriverStore\FileRepository\nvlt.inf_amd64_8ce2e93d564b086f\nvinit.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Unloaded 'C:\Windows\System32\DriverStore\FileRepository\nvlt.inf_amd64_8ce2e93d564b086f\nvinit.dll'
+'term_project.exe' (Win32): Loaded 'C:\Windows\System32\DriverStore\FileRepository\nvlt.inf_amd64_8ce2e93d564b086f\nvinit.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\version.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Unloaded 'C:\Windows\SysWOW64\version.dll'
+'term_project.exe' (Win32): Unloaded 'C:\Windows\System32\DriverStore\FileRepository\nvlt.inf_amd64_8ce2e93d564b086f\nvinit.dll'
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\nvoglv32.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Unloaded 'C:\Windows\SysWOW64\nvoglv32.dll'
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\nvoglv32.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\shell32.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\SHCore.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\windows.storage.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\shlwapi.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\kernel.appcore.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\profapi.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\powrprof.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\fltLib.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\setupapi.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\wtsapi32.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\version.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\devobj.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\wintrust.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\msasn1.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\crypt32.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\ntmarta.dll'. Cannot find or open the PDB file.
+The thread 0x8ac has exited with code 0 (0x0).
+The thread 0x2e0c has exited with code 0 (0x0).
+The thread 0x4d58 has exited with code 0 (0x0).
+The thread 0x4330 has exited with code 0 (0x0).
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\winsta.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\TextInputFramework.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\CoreMessaging.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\CoreUIComponents.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\WinTypes.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\WinTypes.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\WinTypes.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Unloaded 'C:\Windows\SysWOW64\WinTypes.dll'
+'term_project.exe' (Win32): Unloaded 'C:\Windows\SysWOW64\WinTypes.dll'
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\dxgi.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\d3d11.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\ResourcePolicyClient.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Unloaded 'C:\Windows\SysWOW64\ResourcePolicyClient.dll'
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\ResourcePolicyClient.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Unloaded 'C:\Windows\SysWOW64\ResourcePolicyClient.dll'
+'term_project.exe' (Win32): Loaded 'C:\Windows\System32\DriverStore\FileRepository\nvlt.inf_amd64_8ce2e93d564b086f\nvinit.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Unloaded 'C:\Windows\System32\DriverStore\FileRepository\nvlt.inf_amd64_8ce2e93d564b086f\nvinit.dll'
+'term_project.exe' (Win32): Loaded 'C:\Windows\System32\DriverStore\FileRepository\nvlt.inf_amd64_8ce2e93d564b086f\nvwgf2um.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Unloaded 'C:\Windows\System32\DriverStore\FileRepository\nvlt.inf_amd64_8ce2e93d564b086f\nvwgf2um.dll'
+'term_project.exe' (Win32): Loaded 'C:\Windows\System32\DriverStore\FileRepository\nvlt.inf_amd64_8ce2e93d564b086f\nvwgf2um.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\bcrypt.dll'. Cannot find or open the PDB file.
+The thread 0x293c has exited with code 0 (0x0).
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\nvapi.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Unloaded 'C:\Windows\SysWOW64\nvapi.dll'
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\nvapi.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\ole32.dll'. Cannot find or open the PDB file.
+Exception thrown at 0x74EA18A2 in term_project.exe: Microsoft C++ exception: _com_error at memory location 0x07B3C3AC.
+Exception thrown at 0x74EA18A2 in term_project.exe: Microsoft C++ exception: [rethrow] at memory location 0x00000000.
+'term_project.exe' (Win32): Unloaded 'C:\Windows\SysWOW64\d3d11.dll'
+'term_project.exe' (Win32): Loaded 'C:\Windows\SysWOW64\d3d11.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Loaded 'C:\Windows\System32\DriverStore\FileRepository\nvlt.inf_amd64_8ce2e93d564b086f\nvinit.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Unloaded 'C:\Windows\System32\DriverStore\FileRepository\nvlt.inf_amd64_8ce2e93d564b086f\nvinit.dll'
+'term_project.exe' (Win32): Loaded 'C:\Windows\System32\DriverStore\FileRepository\nvlt.inf_amd64_8ce2e93d564b086f\nvinit.dll'. Cannot find or open the PDB file.
+'term_project.exe' (Win32): Unloaded 'C:\Windows\System32\DriverStore\FileRepository\nvlt.inf_amd64_8ce2e93d564b086f\nvinit.dll'
+The thread 0x33f0 has exited with code 0 (0x0).
+The thread 0x1b84 has exited with code 0 (0x0).
+The thread 0x45e4 has exited with code 0 (0x0).
+The thread 0x3774 has exited with code 0 (0x0).
+The thread 0x64c has exited with code 0 (0x0).
+The thread 0x321c has exited with code 0 (0x0).
+The thread 0x2d08 has exited with code 0 (0x0).
+The thread 0x1bf4 has exited with code 0 (0x0).
+The program '[20376] term_project.exe' has exited with code 0 (0x0).
