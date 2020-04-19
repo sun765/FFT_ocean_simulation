@@ -146,7 +146,7 @@ void printGlInfo()
 
 void initOpenGl()
 {
-
+	std::cout << "start init" << std::endl;
     //initialize window width and height.
 	w = glutGet(GLUT_WINDOW_WIDTH);
 	h = glutGet(GLUT_WINDOW_HEIGHT);
@@ -157,6 +157,7 @@ void initOpenGl()
     glewInit();
 
     //load data
+	std::cout << "start init load" << std::endl;
     load();
 
 
@@ -165,8 +166,11 @@ void initOpenGl()
    texture_height = h;
 
    //Initialize mesh shader (static)
+   std::cout << "start init shader" << std::endl;
    init_shader();
+   std::cout << "start init render class" << std::endl;
    init_render_class();
+   std::cout << "start init textures" << std::endl;
    init_textures();
   
 
@@ -189,7 +193,7 @@ void keyboard(unsigned char key, int x, int y)
 	   pause = !pause;
 	   break;
    case 'f':
-	 
+		/*
 	   glm::vec3 pos = mousepicker->getCurrentTerrainPoint();
 	   transform this_transform = { pos,
 					   glm::vec3(create_scale.at(displaymesh_id)),
@@ -200,6 +204,7 @@ void keyboard(unsigned char key, int x, int y)
 	   mesh m = mesh(mesh_filenames[displaymesh_id], 0, &f, &p, &dl, &this_transform, tess_level);
 	   mesh_list.at(displaymesh_id).push_back(m);
 	   std::cout << "created" << std::endl;
+	   */
 	   break;
    }
    if (key == (char)13)
@@ -268,6 +273,7 @@ void pasive_motion(int x, int y)
 	P = glm::perspective(3.141592f / 4.0f, aspect_ratio, near_clip, far_clip);
 	glm::vec4 worldPos = glm::inverse(P)*ClipPos;
 	worldPos = glm::inverse(V)*worldPos;
+	/*
 	mousepicker->update(x, y,&main_camera,main_terrain);
 	glm::vec3 a = mousepicker->getCurrentRay();
 	glm::vec3 test_pos = mousepicker->getCurrentTerrainPoint();
@@ -277,6 +283,7 @@ void pasive_motion(int x, int y)
 						0.0,
 						1
 	};
+	*/
 
 }
 
@@ -299,7 +306,7 @@ int main (int argc, char **argv)
    glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
    glutInitWindowPosition (5, 5);
    glutInitWindowSize (1280, 720);
-   int win = glutCreateWindow ("Mini Game Engine");
+   int win = glutCreateWindow ("Ocean rendering");
    glutSetCursor(GLUT_CURSOR_NONE);
 
    printGlInfo();
@@ -341,14 +348,16 @@ void render_scene(int pass, glm::vec4 plane, camera camera)
    else
    {
 	   glm::mat4 R = glm::rotate(0.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-	   glm::mat4 T = glm::translate(glm::vec3(-main_terrain->get_terrain_wh().x / 2.0, 0.0, -main_terrain->get_terrain_wh().y / 2.0));
+	   //glm::mat4 T = glm::translate(glm::vec3(-main_terrain->get_terrain_wh().x / 2.0, 0.0, -main_terrain->get_terrain_wh().y / 2.0));
 	   glm::mat4 S = glm::scale(glm::vec3(10.0));
-	   glm::mat4 M = R * S * T;
+	   //glm::mat4 M = R * S * T;
 	   glm::mat4 V = camera.get_view_matrice();
 	   
-	   glm::mat4 T2 = glm::translate(glm::vec3(-main_terrain->get_terrain_wh().x / 2.0, main_water->w.water_height, -main_terrain->get_terrain_wh().y / 2.0));
-	   glm::mat4 M2 = R *  T2*S;
-	   glm::mat4 M_water = R * glm::translate(glm::vec3(main_terrain->get_transform().x, main_water->w.water_height, main_terrain->get_transform().z))*S;
+	   //glm::mat4 T2 = glm::translate(glm::vec3(-main_terrain->get_terrain_wh().x / 2.0, main_water->w.water_height, -main_terrain->get_terrain_wh().y / 2.0));
+	   //glm::mat4 M2 = R *  T2*S;
+	   glm::vec3 hard_code = glm::vec3(-1500, 0, -1500);
+	   //std::cout << "x: " << hard_code.x << " y: " << hard_code.y << " z: " << hard_code.z << std::endl;
+	   glm::mat4 M_water = R * glm::translate(glm::vec3(hard_code.x, main_water->w.water_height, hard_code.z))*S;
 	   glm::vec3 cameraPos = main_camera.get_camera_position();
 	   glm::mat4 M_tree = R * glm::scale(glm::vec3(3.0)) *glm::translate(glm::vec3(0.0));
 	   glm::mat4 M_tree2 = R * glm::scale(glm::vec3(3.0)) *glm::translate(glm::vec3(-30.0, 10.0, 30.0));
@@ -370,7 +379,7 @@ void render_scene(int pass, glm::vec4 plane, camera camera)
 
 		  
 		   main_sun->draw_sun(P);
-		   main_terrain->draw_terrain(shading_mode, M, V, P, texture_id, pass, plane, cameraPos);
+		   //main_terrain->draw_terrain(shading_mode, M, V, P, texture_id, pass, plane, cameraPos);
 
 		   for (int i = 0; i < 6; i++)
 		   {
@@ -386,13 +395,13 @@ void render_scene(int pass, glm::vec4 plane, camera camera)
 	   //render terrain pos to textures
 	   else if (pass == 3)
 	   {
-		     main_terrain->draw_terrain(shading_mode, M, V, P, texture_id, pass, plane, cameraPos);
+		     //main_terrain->draw_terrain(shading_mode, M, V, P, texture_id, pass, plane, cameraPos);
 		   
 	   }
 	   // render to dynamic cube map
 	   else if (pass == 5)
 	   {
-		       main_terrain->draw_terrain(shading_mode, M, V, P, texture_id, pass, plane, cameraPos);
+		       //main_terrain->draw_terrain(shading_mode, M, V, P, texture_id, pass, plane, cameraPos);
 	   }
 	   //render scene
 	   else if (pass == 4)
@@ -417,7 +426,7 @@ void render_scene(int pass, glm::vec4 plane, camera camera)
 			   {
 				   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			   }
-			   main_terrain->draw_terrain(shading_mode, M, V, P, texture_id, pass, plane, cameraPos);
+			   //main_terrain->draw_terrain(shading_mode, M, V, P, texture_id, pass, plane, cameraPos);
 			   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 			   int mesh_types = 6;
@@ -429,11 +438,7 @@ void render_scene(int pass, glm::vec4 plane, camera camera)
 					   mesh_list.at(i).at(j).draw_mesh(shading_mode, lastID, V, P, plane, cameraPos, pass, &dl, &f, mesh_line_mode, tess_level, mesh_colors.at(i), time_sec, &transform_list.at(i).at(j));
 				   }
 			   }
-			   //test the mouse picking
-			   if (creating_mode)
-			   {
-				   display_list.at(displaymesh_id).draw_mesh(shading_mode, lastID, V, P, plane, cameraPos, pass, &dl, &f, mesh_line_mode, tess_level, mesh_colors.at(displaymesh_id), time_sec, &display_trasnform);//&display_transform_list.at(displaymesh_id));
-			   }
+
 			 
 			   if (water_linemode)
 			   {
@@ -458,7 +463,7 @@ void update()
 {
 	display_list.at(displaymesh_id).update(&f, &p, &dl, &display_trasnform);
 	main_water->update(clip_distance,&p, &f, &wP, &qP,&tP);
-	main_terrain->update(clip_distance, &tP, &qP, &f, &dl);
+	//main_terrain->update(clip_distance, &tP, &qP, &f, &dl);
 	main_sun->update(&main_camera, &sP);
 	main_lensflare->update(main_sun->get_screen_coord(P), &sP,&lP);
 
@@ -812,7 +817,7 @@ void draw_gui()
 
 void init_render_class()
 {
-
+	std::cout << "start init cameras" << std::endl;
 	//Initialize camearas
 	main_camera = camera(mainC);
 	reflect_camera = camera(mainC);
@@ -823,15 +828,18 @@ void init_render_class()
 	tsky = new screenUI(w, h, glm::vec2(w, h), glm::vec2(0.5*w, 0.5*h), tsky_texture_id);
 	main_sun = new sun(glm::vec2(w, h), &sP, &main_camera);
 	main_lensflare = new lensFlare(main_sun->get_screen_coord(P), &sP, &lP);
-	mousepicker = new mousePicking(w,h,&main_camera,main_terrain->get_scale(), P);
+	//mousepicker = new mousePicking(w,h,&main_camera,main_terrain->get_scale(), P);
 
 
-
+	std::cout << "start init water" << std::endl;
 	// intit all the render class
 	main_water = new water(clip_distance, &p, &f, &wP, &qP, depth_camera, &tP);
-	main_terrain = new terrain(clip_distance, &tP, &qP,  &dl, &f, depth_camera);
+	std::cout << "start init terrain, skybox" << std::endl;
+	//main_terrain = new terrain(clip_distance, &tP, &qP,  &dl, &f, depth_camera);
+	std::cout << "start init skybox" << std::endl;
 	main_sky = new skybox();
 	
+	std::cout << "start init transform" << std::endl;
 	for (int i = 0; i < 6; i++)
 	{
 		transform t = {
@@ -856,7 +864,7 @@ void init_render_class()
 	}
 
 
-	
+	std::cout << "start init meshes" << std::endl;
 	//initialize all meshes;
 	for (int i = 0; i < 6; i++)
 	{
@@ -872,6 +880,7 @@ void init_render_class()
 
 	}
 
+	std::cout << "start init display meshes" << std::endl;
 	//initialize all display meshes;
 	int types = 6;
 	for (int i = 0; i < types; i++)
@@ -885,12 +894,12 @@ void init_render_class()
 			mesh new_mesh = mesh(mesh_filenames[i], 0, &f, &p, &dl, &temp, tess_level);
 			display_list.push_back(new_mesh);
 	}
-
+	
 
 }
 
-void init_textures()
-{
+void init_textures() {
+
 
 	for (int i = 0; i < texture_num; i++)
 	{
@@ -962,7 +971,7 @@ void init_textures()
 
 	//unbind the fbo
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
 }
+//}
 
 
