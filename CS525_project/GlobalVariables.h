@@ -41,7 +41,6 @@
 #include "mousePicking.h"
 
 
-
 //---------------------creating--------------//
 bool creating_mode = false;
 
@@ -50,20 +49,7 @@ transform display_trasnform;
 int displaymesh_id;
 std::vector<mesh> display_list;
 std::vector<transform> display_transform_list;
-std::vector<std::vector<mesh>> mesh_list;
-std::vector<std::vector<transform>> transform_list;
-std::vector < float > create_scale;
-static const std::string mesh_filenames[] =
-{
-											"Meshes/flower.3ds",
-											"Meshes/grass.obj",
-											"Meshes/rock.obj" ,
-											"Meshes/sheep.3ds",
-											"Meshes/tree_blue.3ds",
-											"Meshes/fish.3ds"
-};
 
-static const std::string mesh_names[] = { "flower","grass","rock","sheep","tree","fish" };
 
 
 // --------------------skytype-----------//
@@ -75,22 +61,10 @@ float last_time = 0;
 float time_per_frame;
 //----------------------------------------------------------hard code data-----------------------------------------------------------------------------//
 bool mesh_line_mode = false;
-mousePicking *mousepicker;
 
 
 //-----------------TEST SHADER-------------------------//
 GLuint mesh_shader = -1;
-
-//--------logo-----//
-GLuint logo_texture_id;
-std::string logo_texture_name = "Textures/logo.png";
-bool logo_on = true;
-screenUI* logo;
-
-GLuint logo2_texture_id;
-std::string logo2_texture_name = "Textures/logo2.png";
-bool logo2_on = true;
-screenUI* logo2;
 
 //-------textured------sky//
 GLuint tsky_texture_id;
@@ -119,7 +93,7 @@ static const std::string texture_name[] = { "Textures/blend.png",
 											"Textures/path.png" ,
 											"Textures/heightmap.png" };
 static const std::string skybox_name = "Textures/skybox";
-static const std::string DuDv = "Textures/waterDUDV.png";
+static const std::string dudv = "Textures/waterDUDV.png";
 static const std::string water_normal = "Textures/matchingNormalMap.png";
 
 
@@ -133,8 +107,8 @@ static const std::string mesh_name = "Meshes/palm1.obj";
 float time_sec = 0.0f;   // global time
 float time_ms = 0.0f;
 float angle = 0.0f;
-bool recording = false;
-int precise = 100;
+bool is_recording = false;
+int precise = 100;  // what precise??
 
 
 //FBO and water  , don't change
@@ -154,7 +128,7 @@ float aspect_ratio ;
 
 
 // window width and height
-int w ,h;
+int window_width ,window_height;
 
 //tes
 bool renderScene = true;
@@ -165,7 +139,6 @@ bool pause = false;
 water* main_water;
 terrain* main_terrain ;
 skybox* main_sky ;
-screenUI* testui;
 sun* main_sun;
 lensFlare* main_lensflare;
 
@@ -175,7 +148,7 @@ std::vector<int> list;
 
 // pick objects in the scene
 GLuint terrainpostexture_id = -1;
-glm::vec3 terrainpos = glm::vec3(9999.0);
+glm::vec3 terrain_pos = glm::vec3(9999.0);
 
 int mesh_nums = 0;
 int current_id = 0;

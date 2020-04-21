@@ -24,7 +24,7 @@ void display()
 	reflect_camera.set_yp(reflect_yp);
 	glm::vec4 none = glm::vec4(0.0, 1.0, 0.0, 2000.0);
 
-	float aspect_ratio = float(w) / float(h);
+	float aspect_ratio = float(window_width) / float(window_height);
 
    glEnable(GL_CLIP_DISTANCE0);
 
@@ -34,7 +34,7 @@ void display()
    glBindFramebuffer(GL_FRAMEBUFFER, 0); 
    glDrawBuffer(GL_BACK); // Render to back buffer.
    
-   glViewport(0, 0, w, h); //Render to the full window
+   glViewport(0, 0, window_width, window_height); //Render to the full window
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); //Clear the back buffer
    
 
@@ -44,12 +44,12 @@ void display()
 
 
 
-   if (recording == true)
+   if (is_recording == true)
    {
       glFinish();
 
       glReadBuffer(GL_BACK);
-      read_frame_to_encode(&rgb, &pixels, w, h);
+      read_frame_to_encode(&rgb, &pixels, window_width, window_height);
       encode_frame(rgb);
    }
    
@@ -82,9 +82,9 @@ void printGlInfo()
 void init_application()
 {
     //initialize window width and height.
-	w = glutGet(GLUT_WINDOW_WIDTH);
-	h = glutGet(GLUT_WINDOW_HEIGHT);
-	aspect_ratio = float(w) / float(h);
+	window_width = glutGet(GLUT_WINDOW_WIDTH);
+	window_height = glutGet(GLUT_WINDOW_HEIGHT);
+	aspect_ratio = float(window_width) / float(window_height);
 	std::cout << aspect_ratio << std::endl;
 	P = glm::perspective(3.141592f / 4.0f, aspect_ratio, near_clip, far_clip);
 
@@ -94,9 +94,9 @@ void init_application()
     //load data
     load();
 
-   float aspect_ratio = float(w) / float(h);
-   texture_width = w;
-   texture_height = h;
+   float aspect_ratio = float(window_width) / float(window_height);
+   texture_width = window_width;
+   texture_height = window_height;
 
    //Initialize shader, render class and textures
    init_shader();
@@ -121,10 +121,6 @@ void keyboard(unsigned char key, int x, int y)
    case ' ':
 	   pause = !pause;
 	   break;
-   }
-   if (key == (char)13)
-   {
-	   logo2_on = false;
    }
 
    glm::vec3 position = main_camera.get_camera_position();
@@ -178,12 +174,12 @@ void pasive_motion(int x, int y)
 	glReadPixels(x, h - y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	current_id = int(buffer[0]) / 255;
-	terrainpos = glm::vec3(float(buffer[0]) / float(256), float(buffer[1]) / float(256), float(buffer[2]) / float(256));
+	terrain_pos = glm::vec3(float(buffer[0]) / float(256), float(buffer[1]) / float(256), float(buffer[2]) / float(256));
 	for (int i = 0; i < 3; i++)
 	{
-		terrainpos[i] = terrainpos[i] * 2.0 - 1.0;
+		terrain_pos[i] = terrain_pos[i] * 2.0 - 1.0;
 	}
-	glm::vec4 ClipPos = glm::vec4(terrainpos, 1.0);
+	glm::vec4 ClipPos = glm::vec4(terrain_pos, 1.0);
 	glm::mat4 V = main_camera.get_view_matrice();
 	P = glm::perspective(3.141592f / 4.0f, aspect_ratio, near_clip, far_clip);
 	glm::vec4 worldPos = glm::inverse(P)*ClipPos;
@@ -263,7 +259,7 @@ void render_scene(int pass, glm::vec4 plane, camera camera)
 		   }
 		   else
 		   {
-			   tsky->drawUI(glm::vec2(w, h), glm::vec2(0.5*w, 0.5*h), tsky_texture_id, 1.0, 1.0);
+			   tsky->drawUI(glm::vec2(window_width, window_height), glm::vec2(0.5*window_width, 0.5*window_height), tsky_texture_id, 1.0, 1.0);
 		   }
 
 		  
@@ -283,7 +279,7 @@ void render_scene(int pass, glm::vec4 plane, camera camera)
 			   }
 			   else
 			   {
-				   tsky->drawUI(glm::vec2(w, h), glm::vec2(0.5*w, 0.5*h), tsky_texture_id, 1.0, 1.0);
+				   tsky->drawUI(glm::vec2(window_width, window_height), glm::vec2(0.5*window_width, 0.5*window_height), tsky_texture_id, 1.0, 1.0);
 			   }
 
 			   main_sun->draw_sun(P);
@@ -342,7 +338,7 @@ void init_shader()
 	mesh::init_shader();
 	screenUI::init_shader();
 	sun::init_shader();
-	lensFlare::init_window_wh(w, h);
+	lensFlare::init_window_wh(window_width, window_height);
 	layeredRenderingMesh::init_shader();
 }
 
@@ -366,13 +362,13 @@ void draw_gui()
 			reload_shader();// does it do anything ?
 		}
 
-		if (recording == false)
+		if (is_recording == false)
 		{
 			if (ImGui::Button("Start Recording"))
 			{
 				const int w = glutGet(GLUT_WINDOW_WIDTH);
 				const int h = glutGet(GLUT_WINDOW_HEIGHT);
-				recording = true;
+				is_recording = true;
 				start_encoding(video_filename, w, h); //Uses ffmpeg
 			}
 
@@ -381,7 +377,7 @@ void draw_gui()
 		{
 			if (ImGui::Button("Stop Recording"))
 			{
-				recording = false;
+				is_recording = false;
 				finish_encoding(); //Uses ffmpeg
 			}
 		}
@@ -449,40 +445,14 @@ void init_render_class()
 	main_camera = camera(mainC);
 	reflect_camera = camera(mainC);
 	depth_camera = camera(mainC);
-	logo = new screenUI(w, h, glm::vec2(w, h), glm::vec2(0.5*w, 0.5*h), logo_texture_id);
-	logo2 = new screenUI(w, h, glm::vec2(w, h), glm::vec2(0.5*w, 0.5*h), logo2_texture_id);
-	tsky = new screenUI(w, h, glm::vec2(w, h), glm::vec2(0.5*w, 0.5*h), tsky_texture_id);
-	main_sun = new sun(glm::vec2(w, h), &sP, &main_camera);
+	tsky = new screenUI(window_width, window_height, glm::vec2(window_width, window_height), glm::vec2(0.5*window_width, 0.5*window_height), tsky_texture_id);
+	main_sun = new sun(glm::vec2(window_width, window_height), &sP, &main_camera);
 	main_lensflare = new lensFlare(main_sun->get_screen_coord(P), &sP, &lP);
 
 
 	// intit all the render class
 	main_water = new water(clip_distance, &p, &f, &wP, &qP, depth_camera, &tP);
 	main_sky = new skybox();
-	
-
-	for (int i = 0; i < 6; i++)
-	{
-		transform t = {
-						glm::vec3(-20.0,0.0,20.0),
-						glm::vec3(0.05),
-						0.0,
-						1
-		};
-		std::vector<transform> list1;
-		list1.push_back(t);
-		transform_list.push_back(list1);
-
-
-		std::vector<glm::vec3> list2;
-		for (int j = 0; j < 10; j++)
-		{
-			glm::vec3 color = glm::vec3(0.5);
-			list2.push_back(color);
-		}
-		mesh_colors.push_back(list2);
-		create_scale.push_back(0.05);
-	}
 
 
 }
@@ -499,13 +469,10 @@ void init_textures() {
 	//skybox_id = crystal->cubemap_id;
 
 	//load dudv map and normal map
-
-	waterTexture_id[2] = LoadTexture(DuDv.c_str());
+	waterTexture_id[2] = LoadTexture(dudv.c_str());
 	waterTexture_id[3] = LoadTexture(water_normal.c_str());
 
 	//load logo texture;
-	logo_texture_id = LoadTexture(logo_texture_name.c_str());
-	logo2_texture_id = LoadTexture(logo2_texture_name.c_str());
 	tsky_texture_id = LoadTexture(tsky_texture_name.c_str());
 
 	//-----------------------------------------------------------------fbo initialization----------------------------------------------------------------------------------//
@@ -516,7 +483,7 @@ void init_textures() {
 	{
 		glGenTextures(1, &waterTexture_id[i]);
 		glBindTexture(GL_TEXTURE_2D, waterTexture_id[i]);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, window_width, window_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -527,7 +494,7 @@ void init_textures() {
 
 	glGenTextures(1, &terrainpostexture_id);
 	glBindTexture(GL_TEXTURE_2D, terrainpostexture_id);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, window_width, window_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -537,7 +504,7 @@ void init_textures() {
 	// this looks ugly ! need to be changed
 	glGenTextures(1, &waterTexture_id[4]);
 	glBindTexture(GL_TEXTURE_2D, waterTexture_id[4]);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, window_width, window_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
