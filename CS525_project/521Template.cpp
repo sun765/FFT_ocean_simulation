@@ -283,13 +283,7 @@ void render_scene(int pass, glm::vec4 plane, camera camera)
 			   }
 
 			   main_sun->draw_sun(P);
-			   
-
-
-			   if (terrain_linemode)
-			   {
-				   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-			   }
+			  
 
 			   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 

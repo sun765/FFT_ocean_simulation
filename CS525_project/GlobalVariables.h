@@ -38,33 +38,38 @@
 #include "sun.h"
 #include "lensFlare.h"
 #include "layeredRenderingMesh.h"
-#include "mousePicking.h"
 
 
-//---------------------creating--------------//
+
+//---------------------bool--------------//
 bool creating_mode = false;
+bool test = false;
+bool skybox_on = false;
+bool renderScene = true;
+bool is_recording = false;
+bool pause = false;
+bool water_linemode = false;
 
+// int 
+int precise = 100;  // what precise??
+int window_width, window_height;
+int mesh_nums = 0;
+int current_id = 0;
+int last_id = 0;
+int shading_mode = 1; // by default it's flat shading
+
+// float
 
 transform display_trasnform;
-int displaymesh_id;
+
 std::vector<mesh> display_list;
 std::vector<transform> display_transform_list;
-
-
-
-// --------------------skytype-----------//
-bool skybox_on = false;
 
 
 //--------------------calculate time-------------------------------------//
 float last_time = 0;
 float time_per_frame;
 //----------------------------------------------------------hard code data-----------------------------------------------------------------------------//
-bool mesh_line_mode = false;
-
-
-//-----------------TEST SHADER-------------------------//
-GLuint mesh_shader = -1;
 
 //-------textured------sky//
 GLuint tsky_texture_id;
@@ -75,14 +80,8 @@ screenUI* tsky;
 
 GLuint texture_id[] = { -1,-1,-1,-1,-1,-1 }; 
 GLuint depth_texture_id = -1;
-bool test = false;
-
+int texture_num = sizeof(texture_id) / sizeof(texture_id[0]);
 GLuint skybox_id = -1;
-
-//names of the mesh and texture files to load
-int texture_num = sizeof(texture_id)/sizeof(texture_id[0]);
-
-
 
 
 //static const std::string mesh_name = "Amago0.obj";
@@ -101,14 +100,11 @@ static const std::string water_normal = "Textures/matchingNormalMap.png";
 
 float height_index = 0.1;
 
-//test mesh
-static const std::string mesh_name = "Meshes/palm1.obj";
-
 float time_sec = 0.0f;   // global time
 float time_ms = 0.0f;
 float angle = 0.0f;
-bool is_recording = false;
-int precise = 100;  // what precise??
+
+
 
 
 //FBO and water  , don't change
@@ -127,14 +123,6 @@ glm::mat4 P;
 float aspect_ratio ;
 
 
-// window width and height
-int window_width ,window_height;
-
-//tes
-bool renderScene = true;
-
-// pause
-bool pause = false;
 
 water* main_water;
 terrain* main_terrain ;
@@ -143,22 +131,16 @@ sun* main_sun;
 lensFlare* main_lensflare;
 
 
-// list of entities to render
-std::vector<int> list;
 
 // pick objects in the scene
 GLuint terrainpostexture_id = -1;
 glm::vec3 terrain_pos = glm::vec3(9999.0);
 
-int mesh_nums = 0;
-int current_id = 0;
-int last_id = 0;
-int shading_mode = 1; // by default it's flat shading
-bool terrain_linemode = false;
-bool water_linemode = false;
+
+
 
 //---------------------------------------------------------------data to be saved and loaded-----------------------------------------------------------------------------//
-glm::vec2 tess_level = glm::vec2(5.0, 5.0);// inner and outer level.
+glm::vec2 tess_level = glm::vec2(5.0, 5.0);
 
 
 //camera
@@ -176,8 +158,6 @@ waterP wP;
 quadP qP;
 sunP sP;
 lensFlareP lP;
-
-std::vector<std::vector<glm::vec3>> mesh_colors;
 
 
 bool load()
