@@ -45,8 +45,7 @@
 //---------------------creating--------------//
 bool creating_mode = false;
 
-//std::vector<mesh> tree_list;
-//std::vector<transform> tree_transform;
+
 transform display_trasnform;
 int displaymesh_id;
 std::vector<mesh> display_list;
@@ -77,18 +76,7 @@ float time_per_frame;
 //----------------------------------------------------------hard code data-----------------------------------------------------------------------------//
 bool mesh_line_mode = false;
 mousePicking *mousepicker;
-mesh *test_mesh;
-transform test_transform =
-{
-	glm::vec3(-20.0,0.0,20.0),
-	glm::vec3(0.05),
-	0.0,
-	1
-};
-//--------------dynamic cube map-------------------//
-GLuint dynamic_cubemap_id;
-std::vector<camera> cubemap_camera;
-layeredRenderingMesh *crystal;
+
 
 //-----------------TEST SHADER-------------------------//
 GLuint mesh_shader = -1;
@@ -142,7 +130,7 @@ float height_index = 0.1;
 //test mesh
 static const std::string mesh_name = "Meshes/palm1.obj";
 
-float time_sec = 0.0f;
+float time_sec = 0.0f;   // global time
 float time_ms = 0.0f;
 float angle = 0.0f;
 bool recording = false;
@@ -175,13 +163,11 @@ bool renderScene = true;
 bool pause = false;
 
 water* main_water;
-//water w;
 terrain* main_terrain ;
 skybox* main_sky ;
 screenUI* testui;
 sun* main_sun;
 lensFlare* main_lensflare;
-
 
 
 // list of entities to render
@@ -192,125 +178,33 @@ GLuint terrainpostexture_id = -1;
 glm::vec3 terrainpos = glm::vec3(9999.0);
 
 int mesh_nums = 0;
-int currentId = 0;
-int lastID = 0;
+int current_id = 0;
+int last_id = 0;
 int shading_mode = 1; // by default it's flat shading
 bool terrain_linemode = false;
 bool water_linemode = false;
 
 //---------------------------------------------------------------data to be saved and loaded-----------------------------------------------------------------------------//
 glm::vec2 tess_level = glm::vec2(5.0, 5.0);// inner and outer level.
-terrainP tP ;
-//{
-//	30.0,      //height
-//	rand() % 1000000000, //seed
-//	16.0,   //smooth
-//	0.3,    //roughness
-//	4 ,   //frequency
-//	glm::vec3 (1.0),
-//	glm::vec3 (1.0,1.0,1.0),
-//	0.8,
-//	glm::vec3 (0.0,1.0,1.0),
-//	0.5,
-//	glm::vec3(0.0)
-//
-//};
+
 
 //camera
-cameraP mainC;
-//cameraP depthC =
-//{
-//	glm::vec3(0.0f, 1000.0f, 0.0f),  //start position
-//	glm::vec3(0.0f, 1.0f, 0.0f),
-//	0.0f,
-//	0.0f,
-//	0.0f,
-//	0.0f
-//};
-/*=
-{
-	glm::vec3(0.0f, 1000.0f, 0.0f),  //start position
-	glm::vec3(0.0f, 1.0f, 0.0f),     
-	0.0f,
-	0.0f,
-	50.0f,
-	0.50f
-};
-*/
 camera main_camera;
 camera reflect_camera;
 camera depth_camera;
 glm::vec2 previous_campos;
 
-//point light
-
+terrainP tP;
+cameraP mainC;
 pointLight p;
-/*=
-{
-	0.1,
-	0.7,
-	0.5,
-	glm::vec3(1.0),
-	glm::vec3(1.0),
-	glm::vec3(0.7, 0.8, 0.5),  //Ls
-	glm::vec3(-20.0, 10.0, 0.0)
-};
-*/
 directionalLight dl;
-//{
-//
-//	0.7,
-//	0.5,
-//	glm::vec3(1.0),
-//	glm::vec3(1.0),  //Ls
-//	glm::vec3(1.0, 1.0, 0.0)
-//};
-
-//fog
-fog f;/* =
-{
-	 0.0,              //density
-	 1.5,               //gradient
-	 glm::vec3(0.7)    //fog color
-};*/
-
-//water
+fog f;
 waterP wP;
-/*=
-{
-	0.15f,   // water height
-	0.02,     // wave strength
-	0.007,    //wave speed
-	glm::vec3(0.0, 0.0, 0.3),    //water color
-	0.2,      //water color mix
-	20.0    //shiness
-};*/
-
-//quad
 quadP qP;
-/*{
-	100,
-	3
-};*/
-
-//transform
-//vector<t>
-
 sunP sP;
-//{
-//	glm::vec2(300.0,300.0),
-//   // glm::vec3(2000.0, 2000.0, 500.0)
-//    glm::vec3(1000.0,200.0,0.0)
-//};
-
 lensFlareP lP;
-//{
-//	1.0,
-//   {100.0,30.0,30.0,30.0,30.0,30.0,30.0,30.0,30.0}
-//};
 
 std::vector<std::vector<glm::vec3>> mesh_colors;
-//int tree_sub_nums ;
 
 
 bool load()
@@ -467,80 +361,6 @@ bool load()
 	lensflare_data >> lP.fadefactor;
 
 
-	//------------------------tree  class-------------------------------//
-
-
-	int types = 6;
-	for (int i = 0; i < types; i++)
-	{
-		std::getline(in_file, line);
-		std::istringstream class_data{ line };
-		int sub_nums;
-		class_data >> std::left >> header >> sub_nums;
-		std::vector<glm::vec3> new_color_list;
-		mesh_colors.push_back(new_color_list);
-		for (int j = 0; j < sub_nums; j++)
-		{
-			float x, y, z;
-			class_data >> x
-				>> y
-				>> z;
-			mesh_colors.at(i).push_back(glm::vec3(x, y, z));
-			//std::cout << x << std::endl;
-		}
-
-		//------------------------tree  list-------------------------------//
-		std::getline(in_file, line);
-		std::istringstream num_data{ line };
-		int mesh_number;
-		num_data >> std::left >> header >> mesh_number;
-		std::vector<transform> this_transform_list;
-		transform_list.push_back(this_transform_list);
-		for (int k = 0; k < mesh_number; k++)
-		{
-			transform new_transform;
-			std::getline(in_file, line);
-			std::istringstream mesh_data{ line };
-			mesh_data >> std::left >> header
-
-				>> new_transform.translate.x
-				>> new_transform.translate.y
-				>> new_transform.translate.z
-				>> new_transform.scale.x
-				>> new_transform.scale.y
-				>> new_transform.scale.z
-				>> new_transform.rotateAngle
-				>> new_transform.rotateAxis[0]
-				>> new_transform.rotateAxis[1]
-				>> new_transform.rotateAxis[2];
-			transform_list.at(i).push_back(new_transform);
-
-		}
-
-	}
-
-
-
-	
-	/*
-	for (int i = 0; i < tree_nums; i++)
-	{
-		std::getline(in_file, line);
-		std::istringstream tree{ line };
-		tree >> std::left >> header
-			>> tree_transform.at(i).translate.x
-			>> tree_transform.at(i).translate.y
-			>> tree_transform.at(i).translate.z
-			>> tree_transform.at(i).scale.x
-			>> tree_transform.at(i).scale.y
-			>> tree_transform.at(i).scale.z
-			>> tree_transform.at(i).rotateAngle
-			>> tree_transform.at(i).rotateAxis[0]
-			>> tree_transform.at(i).rotateAxis[1]
-			>> tree_transform.at(i).rotateAxis[2];
-	}
-	
-	*/
 
 	in_file.close();
 	std::cout << " loading data success!" << std::endl;
@@ -563,7 +383,6 @@ bool save()
 	std::ostringstream sun_data{};
 	std::ostringstream lensflare_data{};
 	;
-
 
 
 	out_file.open("data.txt", std::ios::binary);
@@ -715,48 +534,7 @@ bool save()
 	out_file << lensflare_data.str() << std::endl;
 
 	//--------------------------mesh class----------------------------//
-	for (int i = 0; i < 6; i++)
-	{
-		std::ostringstream class_data{};
-		std::string class_name = mesh_names[i] + "_class";
-
-		// how to deal with this?
-		class_data << std::setw(20) << std::left << class_name << std::setw(10) << 10 << std::setw(10);
-		for (int j = 0; j < 2; j++)
-		{
-			class_data << std::setw(10) << mesh_colors.at(i).at(j).x
-					   << std::setw(10) << mesh_colors.at(i).at(j).y
-				       << std::setw(10) << mesh_colors.at(i).at(j).z;
-		}
-
-		out_file << class_data.str() << std::endl;
-
-		//------------------------mesh  list-------------------------------//
-		std::ostringstream mesh_num_data{};
-		std::string num_name = mesh_names[i] + "_nums";
-		int mesh_number = mesh_list.at(i).size();
-		mesh_num_data << std::setw(20) << std::left << num_name << std::setw(10) << mesh_number;
-		out_file << mesh_num_data.str() << std::endl;
-		for (int k = 0; k < mesh_number; k++)
-		{
-			std::ostringstream transform_data{};
-			std::string transform_name = mesh_names[i] + std::to_string(k);
-			transform_data << std::setw(20) << std::left << transform_name
-				<< std::setw(10) << transform_list.at(i).at(k).translate.x
-				<< std::setw(10) << transform_list.at(i).at(k).translate.y
-				<< std::setw(10) << transform_list.at(i).at(k).translate.z
-				<< std::setw(10) << transform_list.at(i).at(k).scale.x
-				<< std::setw(10) << transform_list.at(i).at(k).scale.y
-				<< std::setw(10) << transform_list.at(i).at(k).scale.z
-				<< std::setw(10) << transform_list.at(i).at(k).rotateAngle
-				<< std::setw(10) << transform_list.at(i).at(k).rotateAxis[0]
-				<< std::setw(10) << transform_list.at(i).at(k).rotateAxis[1]
-				<< std::setw(10) << transform_list.at(i).at(k).rotateAxis[2];
-			out_file << transform_data.str() << std::endl;
-		}
-
-	}
-
+	
 
 
 	out_file.close();

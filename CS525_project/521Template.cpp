@@ -26,11 +26,10 @@ void display()
 
 	float aspect_ratio = float(w) / float(h);
 
-
    glEnable(GL_CLIP_DISTANCE0);
 
    ///////////////////////////////////////////////////
-   // Begin pass 5: render scene
+   // Begin pass 1: render scene
    ///////////////////////////////////////////////////
    glBindFramebuffer(GL_FRAMEBUFFER, 0); 
    glDrawBuffer(GL_BACK); // Render to back buffer.
@@ -41,10 +40,8 @@ void display()
 
    render_scene(4,none,main_camera);
 
-   if (!logo_on&&!logo2_on)
-   {
-	   draw_gui();
-   }
+   draw_gui();
+
 
 
    if (recording == true)
@@ -82,7 +79,7 @@ void printGlInfo()
    std::cout << "GLSL Version: " << glGetString(GL_SHADING_LANGUAGE_VERSION)  << std::endl;
 }
 
-void initOpenGl()
+void init_application()
 {
     //initialize window width and height.
 	w = glutGet(GLUT_WINDOW_WIDTH);
@@ -180,7 +177,7 @@ void pasive_motion(int x, int y)
 	glPixelStorei(GL_PACK_ALIGNMENT, 1);
 	glReadPixels(x, h - y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	currentId = int(buffer[0]) / 255;
+	current_id = int(buffer[0]) / 255;
 	terrainpos = glm::vec3(float(buffer[0]) / float(256), float(buffer[1]) / float(256), float(buffer[2]) / float(256));
 	for (int i = 0; i < 3; i++)
 	{
@@ -196,18 +193,17 @@ void pasive_motion(int x, int y)
 
 void mouse(int button, int state, int x, int y)
 {
-	// read the color into the buffer 
 	ImGui_ImplGlut_MouseButtonCallback(button, state);
 }
 
-int main (int argc, char **argv)
+int  main (int argc, char **argv)
 {
    //Configure initial window state using freeglut
-//#if _DEBUG
-//
-//	glutInitContextFlags(GLUT_DEBUG);
-//#endif
-	glutInitContextVersion(4, 3);
+   //#if _DEBUG
+   //	glutInitContextFlags(GLUT_DEBUG);
+   //#endif
+   // init glut
+   glutInitContextVersion(4, 3);
 
    glutInit(&argc, argv); 
    glutInitDisplayMode (GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
@@ -230,7 +226,8 @@ int main (int argc, char **argv)
    glutPassiveMotionFunc(pasive_motion);
    glutIdleFunc(idle);
 
-   initOpenGl();
+   // init application
+   init_application();
 
    ImGui_ImplGlut_Init(); // initialize the imgui system
 
@@ -309,8 +306,6 @@ void render_scene(int pass, glm::vec4 plane, camera camera)
 			   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 			   main_lensflare->conditional_render();
 			   
-
-
 		   }
 	   }
 
@@ -323,8 +318,6 @@ void update()
 	main_water->update(clip_distance,&p, &f, &wP, &qP,&tP);
 	main_sun->update(&main_camera, &sP);
 	main_lensflare->update(main_sun->get_screen_coord(P), &sP,&lP);
-
-	int mesh_nums;
 
 }
 
@@ -360,7 +353,7 @@ void draw_gui()
 
 	ImGui_ImplGlut_NewFrame();
 	myGUIStyle();
-	ImGui::Begin("GUI", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+	ImGui::Begin("Ocean Parameters", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 
 	if (ImGui::CollapsingHeader("general"))
 	{
@@ -415,207 +408,10 @@ void draw_gui()
 		}
 	}
 	
-	// shading mode
-	// water parameters
-	if (ImGui::CollapsingHeader("tessellation level"))
-	{
-		ImGui::SliderFloat("inner", &tess_level.x, 0.0f, +10.0f);
-		ImGui::SliderFloat("outer", &tess_level.y, 0.0f, +10.0f);
-		ImGui::Checkbox("mesh line mode", &mesh_line_mode);
-	}
-
-	if (ImGui::CollapsingHeader("shading mode"))
-	{
-		ImGui::RadioButton("normal shading", &shading_mode, 0);
-		ImGui::SameLine();
-		ImGui::RadioButton("flat shading", &shading_mode, 1);	
-	}
-
-	if (ImGui::CollapsingHeader("entities"))
-	{
-		if (ImGui::TreeNode("create"))
-		{
-			ImGui::Checkbox("creating mode", &creating_mode);
-			for (int i = 0; i < 6; i++)
-			{
-				char title[10];
-				std::string a = mesh_names[i];
-				strcpy(title, a.c_str());
-				ImGui::RadioButton(title, &displaymesh_id, i);
-				char scale_title[20];
-				std::string b = "new "+mesh_names[i]+"scale";
-				strcpy(scale_title, b.c_str());
-				ImGui::SliderFloat(scale_title, &create_scale.at(i), 0.0f, 1.0f);
-				//ImGui::SameLine();
-			}
-			ImGui::TreePop();
-		}
-		// how to go to the next line?
-		if (ImGui::TreeNode("edit"))
-		{
-			for (int i = 0; i < 6; i++)
-			{
-				char title[10];
-				std::string a = mesh_names[i];
-				strcpy(title, a.c_str());
-				
-				if (ImGui::TreeNode(&title[0]))
-				{
-					char class_title[20];
-					std::string b = mesh_names[i] + " class";
-					strcpy(class_title, b.c_str());
-					//-----------------------------mesh class color edit-------------------------------//
-					if (ImGui::TreeNode(&class_title[0]) )
-					{
-
-							int n =display_list.at(i).get_submesh_num();
-							for (int j = 0; j < n; j++)
-							{
-								char title[7];
-								std::string c = "color" + std::to_string(j);
-								strcpy(title, c.c_str());
-								ImGui::ColorEdit3(&title[0], glm::value_ptr(mesh_colors.at(i).at(j)));
-							}
-							ImGui::TreePop();
-					}
-					char list_title[15];
-					std::string d = mesh_names[i] + " list";
-					strcpy(list_title, d.c_str());
-					//-----------------------------loop through all the meshes-------------------------------//
-					if (ImGui::TreeNode(&list_title[0]))
-					{
-
-						int n = mesh_list.at(i).size();
-
-						for (int j = 0; j < n; j++)
-						{
-							char mesh_title[10];
-							std::string e = mesh_names[i] +std::to_string(j);
-							strcpy(mesh_title, e.c_str());
-
-							ImGui::Text(&mesh_title[0]);
-							ImGui::SameLine();
-
-							char title[8][20];
-							std::string title_string[] = { "hightlight","transform","scale","rotate","rotate axis","X","Y","Z" };
-							for (int k = 0; k < 8; k++)
-							{
-								std::string name_string = title_string[k] + mesh_names[i] + std::to_string(j);
-								strcpy(title[k], name_string.c_str());
-							}
-							
-							int index = 0;
-							ImGui::Checkbox(title[index], &mesh_list.at(i).at(j).hight_light);
-							index++;
-							ImGui::SliderFloat3(title[index], glm::value_ptr(transform_list.at(i).at(j).translate), -200.0f, 200.0f);
-							index++;
-							ImGui::SliderFloat3(title[index], glm::value_ptr(transform_list.at(i).at(j).scale), 0.0f, 1.0f);
-							index++;
-							ImGui::SliderFloat(title[index], &transform_list.at(i).at(j).rotateAngle, 0.0f, +5.0f);
-							index++;
-							ImGui::SliderInt3(title[index], transform_list.at(i).at(j).rotateAxis, -1, 1);
-							index++;
-
-							ImGui::RadioButton(title[index], &transform_list.at(i).at(j).rotateAxis[0], 0);
-							index++;
-							ImGui::SameLine();
-							ImGui::RadioButton(title[index], &transform_list.at(i).at(j).rotateAxis[1], 1);
-							index++;
-							ImGui::SameLine();
-							ImGui::RadioButton(title[index], &transform_list.at(i).at(j).rotateAxis[2], 2);
-							index++;
-
-
-							std::string f = "delete " + mesh_names[i]  +std::to_string(j);
-							char delete_title[20];
-							strcpy(delete_title, f.c_str());
-							if (ImGui::Button(&delete_title[0]))
-							{
-								mesh_list.at(i).erase(mesh_list.at(i).begin() + j);
-								transform_list.at(i).erase(transform_list.at(i).begin() + j);
-								break;
-
-							}
-
-						}
-						ImGui::TreePop();
-					}
-					ImGui::TreePop();
-				}
-
-			}
-			ImGui::TreePop();
-		}
-		
-
-
-	}
 	if (ImGui::CollapsingHeader("sky"))
 	{
 		ImGui::Checkbox("skybox", &skybox_on);
 	}
-	if (ImGui::CollapsingHeader("water"))
-	{
-		ImGui::Checkbox("line mode", &terrain_linemode);
-		ImGui::SliderFloat3("water color", glm::value_ptr(wP.water_color), 0.0f, 1.0f);
-		ImGui::SliderFloat("water mix", &wP.water_color_mix, 0.0f, +1.0f);
-		ImGui::SliderFloat("water height", &wP.water_height, -10.0f, +10.0f);
-		ImGui::SliderFloat("wave strength", &wP.wave_strength, 0.0f, +0.1f);
-		ImGui::SliderFloat("wave speed", &wP.wave_speed, 0.0f, +0.01f);
-		ImGui::SliderFloat("wave length", &wP.wave_length, 0.0f, +1.01f);
-		ImGui::SliderFloat("wave amplitude", &wP.wave_amplitude, 0.0f, +1.0f);
-		ImGui::SliderFloat("edge softness", &wP.edge_softness, 0.001f, +10.0f);
-		ImGui::SliderFloat("glitch offset", &wP.glitch_offset, 0.0f, +10.0f);
-		ImGui::SliderFloat("min blue", &wP.minBlue, 0.0f, +1.0f);
-		ImGui::SliderFloat("max blue", &wP.maxBlue, 0.0f, +1.0f);
-		ImGui::SliderFloat("murky depth", &wP.murkyDepth, 0.1f, +20.0f);
-
-
-
-		ImGui::Image((void*)waterTexture_id[0], ImVec2(128.0f, 128.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
-		ImGui::SameLine();
-		ImGui::Image((void*)waterTexture_id[1], ImVec2(128.0f, 128.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
-		ImGui::Image((void*)waterTexture_id[4], ImVec2(128.0f, 128.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
-		if (ImGui::Button("test"))
-		{
-			test = !test;
-		}
-
-		ImGui::SliderFloat("shiness", &wP.shineness, 0.01f, +30.0f);
-
-
-		if (ImGui::Button("water line mode"))
-		{
-			water_linemode = !water_linemode;
-		}
-	}
-
-	if (ImGui::CollapsingHeader("terrain"))
-	{
-
-		ImGui::Image((void*)terrainpostexture_id, ImVec2(128.0f, 128.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
-		ImGui::ColorEdit3("peak color", glm::value_ptr(tP.peak_color));
-		ImGui::ColorEdit3("high color", glm::value_ptr(tP.highpart_color));
-		ImGui::ColorEdit3("middle color", glm::value_ptr(tP.middlepart_color));
-		ImGui::ColorEdit3("under water color", glm::value_ptr(tP.underwater_color));
-		ImGui::SliderFloat("peak_height", &tP.peak_height, -1.0f, +1.0f);
-		ImGui::SliderFloat("high_height", &tP.high_height, -1.0f, +1.0f);
-		ImGui::SliderFloat("middle_height", &tP.middle_height, -1.0f, +1.0f);
-		ImGui::SliderFloat("under_height", &tP.under_height, -1.0f, +1.0f);
-
-	}
-
-	// fog parameters
-	if (ImGui::CollapsingHeader("fog"))
-	{
-		ImGui::SliderFloat("density", &f.density, 0.0f, +5.0f);
-		ImGui::SliderFloat("gradient", &f.gradient, 0.0f, +20.0f);
-		ImGui::ColorEdit3("fog_color", glm::value_ptr(f.fog_color));
-	}
-
-	// transofrm parameters
-
-	
 
 	// sun and lens flare
 	if (ImGui::CollapsingHeader("sun"))
@@ -627,7 +423,7 @@ void draw_gui()
 		int nums = main_lensflare->get_nums();
 		for (int i = 0; i < nums; i++)
 		{
-			// why one more?
+
 			char title[7];
 			std::string a = "flare" + std::to_string(i);
 			strcpy(title, a.c_str());
@@ -637,32 +433,6 @@ void draw_gui()
 		}
 
 
-	}
-
-
-	if (ImGui::CollapsingHeader("lighting"))
-	{
-		if (ImGui::CollapsingHeader("point light"))
-		{
-			ImGui::SliderFloat("Ka", &p.Ka, 0.0f, +1.0f);
-			ImGui::SliderFloat3("La", glm::value_ptr(p.La), 0.0f, 1.0f);
-			ImGui::SliderFloat("Kd", &p.Kd, 0.0f, +1.0f);
-			ImGui::SliderFloat3("Ld", glm::value_ptr(p.Ld), 0.0f, 1.0f);
-			ImGui::SliderFloat("Ks", &p.Ks, 0.0f, +1.0f);
-			ImGui::SliderFloat3("Ls", glm::value_ptr(p.Ls), 0.0f, 1.0f);
-			ImGui::SliderFloat3("LightPos", glm::value_ptr(p.lightPos), -100.0f, 100.0f);
-
-		}
-
-		if (ImGui::CollapsingHeader("direction light"))
-		{
-			ImGui::SliderFloat(" d Ka", &dl.Ka, 0.0f, +1.0f);
-			ImGui::SliderFloat3("d La", glm::value_ptr(dl.La), 0.0f, 1.0f);
-			ImGui::SliderFloat(" d Kd", &dl.Kd, 0.0f, +1.0f);
-			ImGui::SliderFloat3("d Ld", glm::value_ptr(dl.Ld), 0.0f, 1.0f);
-			ImGui::SliderFloat3("direction", glm::value_ptr(dl.dir), -1.0f, 1.0f);
-
-		}
 	}
 
 	ImGui::End();
@@ -791,6 +561,6 @@ void init_textures() {
 	//unbind the fbo
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
-//}
+
 
 

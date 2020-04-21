@@ -95,11 +95,7 @@ void skybox::draw_sky(  GLuint cubemap_id, glm::mat4 V, glm::mat4 P, int pass)
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, cubemap_id);
 	glUniform1i(UniformLoc::cubemap_loc, 1); // we bound our texture to texture unit 1
-	//glActiveTexture(GL_TEXTURE12);
-	//glBindTexture(GL_TEXTURE_CUBE_MAP, cubemap_id);
-	//glUniform1i(UniformLoc::dcubemap_loc, 12); // we bound our texture to texture unit 12
 
-	//std::cout << cubemap_id << std::endl;
 
 	glBindVertexArray(vao);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
