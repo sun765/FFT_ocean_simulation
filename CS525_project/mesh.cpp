@@ -23,7 +23,6 @@ mesh::mesh(std::string mesh_name, int meshID, fog * f, pointLight * p, direction
 	this->level = level;
 	mesh_nums++;
 	this->sub_mesh_num = get_submesh_num();
-	//initMeshShader();
 	initMesh();
 }
 

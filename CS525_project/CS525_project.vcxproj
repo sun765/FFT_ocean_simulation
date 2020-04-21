@@ -168,8 +168,9 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="521Template.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="camera.cpp" />
+    <ClCompile Include="ComputeShader.cpp" />
     <ClCompile Include="DebugCallback.cpp" />
     <ClCompile Include="gui.cpp" />
     <ClCompile Include="imgui.cpp" />
@@ -179,13 +180,13 @@
     <ClCompile Include="imgui_widgets.cpp" />
     <ClCompile Include="InitShader.cpp" />
     <ClCompile Include="layeredRenderingMesh.cpp" />
-    <ClCompile Include="lensFlare.cpp" />
     <ClCompile Include="LoadMesh.cpp" />
     <ClCompile Include="LoadTexture.cpp" />
     <ClCompile Include="mesh.cpp" />
     <ClCompile Include="mousePicking.cpp" />
     <ClCompile Include="query.cpp" />
     <ClCompile Include="screenUI.cpp" />
+    <ClCompile Include="Shader.cpp" />
     <ClCompile Include="skybox.cpp" />
     <ClCompile Include="sun.cpp" />
     <ClCompile Include="terrain.cpp" />
@@ -195,6 +196,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
+    <ClInclude Include="ComputeShader.h" />
     <ClInclude Include="DebugCallback.h" />
     <ClInclude Include="GlobalVariables.h" />
     <ClInclude Include="gui.h" />
@@ -207,7 +209,6 @@
     <ClInclude Include="imstb_truetype.h" />
     <ClInclude Include="InitShader.h" />
     <ClInclude Include="layeredRenderingMesh.h" />
-    <ClInclude Include="lensFlare.h" />
     <ClInclude Include="LoadMesh.h" />
     <ClInclude Include="LoadTexture.h" />
     <ClInclude Include="location.h" />
@@ -215,6 +216,7 @@
     <ClInclude Include="mousePicking.h" />
     <ClInclude Include="query.h" />
     <ClInclude Include="screenUI.h" />
+    <ClInclude Include="Shader.h" />
     <ClInclude Include="skybox.h" />
     <ClInclude Include="structs.h" />
     <ClInclude Include="sun.h" />
@@ -244,6 +246,7 @@
     <None Include="Shaders\water_fs.glsl" />
     <None Include="Shaders\water_gs.glsl" />
     <None Include="Shaders\water_vs.glsl" />
+    <None Include="test.comp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="data.txt" />

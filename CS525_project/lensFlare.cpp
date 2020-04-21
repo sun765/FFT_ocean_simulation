@@ -1,6 +1,12 @@
 #include "lensFlare.h"
+//#define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
+#include <experimental/filesystem>
+
+
 float lensFlare::window_w = 1280.0;
 float lensFlare::window_h = 720.0;
+
+namespace filesystem = std::experimental::filesystem;
 
 lensFlare::lensFlare(glm::vec2 sun_screen_pos, sunP* sP, lensFlareP* lP)
 {

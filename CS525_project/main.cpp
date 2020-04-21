@@ -11,6 +11,20 @@ void init_render_class();
 void init_textures();
 void init_2D_texture(GLuint texture_id, int width, int height);
 
+bool check_program_link_status(GLuint obj) {
+	GLint status;
+	glGetProgramiv(obj, GL_LINK_STATUS, &status);
+	if (status == GL_FALSE) {
+		GLint length;
+		glGetProgramiv(obj, GL_INFO_LOG_LENGTH, &length);
+		std::vector<char> log(length);
+		glGetProgramInfoLog(obj, length, &length, &log[0]);
+		std::cerr << &log[0];
+		return false;
+	}
+	return true;
+}
+
 
 void display()
 {
@@ -273,6 +287,13 @@ void render_scene(int pass, glm::vec4 plane, camera camera)
 	   {
 		   if (renderScene)
 		   {
+			   // test compute shader 
+				// refractor later
+			   glUseProgram(test_program);
+			   glBindImageTexture(0, test_texture, 0, GL_TRUE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+			   glDispatchCompute(FFT_DIMENSION / 16, FFT_DIMENSION / 16, 1);
+			   glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+
 			   if (skybox_on)
 
 			   {
@@ -295,7 +316,6 @@ void render_scene(int pass, glm::vec4 plane, camera camera)
 			   }
 			   main_water->draw_water(shading_mode, test, M_water, V, P, waterTexture_id, pass, float(time_ms), cameraPos);
 			   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-			   main_lensflare->conditional_render();
 			   
 		   }
 	   }
@@ -308,7 +328,6 @@ void update()
 
 	main_water->update(clip_distance,&p, &f, &wP, &qP,&tP);
 	main_sun->update(&main_camera, &sP);
-	main_lensflare->update(main_sun->get_screen_coord(P), &sP,&lP);
 
 }
 
@@ -326,8 +345,33 @@ void init_shader()
 	water::init_shader();
 	screenUI::init_shader();
 	sun::init_shader();
-	lensFlare::init_window_wh(window_width, window_height);
 	layeredRenderingMesh::init_shader();
+
+
+	// refractor later
+	static const GLchar* source[] =
+	{
+	"#version 430 core\n "
+	"layout (local_size_x = 16, local_size_y = 16) in;"
+	"layout (binding = 0, rgba32f) writeonly uniform image2D tilde_h0k;"
+	"void main(void) "
+	"{"
+		" 	vec4 test_color = vec4(1.0,0.0,0.0,1.0);"	
+		"   imageStore(tilde_h0k, ivec2(gl_GlobalInvocationID.xy), test_color); "
+	"}"
+	};
+	std::cout << "before: " << test_program << " " << test_shader << std::endl;
+	test_shader = glCreateShader(GL_COMPUTE_SHADER);
+	glShaderSource(test_shader, 1, source, NULL);
+	glCompileShader(test_shader);
+	test_program = glCreateProgram();
+	glAttachShader(test_program, test_shader);
+	glLinkProgram(test_program);
+	std::cout << "after: " << test_program << " " << test_shader << std::endl;
+	check_program_link_status(test_program);
+
+
+	
 }
 
 void draw_gui()
@@ -338,6 +382,10 @@ void draw_gui()
 	ImGui_ImplGlut_NewFrame();
 	myGUIStyle();
 	ImGui::Begin("Ocean Parameters", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
+
+	if (ImGui::CollapsingHeader("debug")) {
+		ImGui::Image((void*)test_texture, ImVec2(128.0f, 128.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
+	}
 
 	if (ImGui::CollapsingHeader("general"))
 	{
@@ -397,27 +445,6 @@ void draw_gui()
 		ImGui::Checkbox("skybox", &skybox_on);
 	}
 
-	// sun and lens flare
-	if (ImGui::CollapsingHeader("sun"))
-	{
-		ImGui::SliderFloat3("sun pos", glm::value_ptr(sP.sun_pos), -1000.0f, 1000.0f);
-		ImGui::SliderFloat2("sun scale", glm::value_ptr(sP.sun_scale), 0, 500.0f);
-		ImGui::SliderFloat("flare strength", &lP.strength, 0.0f, +1.0f);
-		ImGui::SliderFloat("flare fade factor", &lP.fadefactor, 0.0f, +1.0f);
-		int nums = main_lensflare->get_nums();
-		for (int i = 0; i < nums; i++)
-		{
-
-			char title[7];
-			std::string a = "flare" + std::to_string(i);
-			strcpy(title, a.c_str());
-
-			ImGui::Image((void*)main_lensflare->get_texture_id(i), ImVec2(128.0f, 128.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
-			ImGui::SliderFloat(&title[0], &lP.scale[i], 0.0f, +500.0f);
-		}
-
-
-	}
 
 	ImGui::End();
 
@@ -434,7 +461,7 @@ void init_render_class()
 	depth_camera = camera(mainC);
 	tsky = new screenUI(window_width, window_height, glm::vec2(window_width, window_height), glm::vec2(0.5*window_width, 0.5*window_height), tsky_texture_id);
 	main_sun = new sun(glm::vec2(window_width, window_height), &sP, &main_camera);
-	main_lensflare = new lensFlare(main_sun->get_screen_coord(P), &sP, &lP);
+	//main_lensflare = new lensFlare(main_sun->get_screen_coord(P), &sP, &lP);
 
 	// intit all the render class
 	main_water = new water(clip_distance, &p, &f, &wP, &qP, depth_camera, &tP);
@@ -485,6 +512,11 @@ void init_textures() {
 
 	//unbind the fbo
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	//testing with compute shader
+	glGenTextures(1, &test_texture);
+	glBindTexture(GL_TEXTURE_2D, test_texture);
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, FFT_DIMENSION, FFT_DIMENSION);
 }
 
 void init_2D_texture(GLuint texture_id, int width, int height)

@@ -34,10 +34,10 @@
 #include "gui.h"
 #include "screenUI.h"
 #include "sun.h"
-#include "lensFlare.h"
+//#include "lensFlare.h"
 #include "layeredRenderingMesh.h"
 
-
+#define FFT_DIMENSION 256
 
 // bool
 bool creating_mode  = false;
@@ -72,7 +72,7 @@ water* main_water;
 skybox* main_sky;
 sun* main_sun;
 screenUI* tsky;
-lensFlare* main_lensflare;
+//lensFlare* main_lensflare;
 camera main_camera;
 camera reflect_camera;
 camera depth_camera;
@@ -100,6 +100,9 @@ GLuint texture_height = 1080;
 GLuint waterTexture_id[] = { -1,-1,-1,-1,-1 };  // 0 is reflection 1 refraction  2 is dudv MAP   3 water normal  4 water depth map
 GLenum refraction_buffers[] = { GL_COLOR_ATTACHMENT1,GL_COLOR_ATTACHMENT3 };
 GLuint terrainpostexture_id = -1;
+GLuint test_texture = -1;
+GLuint test_shader = -1;
+GLuint test_program = -1;
 
 // glm
 glm::mat4 P;

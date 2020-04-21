@@ -55,9 +55,6 @@
     <Filter Include="rendering classes\meshes">
       <UniqueIdentifier>{a827524c-9ce1-42ac-a0ef-9d5289d977b5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="rendering classes\lens flare">
-      <UniqueIdentifier>{c7fcc64c-c5d1-4852-992b-261aae108a89}</UniqueIdentifier>
-    </Filter>
     <Filter Include="rendering classes\terrain">
       <UniqueIdentifier>{c464c6b5-3c0d-4af8-aa82-6fc4448a6642}</UniqueIdentifier>
     </Filter>
@@ -70,18 +67,15 @@
     <Filter Include="rendering classes\layered rendering meshes">
       <UniqueIdentifier>{fc47d7f1-a1e9-4535-9375-09464bc7022a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{00d4f01b-673b-43ad-8fa0-f10530c36bab}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="521Template.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="InitShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LoadTexture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="VAO.cpp">
@@ -132,9 +126,6 @@
     <ClCompile Include="mesh.cpp">
       <Filter>rendering classes\meshes</Filter>
     </ClCompile>
-    <ClCompile Include="lensFlare.cpp">
-      <Filter>rendering classes\lens flare</Filter>
-    </ClCompile>
     <ClCompile Include="gui.cpp">
       <Filter>rendering classes\gui</Filter>
     </ClCompile>
@@ -144,15 +135,24 @@
     <ClCompile Include="mousePicking.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="camera.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="ComputeShader.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="InitShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LoadTexture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="location.h">
@@ -218,9 +218,6 @@
     <ClInclude Include="gui.h">
       <Filter>rendering classes\gui</Filter>
     </ClInclude>
-    <ClInclude Include="lensFlare.h">
-      <Filter>rendering classes\lens flare</Filter>
-    </ClInclude>
     <ClInclude Include="mesh.h">
       <Filter>rendering classes\meshes</Filter>
     </ClInclude>
@@ -229,6 +226,15 @@
     </ClInclude>
     <ClInclude Include="mousePicking.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="camera.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="ComputeShader.h">
+      <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -291,6 +297,9 @@
     </None>
     <None Include="Shaders\mesh_te.glsl">
       <Filter>rendering classes\meshes</Filter>
+    </None>
+    <None Include="test.comp">
+      <Filter>rendering classes</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

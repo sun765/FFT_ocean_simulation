@@ -9,5 +9,7 @@ GLuint InitShader( const char* vertexShaderFile, const char* fragmentShaderFile 
 GLuint InitShader( const char* vertexShaderFile, const char* geometryShader, const char* fragmentShaderFile );
 GLuint InitShader(const char* vertexShaderFile, const char* tessControlShader, const char* tessEvalShader, const char* geometryShader, const char* fragmentShaderFile);
 
+static char* readShaderSource(const char* shaderFile);
+
 
 #endif
