@@ -288,8 +288,7 @@ void render_scene(int pass, glm::vec4 plane, camera camera)
 		   if (renderScene)
 		   {
 			   // test compute shader 
-				// refractor later
-			   glUseProgram(test_program);
+			   comp_shader->bind_shader();
 			   glBindImageTexture(0, test_texture, 0, GL_TRUE, 0, GL_WRITE_ONLY, GL_RGBA32F);
 			   glDispatchCompute(FFT_DIMENSION / 16, FFT_DIMENSION / 16, 1);
 			   glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
@@ -337,7 +336,6 @@ void reload_shader()
 	main_sky->reload_shader();
 	screenUI::reload_shader();
 	sun::reload_shader();
-	layeredRenderingMesh::reload_shader();
 }
 
 void init_shader()
@@ -345,32 +343,8 @@ void init_shader()
 	water::init_shader();
 	screenUI::init_shader();
 	sun::init_shader();
-	layeredRenderingMesh::init_shader();
-
-
-	// refractor later
-	static const GLchar* source[] =
-	{
-	"#version 430 core\n "
-	"layout (local_size_x = 16, local_size_y = 16) in;"
-	"layout (binding = 0, rgba32f) writeonly uniform image2D tilde_h0k;"
-	"void main(void) "
-	"{"
-		" 	vec4 test_color = vec4(1.0,0.0,0.0,1.0);"	
-		"   imageStore(tilde_h0k, ivec2(gl_GlobalInvocationID.xy), test_color); "
-	"}"
-	};
-	std::cout << "before: " << test_program << " " << test_shader << std::endl;
-	test_shader = glCreateShader(GL_COMPUTE_SHADER);
-	glShaderSource(test_shader, 1, source, NULL);
-	glCompileShader(test_shader);
-	test_program = glCreateProgram();
-	glAttachShader(test_program, test_shader);
-	glLinkProgram(test_program);
-	std::cout << "after: " << test_program << " " << test_shader << std::endl;
-	check_program_link_status(test_program);
-
-
+	comp_shader = new ComputeShader("Shaders/test.comp");
+	comp_shader->init_shader();
 	
 }
 
@@ -461,7 +435,6 @@ void init_render_class()
 	depth_camera = camera(mainC);
 	tsky = new screenUI(window_width, window_height, glm::vec2(window_width, window_height), glm::vec2(0.5*window_width, 0.5*window_height), tsky_texture_id);
 	main_sun = new sun(glm::vec2(window_width, window_height), &sP, &main_camera);
-	//main_lensflare = new lensFlare(main_sun->get_screen_coord(P), &sP, &lP);
 
 	// intit all the render class
 	main_water = new water(clip_distance, &p, &f, &wP, &qP, depth_camera, &tP);

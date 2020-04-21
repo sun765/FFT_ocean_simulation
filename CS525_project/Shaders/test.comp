@@ -9,7 +9,7 @@ layout (binding = 0, rgba32f) writeonly uniform image2D tilde_h0k;
 void main(void)
 {
 
-	vec4 test_color = vec4(1.0,0.0,0.0,0.0);	
+	vec4 test_color = vec4(1.0,0.0,0.0,1.0);	
 	imageStore(tilde_h0k, ivec2(gl_GlobalInvocationID.xy), test_color);
-	
+
 }

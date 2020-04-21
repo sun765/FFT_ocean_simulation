@@ -18,11 +18,9 @@
 #include <iomanip>
 #include <string>
 #include <sstream>
-
 #include "InitShader.h"
 #include "LoadMesh.h"
 #include "LoadTexture.h"
-
 #include "VideoMux.h"
 #include "DebugCallback.h"
 #include "VAO.h"
@@ -34,7 +32,7 @@
 #include "gui.h"
 #include "screenUI.h"
 #include "sun.h"
-//#include "lensFlare.h"
+#include "ComputeShader.h"
 #include "layeredRenderingMesh.h"
 
 #define FFT_DIMENSION 256
@@ -72,10 +70,10 @@ water* main_water;
 skybox* main_sky;
 sun* main_sun;
 screenUI* tsky;
-//lensFlare* main_lensflare;
 camera main_camera;
 camera reflect_camera;
 camera depth_camera;
+ComputeShader* comp_shader;
 
 // parameters
 terrainP tP;
@@ -103,6 +101,7 @@ GLuint terrainpostexture_id = -1;
 GLuint test_texture = -1;
 GLuint test_shader = -1;
 GLuint test_program = -1;
+
 
 // glm
 glm::mat4 P;

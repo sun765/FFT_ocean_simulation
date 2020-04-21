@@ -3,10 +3,10 @@
 void ComputeShader::init_shader()
 {
 	// refractor later
-	//char* source = readShaderSource(&compshader_code_path[0]);
+	GLchar* source = readShaderSource(&compshader_code_path[0]);
 
 	shader_handle = glCreateShader(GL_COMPUTE_SHADER);
-	//glShaderSource(shader_handle, 1, (const GLchar**)&source, NULL);
+	glShaderSource(shader_handle, 1, (const GLchar**)&source, NULL);
 	glCompileShader(shader_handle);
 	program_handle = glCreateProgram();
 	glAttachShader(program_handle, shader_handle);
@@ -16,4 +16,10 @@ void ComputeShader::init_shader()
 
 void ComputeShader::bind_shader()
 {
+	glUseProgram(program_handle);
+}
+
+ComputeShader::ComputeShader(string code_path)
+{
+	this->compshader_code_path = code_path;
 }

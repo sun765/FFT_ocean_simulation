@@ -10,6 +10,8 @@ public :
 	void init_shader() override;
 	void bind_shader() override;
 
+	ComputeShader(string code_path);
+
 private:
 
 	GLuint shader_handle;

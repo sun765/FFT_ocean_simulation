@@ -298,8 +298,8 @@
     <None Include="Shaders\mesh_te.glsl">
       <Filter>rendering classes\meshes</Filter>
     </None>
-    <None Include="test.comp">
-      <Filter>rendering classes</Filter>
+    <None Include="Shaders\test.comp">
+      <Filter>shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
