@@ -155,7 +155,6 @@ glm::mat4 mesh::get_M()
 void mesh::update_light(directionalLight *dl)
 {
 	//direction light
-	//init_shader();
 	glUseProgram(shader);
 	glUniform3f(UniformLoc::dir_loc, dl->dir.x, dl->dir.y, dl->dir.z);
 	glUniform1f(UniformLoc::dka_loc, dl->Ka);

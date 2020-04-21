@@ -26,6 +26,12 @@ public:
 	waterP w;
 	quadP q;
 	terrainP tP;
+	static GLuint shader;
+	static std::string vertex_shader; 
+	static std::string fragment_shader; 
+	static std::string geometry_shader; 
+
+	static void init_shader();
 
 	void init();
 	water();
@@ -43,15 +49,7 @@ public:
 
 private:
 
-	//need to intitialize
-
-
-
 	GLuint vao;
-	GLuint shader;
-	std::string vertex_shader;
-	std::string fragment_shader; 
-	std::string geometry_shader;
 
 
 	int NUM_VERTICES;
@@ -72,7 +70,7 @@ private:
 	GLuint create_water_vao();
 
 	void initVao();
-	void initShader();
+	
 
 };
 

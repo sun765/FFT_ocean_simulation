@@ -2,6 +2,11 @@
 #include "water.h"
 #include <iostream>
 
+GLuint water::shader = -1;
+std::string water::vertex_shader = "Shaders/water_vs.glsl";
+std::string water::fragment_shader = "Shaders/water_fs.glsl";
+std::string water::geometry_shader = "Shaders/water_gs.glsl";
+
 water::water()
 {
 
@@ -124,7 +129,7 @@ GLuint water::create_water_posvbo()
 void water::draw_water(int shading_mode,bool test, glm::mat4 M, glm::mat4 V, glm::mat4 P, GLuint waterTextureID[], int pass, float time, glm::vec3 cameraPos)
 {
 	glUseProgram(0);
-	glUseProgram(this->shader);
+	glUseProgram(shader);
 	//std::cout <<"water shader"<< shader << std::endl;
 
 
@@ -205,11 +210,12 @@ void water::initVao()
 	this->vao = create_water_vao();  
 }
 
-void water::initShader()
+void water::init_shader()
 {
-	vertex_shader=  "Shaders/water_vs.glsl" ;
-	fragment_shader =  "Shaders/water_fs.glsl" ;
-	geometry_shader = "Shaders/water_gs.glsl";
+	
+	std::string vertex_shader=  "Shaders/water_vs.glsl" ;
+	std::string fragment_shader =  "Shaders/water_fs.glsl" ;
+	std::string geometry_shader = "Shaders/water_gs.glsl";
 	shader = InitShader(vertex_shader.c_str(), geometry_shader.c_str(), fragment_shader.c_str());
 }
 
@@ -243,7 +249,7 @@ void water::reload_shader()
 void water::init()
 {
 	initVao();
-	initShader();
+	//initShader();
 }
 float water::get_clipDistance()
 {

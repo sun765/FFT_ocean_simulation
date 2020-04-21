@@ -28,11 +28,9 @@
 #include "VAO.h"
 #include "camera.h"
 #include "location.h"
-#include "terrain.h"
 #include "water.h"
 #include "structs.h"
 #include "skybox.h"
-#include "mesh.h"
 #include "gui.h"
 #include "screenUI.h"
 #include "sun.h"
@@ -41,114 +39,45 @@
 
 
 
-//---------------------bool--------------//
-bool creating_mode = false;
-bool test = false;
-bool skybox_on = false;
-bool renderScene = true;
-bool is_recording = false;
-bool pause = false;
+// bool
+bool creating_mode  = false;
+bool test           = false;
+bool skybox_on      = false;
+bool renderScene    = true;
+bool is_recording   = false;
+bool pause          = false;
 bool water_linemode = false;
 
 // int 
-int precise = 100;  // what precise??
 int window_width, window_height;
-int mesh_nums = 0;
-int current_id = 0;
-int last_id = 0;
-int shading_mode = 1; // by default it's flat shading
+int mesh_nums        = 0;
+int current_id       = 0;
+int last_id          = 0;
+int shading_mode     = 1; // by default it's flat shading
 
 // float
+float last_time      = 0;
+float time_per_frame = 0;
+float height_index   = 0.1;
+float time_sec       = 0.0f;   // global time
+float time_ms        = 0.0f;
+float angle          = 0.0f;
+float near_clip      = 0.1;
+float far_clip       = 10000.0;
+float clip_distance  = far_clip - near_clip;
+float aspect_ratio   = 1;
 
-transform display_trasnform;
-
-std::vector<mesh> display_list;
-std::vector<transform> display_transform_list;
-
-
-//--------------------calculate time-------------------------------------//
-float last_time = 0;
-float time_per_frame;
-//----------------------------------------------------------hard code data-----------------------------------------------------------------------------//
-
-//-------textured------sky//
-GLuint tsky_texture_id;
-std::string tsky_texture_name = "Textures/tsky4.png";
-screenUI* tsky;
-
-
-
-GLuint texture_id[] = { -1,-1,-1,-1,-1,-1 }; 
-GLuint depth_texture_id = -1;
-int texture_num = sizeof(texture_id) / sizeof(texture_id[0]);
-GLuint skybox_id = -1;
-
-
-//static const std::string mesh_name = "Amago0.obj";
-static const std::string texture_name[] = { "Textures/blend.png",
-											"Textures/dirt.png",
-											"Textures/flower.png",
-											"Textures/grass.png",
-											"Textures/path.png" ,
-											"Textures/heightmap.png" };
-static const std::string skybox_name = "Textures/skybox";
-static const std::string dudv = "Textures/waterDUDV.png";
-static const std::string water_normal = "Textures/matchingNormalMap.png";
-
-
-
-
-float height_index = 0.1;
-
-float time_sec = 0.0f;   // global time
-float time_ms = 0.0f;
-float angle = 0.0f;
-
-
-
-
-//FBO and water  , don't change
-
-GLuint fbo = -1;
-GLuint rbo = -1;
-GLuint texture_width = 1920;
-GLuint texture_height = 1080;
-GLuint waterTexture_id[] = { -1,-1,-1,-1,-1 };  // 0 is reflection 1 refraction  2 is dudv MAP   3 water normal  4 water depth map
-GLenum refraction_buffers[] = { GL_COLOR_ATTACHMENT1,GL_COLOR_ATTACHMENT3 };
-
-float near_clip = 0.1;
-float far_clip = 10000.0;
-float clip_distance = far_clip - near_clip;
-glm::mat4 P;
-float aspect_ratio ;
-
-
-
+// objects
 water* main_water;
-terrain* main_terrain ;
-skybox* main_sky ;
+skybox* main_sky;
 sun* main_sun;
+screenUI* tsky;
 lensFlare* main_lensflare;
-
-
-
-// pick objects in the scene
-GLuint terrainpostexture_id = -1;
-glm::vec3 terrain_pos = glm::vec3(9999.0);
-
-
-
-
-//---------------------------------------------------------------data to be saved and loaded-----------------------------------------------------------------------------//
-glm::vec2 tess_level = glm::vec2(5.0, 5.0);
-
-
-//camera
 camera main_camera;
 camera reflect_camera;
 camera depth_camera;
-glm::vec2 previous_campos;
 
+// parameters
 terrainP tP;
 cameraP mainC;
 pointLight p;
@@ -158,6 +87,38 @@ waterP wP;
 quadP qP;
 sunP sP;
 lensFlareP lP;
+
+// Gluint
+GLuint tsky_texture_id;
+GLuint texture_ids[] = { -1,-1,-1,-1,-1,-1 };
+GLuint depth_texture_id = -1;
+GLuint skybox_id = -1;
+GLuint fbo = -1;
+GLuint rbo = -1;
+GLuint texture_width = 1920;
+GLuint texture_height = 1080;
+GLuint waterTexture_id[] = { -1,-1,-1,-1,-1 };  // 0 is reflection 1 refraction  2 is dudv MAP   3 water normal  4 water depth map
+GLenum refraction_buffers[] = { GL_COLOR_ATTACHMENT1,GL_COLOR_ATTACHMENT3 };
+GLuint terrainpostexture_id = -1;
+
+// glm
+glm::mat4 P;
+glm::vec3 terrain_pos = glm::vec3(9999.0);
+glm::vec2 tess_level = glm::vec2(5.0, 5.0);
+glm::vec2 previous_campos;
+
+
+// strings
+static const std::string texture_name[]   = { "Textures/blend.png",
+											 "Textures/dirt.png",
+											 "Textures/flower.png",
+											 "Textures/grass.png",
+											 "Textures/path.png" ,
+											 "Textures/heightmap.png" };
+static const std::string skybox_name       = "Textures/skybox";
+static const std::string dudv              = "Textures/waterDUDV.png";
+static const std::string water_normal      = "Textures/matchingNormalMap.png";
+static const std::string tsky_texture_name = "Textures/tsky4.png";
 
 
 bool load()

@@ -9,6 +9,7 @@ void reload_shader();
 void init_shader();
 void init_render_class();
 void init_textures();
+void init_2D_texture(GLuint texture_id, int width, int height);
 
 
 void display()
@@ -313,23 +314,16 @@ void update()
 
 void reload_shader()
 {
-
-
-		main_water->reload_shader();
-		terrain::reload_shader();
-		main_sky->reload_shader();
-		mesh::reloadMeshShader();
-		screenUI::reload_shader();
-		sun::reload_shader();
-		layeredRenderingMesh::reload_shader();
-		
-
+	main_water->reload_shader();
+	main_sky->reload_shader();
+	screenUI::reload_shader();
+	sun::reload_shader();
+	layeredRenderingMesh::reload_shader();
 }
 
 void init_shader()
 {
-	terrain::initShader();
-	mesh::init_shader();
+	water::init_shader();
 	screenUI::init_shader();
 	sun::init_shader();
 	lensFlare::init_window_wh(window_width, window_height);
@@ -434,7 +428,6 @@ void draw_gui()
 
 void init_render_class()
 {
-	std::cout << "start init cameras" << std::endl;
 	//Initialize camearas
 	main_camera = camera(mainC);
 	reflect_camera = camera(mainC);
@@ -442,7 +435,6 @@ void init_render_class()
 	tsky = new screenUI(window_width, window_height, glm::vec2(window_width, window_height), glm::vec2(0.5*window_width, 0.5*window_height), tsky_texture_id);
 	main_sun = new sun(glm::vec2(window_width, window_height), &sP, &main_camera);
 	main_lensflare = new lensFlare(main_sun->get_screen_coord(P), &sP, &lP);
-
 
 	// intit all the render class
 	main_water = new water(clip_distance, &p, &f, &wP, &qP, depth_camera, &tP);
@@ -453,14 +445,14 @@ void init_render_class()
 
 void init_textures() {
 
+	int texture_num = sizeof(texture_ids) / sizeof(texture_ids[0]);
 
 	for (int i = 0; i < texture_num; i++)
 	{
-		texture_id[i] = LoadTexture(texture_name[i].c_str());
+		texture_ids[i] = LoadTexture(texture_name[i].c_str());
 	}
 
 	skybox_id = LoadCube(skybox_name);
-	//skybox_id = crystal->cubemap_id;
 
 	//load dudv map and normal map
 	waterTexture_id[2] = LoadTexture(dudv.c_str());
@@ -473,40 +465,12 @@ void init_textures() {
 	//Create a texture object and set initial wrapping and filtering state
 
 
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < 4; i++)
 	{
-		glGenTextures(1, &waterTexture_id[i]);
-		glBindTexture(GL_TEXTURE_2D, waterTexture_id[i]);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, window_width, window_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glBindTexture(GL_TEXTURE_2D, 0);
+		if (i == 3)
+			continue;
+		init_2D_texture(waterTexture_id[i], window_width, window_height);
 	}
-
-
-	glGenTextures(1, &terrainpostexture_id);
-	glBindTexture(GL_TEXTURE_2D, terrainpostexture_id);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, window_width, window_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	// this looks ugly ! need to be changed
-	glGenTextures(1, &waterTexture_id[4]);
-	glBindTexture(GL_TEXTURE_2D, waterTexture_id[4]);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, window_width, window_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	/* setup framebuffer with cubemap attached */;
-
 
 	//Create the framebuffer object
 	glGenFramebuffers(1, &fbo);
@@ -521,6 +485,18 @@ void init_textures() {
 
 	//unbind the fbo
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void init_2D_texture(GLuint texture_id, int width, int height)
+{
+	glGenTextures(1, &texture_id);
+	glBindTexture(GL_TEXTURE_2D, texture_id);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 
