@@ -168,6 +168,7 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CompOutputTexture.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="ComputeShader.cpp" />
@@ -190,12 +191,14 @@
     <ClCompile Include="skybox.cpp" />
     <ClCompile Include="sun.cpp" />
     <ClCompile Include="terrain.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="VAO.cpp" />
     <ClCompile Include="VideoMux.cpp" />
     <ClCompile Include="water.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
+    <ClInclude Include="CompOutputTexture.h" />
     <ClInclude Include="ComputeShader.h" />
     <ClInclude Include="DebugCallback.h" />
     <ClInclude Include="GlobalVariables.h" />
@@ -221,6 +224,7 @@
     <ClInclude Include="structs.h" />
     <ClInclude Include="sun.h" />
     <ClInclude Include="terrain.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="VAO.h" />
     <ClInclude Include="VideoMux.h" />
     <ClInclude Include="water.h" />

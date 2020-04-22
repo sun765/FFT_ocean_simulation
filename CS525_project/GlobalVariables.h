@@ -33,6 +33,7 @@
 #include "screenUI.h"
 #include "sun.h"
 #include "ComputeShader.h"
+#include "CompOutputTexture.h"
 #include "layeredRenderingMesh.h"
 
 #define FFT_DIMENSION 256
@@ -74,6 +75,7 @@ camera main_camera;
 camera reflect_camera;
 camera depth_camera;
 ComputeShader* comp_shader;
+CompOutputTexture* comp_texture;
 
 // parameters
 terrainP tP;

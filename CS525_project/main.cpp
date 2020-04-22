@@ -11,20 +11,6 @@ void init_render_class();
 void init_textures();
 void init_2D_texture(GLuint texture_id, int width, int height);
 
-bool check_program_link_status(GLuint obj) {
-	GLint status;
-	glGetProgramiv(obj, GL_LINK_STATUS, &status);
-	if (status == GL_FALSE) {
-		GLint length;
-		glGetProgramiv(obj, GL_INFO_LOG_LENGTH, &length);
-		std::vector<char> log(length);
-		glGetProgramInfoLog(obj, length, &length, &log[0]);
-		std::cerr << &log[0];
-		return false;
-	}
-	return true;
-}
-
 
 void display()
 {
@@ -289,7 +275,8 @@ void render_scene(int pass, glm::vec4 plane, camera camera)
 		   {
 			   // test compute shader 
 			   comp_shader->bind_shader();
-			   glBindImageTexture(0, test_texture, 0, GL_TRUE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+			   //comp_texture->bind(GL_WRITE_ONLY, 0);
+			   glBindImageTexture(0, comp_texture->get_handle(), 0, GL_TRUE, 0, GL_WRITE_ONLY, GL_RGBA32F);
 			   glDispatchCompute(FFT_DIMENSION / 16, FFT_DIMENSION / 16, 1);
 			   glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 
@@ -487,9 +474,17 @@ void init_textures() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	//testing with compute shader
+	/*
 	glGenTextures(1, &test_texture);
 	glBindTexture(GL_TEXTURE_2D, test_texture);
 	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, FFT_DIMENSION, FFT_DIMENSION);
+	*/
+
+	std::cout << test_texture;
+	comp_texture = new CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION, GL_RGBA32F);
+
+	GLuint handle = comp_texture->get_handle();
+	comp_texture->init();
 }
 
 void init_2D_texture(GLuint texture_id, int width, int height)

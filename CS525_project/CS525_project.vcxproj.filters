@@ -147,6 +147,12 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="CompOutputTexture.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="InitShader.h">
@@ -234,6 +240,12 @@
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="ComputeShader.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="CompOutputTexture.h">
       <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
