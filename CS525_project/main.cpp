@@ -274,12 +274,13 @@ void render_scene(int pass, glm::vec4 plane, camera camera)
 		   if (renderScene)
 		   {
 			   // test compute shader 
+			   
 			   comp_shader->bind_shader();
-			   //comp_texture->bind(GL_WRITE_ONLY, 0);
-			   glBindImageTexture(0, comp_texture->get_handle(), 0, GL_TRUE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+			   comp_texture->bind(GL_WRITE_ONLY, 0);
+			   //glBindImageTexture(0, test_texture, 0, GL_TRUE, 0, GL_WRITE_ONLY, GL_RGBA32F);
 			   glDispatchCompute(FFT_DIMENSION / 16, FFT_DIMENSION / 16, 1);
 			   glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
-
+			   
 			   if (skybox_on)
 
 			   {
@@ -345,7 +346,7 @@ void draw_gui()
 	ImGui::Begin("Ocean Parameters", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 
 	if (ImGui::CollapsingHeader("debug")) {
-		ImGui::Image((void*)test_texture, ImVec2(128.0f, 128.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
+		ImGui::Image((void*)comp_texture->get_handle(), ImVec2(128.0f, 128.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 	}
 
 	if (ImGui::CollapsingHeader("general"))
@@ -474,17 +475,13 @@ void init_textures() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	//testing with compute shader
-	/*
-	glGenTextures(1, &test_texture);
-	glBindTexture(GL_TEXTURE_2D, test_texture);
-	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, FFT_DIMENSION, FFT_DIMENSION);
-	*/
-
-	std::cout << test_texture;
+	
+	//glGenTextures(1, &test_texture);
+	//glBindTexture(GL_TEXTURE_2D, test_texture);
+	//glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, FFT_DIMENSION, FFT_DIMENSION);
+	
 	comp_texture = new CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION, GL_RGBA32F);
 
-	GLuint handle = comp_texture->get_handle();
-	comp_texture->init();
 }
 
 void init_2D_texture(GLuint texture_id, int width, int height)
