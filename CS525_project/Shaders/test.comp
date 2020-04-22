@@ -32,7 +32,7 @@ vec4 gaussRND()
 	
 	//float noise00 = clamp(texture(noise_r0, texCoord).r, 0.001, 1.0);
 	float noise00 = 1;
-	float noise01 = clamp(texture(noise_i0, texCoord).r, 0.001, 1.0);
+	float noise01 = 1;
 	float noise02 = clamp(texture(noise_r1, texCoord).r, 0.001, 1.0);
 	float noise03 = clamp(texture(noise_i1, texCoord).r, 0.001, 1.0);
 	
@@ -73,10 +73,15 @@ void main(void)
 	vec2 texCoord = vec2(gl_GlobalInvocationID.xy)/float(256);
 	float noise00 = clamp(texture(noise_r0, texCoord).r, 0.001, 1.0);
 	float noise01 = clamp(texture(noise_r1, texCoord).r, 0.001, 1.0);
+
+    float noise02 = clamp(texture(noise_i0, texCoord).r, 0.001, 1.0);
+	float noise03 = clamp(texture(noise_i1, texCoord).r, 0.001, 1.0);
     
 	float diff = noise00 - noise01;
+
+	float diff2= noise02 - noise03;
 	
 	imageStore(tilde_h0k, ivec2(gl_GlobalInvocationID.xy), vec4(vec3(diff),1.0));
-	imageStore(tilde_h0minusk, ivec2(gl_GlobalInvocationID.xy), vec4(noise01));
+	imageStore(tilde_h0minusk, ivec2(gl_GlobalInvocationID.xy), vec4(vec3(diff2),1.0));
 	//imageStore(tilde_h0minusk, ivec2(gl_GlobalInvocationID.xy), vec4(gauss_random.zw * h0minusk, 0, 1));
 }

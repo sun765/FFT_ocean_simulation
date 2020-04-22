@@ -11,7 +11,8 @@ public :
 	void init_shader() override;
 	void bind_shader() override;
 
-	GLuint get_handle();
+	GLuint get_shader_handle();
+	GLuint get_program_handle();
 
 	ComputeShader(string code_path);
 	ComputeShader();

@@ -37,13 +37,20 @@ void Ocean::render_h0()
 	
 	// 3. bind noise textures 
 	const vector<string> var_names = { "noise_r0" ,"noise_i0", "noise_r1", "noise_i1" };
-	
-	//int size = this->noise_textures.size();
-	for (int i = 0; i<this->noise_textures.size(); i++) {
-		GLuint noise_r0_loc = glGetUniformLocation(debug_shader.get_handle(), &var_names[i][0]);
-		glUniform1i(noise_r0_loc, i);
+	const vector<GLenum> texture_ids = { GL_TEXTURE0, GL_TEXTURE1, GL_TEXTURE2, GL_TEXTURE3 };
+	vector<GLuint> locs = { 0,0,0,0 };
 
-		glActiveTexture(GL_TEXTURE0 + i);
+
+
+	for (int i = 0; i < this->noise_textures.size(); i++) {
+		locs[i] = glGetUniformLocation(debug_shader.get_program_handle(), &var_names[i][0]);
+	}
+	for (int i = 0; i < 4; i++) {
+		cout << "locs: " << locs[i] << endl;
+		glUniform1i(locs[i], i);
+	}
+	for (int i = 0; i<this->noise_textures.size(); i++) {
+		glActiveTexture(texture_ids[i]);
 		glBindTexture(GL_TEXTURE_2D, this->noise_textures[i]);
 		cout << "ts " << this->noise_textures.size()<<endl;
 	}
