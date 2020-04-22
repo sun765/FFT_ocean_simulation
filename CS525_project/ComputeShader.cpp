@@ -23,3 +23,7 @@ ComputeShader::ComputeShader(string code_path)
 {
 	this->compshader_code_path = code_path;
 }
+
+ComputeShader::ComputeShader()
+{
+}

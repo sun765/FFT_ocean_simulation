@@ -185,6 +185,7 @@
     <ClCompile Include="LoadTexture.cpp" />
     <ClCompile Include="mesh.cpp" />
     <ClCompile Include="mousePicking.cpp" />
+    <ClCompile Include="Ocean.cpp" />
     <ClCompile Include="query.cpp" />
     <ClCompile Include="screenUI.cpp" />
     <ClCompile Include="Shader.cpp" />
@@ -217,6 +218,7 @@
     <ClInclude Include="location.h" />
     <ClInclude Include="mesh.h" />
     <ClInclude Include="mousePicking.h" />
+    <ClInclude Include="Ocean.h" />
     <ClInclude Include="query.h" />
     <ClInclude Include="screenUI.h" />
     <ClInclude Include="Shader.h" />

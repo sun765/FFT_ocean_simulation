@@ -11,6 +11,7 @@ public :
 	void bind_shader() override;
 
 	ComputeShader(string code_path);
+	ComputeShader();
 
 private:
 

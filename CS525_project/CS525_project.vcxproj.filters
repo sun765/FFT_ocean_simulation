@@ -153,6 +153,9 @@
     <ClCompile Include="CompOutputTexture.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="Ocean.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="InitShader.h">
@@ -247,6 +250,9 @@
     </ClInclude>
     <ClInclude Include="CompOutputTexture.h">
       <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Ocean.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

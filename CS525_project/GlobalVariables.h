@@ -35,6 +35,7 @@
 #include "ComputeShader.h"
 #include "CompOutputTexture.h"
 #include "layeredRenderingMesh.h"
+#include "Ocean.h"
 
 #define FFT_DIMENSION 256
 
@@ -76,6 +77,7 @@ camera reflect_camera;
 camera depth_camera;
 ComputeShader* comp_shader;
 CompOutputTexture* comp_texture;
+Ocean* ocean;
 
 // parameters
 terrainP tP;

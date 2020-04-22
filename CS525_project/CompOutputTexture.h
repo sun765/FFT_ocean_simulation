@@ -12,6 +12,7 @@ public:
 	void bind(GLenum access_mode, int bind_loc);
 
 	CompOutputTexture(int width, int height, GLenum color_mode);
+	CompOutputTexture();
 
 private:
 	GLenum color_mode;

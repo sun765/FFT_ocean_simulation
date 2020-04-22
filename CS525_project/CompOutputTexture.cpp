@@ -25,3 +25,7 @@ CompOutputTexture::CompOutputTexture(int width, int height, GLenum color_mode): 
 	this->color_mode = color_mode;
 	this->init();
 }
+
+CompOutputTexture::CompOutputTexture()
+{
+}

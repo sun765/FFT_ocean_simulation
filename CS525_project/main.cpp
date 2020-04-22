@@ -344,6 +344,9 @@ void draw_gui()
 	myGUIStyle();
 	ImGui::Begin("Ocean Parameters", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 
+	ImGui::Image((void*)ocean->get_h0_k_handle(), ImVec2(128.0f, 128.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
+	ImGui::Image((void*)ocean->get_h0_minus_k_handle(), ImVec2(128.0f, 128.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
+
 	if (ImGui::CollapsingHeader("debug")) {
 		ImGui::Image((void*)comp_texture->get_handle(), ImVec2(128.0f, 128.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 	}
@@ -426,6 +429,7 @@ void init_render_class()
 	// intit all the render class
 	main_water = new water(clip_distance, &p, &f, &wP, &qP, depth_camera, &tP);
 	main_sky = new skybox();
+	ocean = new Ocean();
 
 
 }
