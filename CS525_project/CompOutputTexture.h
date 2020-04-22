@@ -15,7 +15,7 @@ public:
 	CompOutputTexture();
 
 private:
-	GLenum color_mode;
+	GLenum color_mode = GL_RGBA32F;
 };
 
 #endif

@@ -5,6 +5,10 @@
 #include <GL/freeglut.h>
 #include <GL/gl.h>
 
+#include "LoadTexture.h"
+
+using namespace std;
+
 class Texture
 {
 public:
@@ -12,6 +16,8 @@ public:
 	virtual void bind();
 
 	virtual GLuint get_handle() = 0;
+
+	void load_texture(string file_path);
 
 	Texture(int width, int height);
 	Texture();

@@ -316,6 +316,9 @@
     <None Include="Shaders\mesh_te.glsl">
       <Filter>rendering classes\meshes</Filter>
     </None>
+    <None Include="Shaders\h0_comp.comp">
+      <Filter>shaders</Filter>
+    </None>
     <None Include="Shaders\test.comp">
       <Filter>shaders</Filter>
     </None>

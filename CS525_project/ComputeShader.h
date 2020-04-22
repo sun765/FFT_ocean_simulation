@@ -7,8 +7,11 @@ class ComputeShader : public Shader
 {
 public :
 
+	// change to private later
 	void init_shader() override;
 	void bind_shader() override;
+
+	GLuint get_handle();
 
 	ComputeShader(string code_path);
 	ComputeShader();

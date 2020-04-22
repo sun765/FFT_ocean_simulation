@@ -19,11 +19,18 @@ void ComputeShader::bind_shader()
 	glUseProgram(program_handle);
 }
 
+GLuint ComputeShader::get_handle()
+{
+	return this->shader_handle;
+}
+
 ComputeShader::ComputeShader(string code_path)
 {
 	this->compshader_code_path = code_path;
+	this->init_shader();
 }
 
 ComputeShader::ComputeShader()
 {
+
 }
