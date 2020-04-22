@@ -3,11 +3,11 @@
 
 #include "Texture.h"
 
-class CompOutputTexture 
+class CompOutputTexture : public Texture
 {
 public:
-	void init() ;
-	GLuint get_handle() ;
+	void init() override;
+	GLuint get_handle() override;
 
 	void bind(GLenum access_mode, int bind_loc);
 
@@ -15,8 +15,6 @@ public:
 
 private:
 	GLenum color_mode;
-	int width, height;
-	GLuint handle;
 };
 
 #endif

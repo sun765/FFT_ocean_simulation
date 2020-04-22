@@ -100,9 +100,6 @@ GLuint texture_height = 1080;
 GLuint waterTexture_id[] = { -1,-1,-1,-1,-1 };  // 0 is reflection 1 refraction  2 is dudv MAP   3 water normal  4 water depth map
 GLenum refraction_buffers[] = { GL_COLOR_ATTACHMENT1,GL_COLOR_ATTACHMENT3 };
 GLuint terrainpostexture_id = -1;
-GLuint test_texture = -1;
-GLuint test_shader = -1;
-GLuint test_program = -1;
 
 
 // glm

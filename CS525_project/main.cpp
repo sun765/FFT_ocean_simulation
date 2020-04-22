@@ -253,18 +253,18 @@ void render_scene(int pass, glm::vec4 plane, camera camera)
 	   //render reflection and refraction textures
 	   if (pass == 1 || pass == 2)
 	   {
-		   if (skybox_on)
+		   //if (skybox_on)
 
-		   {
-			   main_sky->draw_sky(skybox_id, V, P, pass);
-		   }
-		   else
-		   {
-			   tsky->drawUI(glm::vec2(window_width, window_height), glm::vec2(0.5*window_width, 0.5*window_height), tsky_texture_id, 1.0, 1.0);
-		   }
+		   //{
+			  // main_sky->draw_sky(skybox_id, V, P, pass);
+		   //}
+		   //else
+		   //{
+			  // tsky->drawUI(glm::vec2(window_width, window_height), glm::vec2(0.5*window_width, 0.5*window_height), tsky_texture_id, 1.0, 1.0);
+		   //}
 
 		  
-		   main_sun->draw_sun(P);
+		   //main_sun->draw_sun(P);
 
 	   }
 
@@ -273,25 +273,23 @@ void render_scene(int pass, glm::vec4 plane, camera camera)
 	   {
 		   if (renderScene)
 		   {
-			   // test compute shader 
-			   
+			   // test compute shader    
 			   comp_shader->bind_shader();
 			   comp_texture->bind(GL_WRITE_ONLY, 0);
-			   //glBindImageTexture(0, test_texture, 0, GL_TRUE, 0, GL_WRITE_ONLY, GL_RGBA32F);
 			   glDispatchCompute(FFT_DIMENSION / 16, FFT_DIMENSION / 16, 1);
 			   glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 			   
 			   if (skybox_on)
 
 			   {
-				   main_sky->draw_sky(skybox_id, V, P, pass);
+				   //main_sky->draw_sky(skybox_id, V, P, pass);
 			   }
 			   else
 			   {
-				   tsky->drawUI(glm::vec2(window_width, window_height), glm::vec2(0.5*window_width, 0.5*window_height), tsky_texture_id, 1.0, 1.0);
+				   //tsky->drawUI(glm::vec2(window_width, window_height), glm::vec2(0.5*window_width, 0.5*window_height), tsky_texture_id, 1.0, 1.0);
 			   }
 
-			   main_sun->draw_sun(P);
+			   //main_sun->draw_sun(P);
 			  
 
 			   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -301,7 +299,7 @@ void render_scene(int pass, glm::vec4 plane, camera camera)
 			   {
 				   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			   }
-			   main_water->draw_water(shading_mode, test, M_water, V, P, waterTexture_id, pass, float(time_ms), cameraPos);
+			   //main_water->draw_water(shading_mode, test, M_water, V, P, waterTexture_id, pass, float(time_ms), cameraPos);
 			   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 			   
 		   }
@@ -474,12 +472,7 @@ void init_textures() {
 	//unbind the fbo
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	//testing with compute shader
-	
-	//glGenTextures(1, &test_texture);
-	//glBindTexture(GL_TEXTURE_2D, test_texture);
-	//glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, FFT_DIMENSION, FFT_DIMENSION);
-	
+	//test compute shader
 	comp_texture = new CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION, GL_RGBA32F);
 
 }
