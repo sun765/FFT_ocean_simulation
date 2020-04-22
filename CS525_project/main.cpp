@@ -9,6 +9,7 @@ void reload_shader();
 void init_shader();
 void init_render_class();
 void init_textures();
+void init_imgui();
 void init_2D_texture(GLuint texture_id, int width, int height);
 
 
@@ -103,6 +104,7 @@ void init_application()
    init_shader();
    init_render_class();
    init_textures();
+   init_imgui();
 
    glEnable(GL_DEPTH_TEST);
 
@@ -166,6 +168,7 @@ void pasive_motion(int x, int y)
 		previous_campos = glm::vec2(x, y);
 		main_camera.turn_camera(-dx, -dy);
 	}
+	/*
 
 	const int h = glutGet(GLUT_WINDOW_HEIGHT);
 	GLubyte buffer[4];
@@ -185,7 +188,7 @@ void pasive_motion(int x, int y)
 	P = glm::perspective(3.141592f / 4.0f, aspect_ratio, near_clip, far_clip);
 	glm::vec4 worldPos = glm::inverse(P)*ClipPos;
 	worldPos = glm::inverse(V)*worldPos;
-
+	*/
 }
 
 void mouse(int button, int state, int x, int y)
@@ -282,14 +285,14 @@ void render_scene(int pass, glm::vec4 plane, camera camera)
 			   if (skybox_on)
 
 			   {
-				   //main_sky->draw_sky(skybox_id, V, P, pass);
+				   main_sky->draw_sky(skybox_id, V, P, pass);
 			   }
 			   else
 			   {
-				   //tsky->drawUI(glm::vec2(window_width, window_height), glm::vec2(0.5*window_width, 0.5*window_height), tsky_texture_id, 1.0, 1.0);
+				   tsky->drawUI(glm::vec2(window_width, window_height), glm::vec2(0.5*window_width, 0.5*window_height), tsky_texture_id, 1.0, 1.0);
 			   }
 
-			   //main_sun->draw_sun(P);
+			   main_sun->draw_sun(P);
 			  
 
 			   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -299,7 +302,7 @@ void render_scene(int pass, glm::vec4 plane, camera camera)
 			   {
 				   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			   }
-			   //main_water->draw_water(shading_mode, test, M_water, V, P, waterTexture_id, pass, float(time_ms), cameraPos);
+			   main_water->draw_water(shading_mode, test, M_water, V, P, waterTexture_id, pass, float(time_ms), cameraPos);
 			   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 			   
 		   }
@@ -336,8 +339,6 @@ void init_shader()
 
 void draw_gui()
 {
-	ImGuiIO& io = ImGui::GetIO();
-	io.Fonts->AddFontFromFileTTF("Raleway-Medium.ttf", 14.0f);
 
 	ImGui_ImplGlut_NewFrame();
 	myGUIStyle();
@@ -487,6 +488,11 @@ void init_2D_texture(GLuint texture_id, int width, int height)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+// debug later
+void init_imgui() {
+	//ImGui::GetIO().Fonts->AddFontFromFileTTF("Raleway-Medium.ttf", 14.0f);
 }
 
 
