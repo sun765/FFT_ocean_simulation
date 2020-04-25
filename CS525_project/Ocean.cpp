@@ -27,8 +27,8 @@ Ocean::Ocean()
 void Ocean::render_h0()
 {
 	// 1. bind two texture
-	//h0_shader.bind_shader();
-	debug_shader.bind_shader();
+	h0_shader.bind_shader();
+	//debug_shader.bind_shader();
 
 	// 2. bind h0 textures
 	int bind_loc = 0;
@@ -38,25 +38,16 @@ void Ocean::render_h0()
 	// 3. bind noise textures 
 	const vector<string> var_names = { "noise_r0" ,"noise_i0", "noise_r1", "noise_i1" };
 	const vector<GLenum> texture_ids = { GL_TEXTURE0, GL_TEXTURE1, GL_TEXTURE2, GL_TEXTURE3 };
-	vector<GLuint> locs = { 0,0,0,0 };
 
-
-
-	for (int i = 0; i < this->noise_textures.size(); i++) {
-		locs[i] = glGetUniformLocation(debug_shader.get_program_handle(), &var_names[i][0]);
-	}
-	for (int i = 0; i < 4; i++) {
-		cout << "locs: " << locs[i] << endl;
-		glUniform1i(locs[i], i);
-	}
 	for (int i = 0; i<this->noise_textures.size(); i++) {
+		h0_shader.set_uniform_int(var_names[i], i);
+
 		glActiveTexture(texture_ids[i]);
 		glBindTexture(GL_TEXTURE_2D, this->noise_textures[i]);
-		cout << "ts " << this->noise_textures.size()<<endl;
 	}
 
 	// 4. dispatch compute shader
-	glDispatchCompute(FFT_DIMENSION / 16, FFT_DIMENSION / 16, 1);
+	glDispatchCompute(FFT_DIMENSION/16 , FFT_DIMENSION/16,  1);
 	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 
 }

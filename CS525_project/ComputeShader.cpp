@@ -19,6 +19,12 @@ void ComputeShader::bind_shader()
 	glUseProgram(program_handle);
 }
 
+void ComputeShader::set_uniform_int(string var_name, int val)
+{
+	GLuint var_loc = glGetUniformLocation(this->program_handle, &var_name[0]);
+	glUniform1i(var_loc, val);
+}
+
 GLuint ComputeShader::get_shader_handle()
 {
 	return this->shader_handle;

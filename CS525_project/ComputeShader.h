@@ -11,6 +11,8 @@ public :
 	void init_shader() override;
 	void bind_shader() override;
 
+	void set_uniform_int(string var_name, int val);
+
 	GLuint get_shader_handle();
 	GLuint get_program_handle();
 
