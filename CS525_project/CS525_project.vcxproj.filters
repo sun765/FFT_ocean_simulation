@@ -322,6 +322,9 @@
     <None Include="Shaders\test.comp">
       <Filter>shaders</Filter>
     </None>
+    <None Include="Shaders\hkt_comp.comp">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="data.txt" />

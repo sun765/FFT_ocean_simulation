@@ -25,6 +25,12 @@ void ComputeShader::set_uniform_int(string var_name, int val)
 	glUniform1i(var_loc, val);
 }
 
+void ComputeShader::set_uniform_float(string var_name, float val)
+{
+	GLuint var_loc = glGetUniformLocation(this->program_handle, &var_name[0]);
+	glUniform1f(var_loc, val);
+}
+
 GLuint ComputeShader::get_shader_handle()
 {
 	return this->shader_handle;

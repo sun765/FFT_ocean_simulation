@@ -287,6 +287,8 @@ void render_scene(int pass, glm::vec4 plane, camera camera)
 			   }
 			   main_water->draw_water(shading_mode, test, M_water, V, P, waterTexture_id, pass, float(time_ms), cameraPos);
 			   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+			   ocean->render();
 			   
 		   }
 	   }
@@ -327,10 +329,10 @@ void draw_gui()
 	ImGui::Begin("Ocean Parameters", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 
 	ImGui::Image((void*)ocean->get_h0_k_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
+	ImGui::SameLine();
 	ImGui::Image((void*)ocean->get_h0_minus_k_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
-	for (int i = 0; i < 4; i++) {
-		ImGui::Image((void*)ocean->noise_textures[i], ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
-	}
+
+	ImGui::Image((void*)ocean->get_hkt_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 
 	if (ImGui::CollapsingHeader("debug")) {
 		ImGui::Image((void*)comp_texture->get_handle(), ImVec2(128.0f, 128.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));

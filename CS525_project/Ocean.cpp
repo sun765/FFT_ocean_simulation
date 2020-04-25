@@ -8,6 +8,11 @@ void Ocean::init()
 
 }
 
+void Ocean::render()
+{
+	this->render_hkt();
+}
+
 GLuint Ocean::get_h0_k_handle()
 {
 	return this->h0_k_texture.get_handle();
@@ -18,22 +23,44 @@ GLuint Ocean::get_h0_minus_k_handle()
 	return this->h0_minus_k_texture.get_handle();
 }
 
+GLuint Ocean::get_hkt_handle()
+{
+	return this->hkt_texture.get_handle();
+}
 
 Ocean::Ocean()
 {
 	this->init();
 }
 
+void Ocean::render_hkt()
+{
+	// 1. bind shader
+	this->hkt_shader.bind_shader();
+
+	// 2. bind textures
+	this->h0_k_texture.bind(GL_READ_ONLY, 0);
+	this->h0_minus_k_texture.bind(GL_READ_ONLY, 1);
+	this->hkt_texture.bind(GL_WRITE_ONLY, 2);
+	
+	// 3. update uniform
+	float time_ms = float(glutGet(GLUT_ELAPSED_TIME));
+	this->hkt_shader.set_uniform_float("time_ms", time_ms);
+
+    // 4. dispatch compute shader
+	glDispatchCompute(FFT_DIMENSION / 16, FFT_DIMENSION / 16, 1);
+	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+}
+
 void Ocean::render_h0()
 {
-	// 1. bind two texture
+	// 1. bind shader
 	h0_shader.bind_shader();
-	//debug_shader.bind_shader();
 
 	// 2. bind h0 textures
 	int bind_loc = 0;
-	h0_k_texture.bind(GL_WRITE_ONLY, bind_loc++);
-	h0_minus_k_texture.bind(GL_WRITE_ONLY, bind_loc++);
+	this->h0_k_texture.bind(GL_WRITE_ONLY, bind_loc++);
+	this->h0_minus_k_texture.bind(GL_WRITE_ONLY, bind_loc++);
 	
 	// 3. bind noise textures 
 	const vector<string> var_names = { "noise_r0" ,"noise_i0", "noise_r1", "noise_i1" };
@@ -57,6 +84,8 @@ void Ocean::init_shaders()
 	this->h0_shader    = ComputeShader("Shaders/h0_comp.comp");
 
 	this->debug_shader = ComputeShader("Shaders/test.comp");
+
+	this->hkt_shader   = ComputeShader("Shaders/hkt_comp.comp");
 }
 
 void Ocean::init_textures()
@@ -64,7 +93,7 @@ void Ocean::init_textures()
 	// init h0 textures
 	this->h0_k_texture       =  CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION, GL_RGBA32F);
 	this->h0_minus_k_texture =  CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION, GL_RGBA32F);
-
+	this->hkt_texture        =  CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION, GL_RGBA32F);
 	// init noise textures
 	const vector<string> noise_texture_paths = { "Textures/Noise256_0.jpg",
 											     "Textures/Noise256_1.jpg",
@@ -77,7 +106,6 @@ void Ocean::init_textures()
 		noise_textures.push_back(noise_texture);
 	}
 
-	cout << noise_texture_paths.size();
 }
 
 void Ocean::render_precompute_textures()
