@@ -1,22 +1,89 @@
 #version 430 core
 #define M_PI 3.1415926535897932384626433832795
+#define G 9.81
 
 layout (local_size_x = 16, local_size_y = 16) in;
 
-layout (binding = 0, rgba32f) readonly uniform image2D h0k;
-
-layout (binding = 1, rgba32f) readonly uniform image2D h0minusk;
-
-layout (binding = 2, rgba32f) writeonly uniform image2D hkt;
-
+layout (binding = 0, rgba32f) readonly uniform image2D h0k_image;
+layout (binding = 1, rgba32f) readonly uniform image2D h0minusk_image;
+layout (binding = 2, rgba32f) writeonly uniform image2D hkt_image;
 
 uniform float time_ms;
+uniform int FFT_dimension = 256;   // 
+uniform int ocean_dimension = 256; // 
+
+//helper functions and struct for calculation
+struct complex{
+	float r;
+	float i;
+};
+
+complex add_complex (complex c1, complex c2);
+complex mult_complex(complex c1, complex c2);
+complex conj(complex c1);
+complex create_complex(float r, float i);
+
+complex compute_hkt();
 
 void main(void)
 {
-	float time_s = time_ms/1000.0;
-	imageStore(hkt, ivec2(gl_GlobalInvocationID.xy), vec4(sin(time_s)));
+	
+	
+	complex hkt = compute_hkt();
+	imageStore(hkt_image, ivec2(gl_GlobalInvocationID.xy), vec4(hkt.r, hkt.i, 0.0, 1.0));
 }
 
 
 
+complex compute_hkt(){
+	vec2 x = ivec2(gl_GlobalInvocationID.xy) - float(FFT_dimension)/2.0;
+	vec2 k = vec2(2.0 * M_PI * x.x/ocean_dimension, 2.0 * M_PI * x.y/ocean_dimension);
+
+	float k_mag = length(k);
+	if(k_mag< 0.0001)
+		k_mag = 0.0001;
+
+	float w = sqrt(G * k_mag);
+	float time_s = time_ms/1000.0;
+
+    ivec2 h0k_loc	    = ivec2(gl_GlobalInvocationID.xy);
+	ivec2 h0minusk_loc	= ivec2(FFT_dimension -  h0k_loc.x, FFT_dimension -  h0k_loc.y);          // use this for -k?
+	complex h0k =      create_complex( imageLoad(h0k_image, h0k_loc).r , imageLoad(h0k_image, h0k_loc).g);
+	complex h0minusk = create_complex( imageLoad(h0k_image, h0minusk_loc).r , imageLoad(h0k_image, h0minusk_loc).g);
+	h0minusk = conj(h0minusk);
+
+	//Euler formular
+	float cos_part = cos(w * time_s);
+	float sin_part = sin(w * time_s);
+
+	complex e_k      = create_complex(cos_part,  sin_part);
+	complex e_minusk = create_complex(cos_part, -sin_part); 
+
+	return add_complex( mult_complex(h0k, e_k), mult_complex(h0minusk, e_minusk));
+}
+
+
+complex add_complex (complex c1, complex c2){
+	complex res;
+	res.r = c1.r + c2.r;
+	res.i = c1.i + c2.i;
+	return res;
+}
+
+complex mult_complex(complex c1, complex c2){
+	complex res;
+	res.r = c1.r*c2.r - c1.i*c2.i;
+	res.i = c1.r*c2.i + c1.i*c2.r;
+	return res;
+}
+
+complex create_complex(float r, float i){
+	complex res;
+	res.r = r;
+	res.i = i;
+	return res;
+}
+
+complex conj(complex c){
+	return create_complex(c.r, c.i);
+}

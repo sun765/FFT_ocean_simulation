@@ -1,5 +1,6 @@
 #version 430 core
 #define M_PI 3.1415926535897932384626433832795
+#define G 9.81
 
 layout (local_size_x = 16, local_size_y = 16) in;
 
@@ -62,7 +63,7 @@ float P_k (vec2 k){
 	if (k_mag < 0.001) 
 		k_mag = 0.001;
 
-	float L_  = (windspeed * windspeed)/g;  // largest possible wave for wind speed V
+	float L_  = (windspeed * windspeed)/G;  // largest possible wave for wind speed V
 	float l   = L_ / 1000.0f;               // supress waevs smaller than this ??
 
 	float k_dot_w = dot(normalize(k), normalize(wind_dir) );
