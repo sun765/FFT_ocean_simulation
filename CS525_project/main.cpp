@@ -333,6 +333,8 @@ void draw_gui()
 	ImGui::Image((void*)ocean->get_h0_minus_k_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 
 	ImGui::Image((void*)ocean->get_hkt_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
+	ImGui::SameLine();
+	ImGui::Image((void*)ocean->get_twiddle_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 
 	if (ImGui::CollapsingHeader("debug")) {
 		ImGui::Image((void*)comp_texture->get_handle(), ImVec2(128.0f, 128.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));

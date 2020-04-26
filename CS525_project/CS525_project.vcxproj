@@ -252,6 +252,7 @@
     <None Include="Shaders\terrain_gs.glsl" />
     <None Include="Shaders\terrain_vs.glsl" />
     <None Include="Shaders\test.comp" />
+    <None Include="Shaders\twiddle_factor_comp.comp" />
     <None Include="Shaders\water_fs.glsl" />
     <None Include="Shaders\water_gs.glsl" />
     <None Include="Shaders\water_vs.glsl" />

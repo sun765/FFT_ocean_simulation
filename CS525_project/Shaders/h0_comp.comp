@@ -18,7 +18,7 @@ uniform	int    FFT_dimension = 256;            //FFT resolution
 uniform int    ocean_dimension = 256;           //Ocean dimension
 uniform float  amplitude = 20;           //apmtitude of what ???s
 uniform float  windspeed =  26;
-uniform vec2   wind_dir = vec2(1,1);     // wind speed vector
+uniform vec2   wind_dir = vec2(1,0);     // wind speed vector
 uniform float  l;               // what is this l?
 uniform float  alignment;
 
