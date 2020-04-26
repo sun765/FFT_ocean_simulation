@@ -51,6 +51,9 @@ private:
 
 	void init_shaders();
 	void init_textures();
+
+	// helper function to reverse the bit
+	int reverse_bit(int i, int bit_num);
 	
 };
 

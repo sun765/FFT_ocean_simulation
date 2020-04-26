@@ -1,4 +1,4 @@
-#include "Ocean.h"
+﻿#include "Ocean.h"
 
 void Ocean::init()
 {
@@ -102,7 +102,24 @@ void Ocean::render_twiddle_factor()
 	// 2. bind textures
 	this->twiddle_factor_texture.bind(GL_WRITE_ONLY, 0);
 
-	// 3. dispatch compute  (the size of the work group may be changed?)
+	// 3. calc bit reverse array and bind to ssbo
+	
+
+
+	vector<int> reversed_bit;
+	for (int i = 0; i <FFT_DIMENSION; i++) {
+		reversed_bit.push_back(this->reverse_bit(i, log2(FFT_DIMENSION)));
+		//cout << i << " " << reversed_bit[i] << endl;
+	}
+
+	GLuint ssbo;
+	glGenBuffers(1, &ssbo);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(int) * reversed_bit.size(), reversed_bit.data(), GL_DYNAMIC_COPY);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, ssbo);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0); // unbind
+
+	// 4. dispatch compute  (the size of the work group may be changed?)
 	glDispatchCompute(log2(FFT_DIMENSION), FFT_DIMENSION / 16, 1);
 	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 }
@@ -140,6 +157,20 @@ void Ocean::init_textures()
 		noise_textures.push_back(noise_texture);
 	}
 
+}
+
+int Ocean::reverse_bit(int i, int bit_num)
+{
+	int ans = 0;
+
+	while (bit_num >0) {
+		ans <<= 1;
+		if ((i & 1) == 1)
+			ans ^= 1;
+		i >>= 1;
+		bit_num--;
+	}
+	return ans;
 }
 
 void Ocean::render_twiddle_debug()

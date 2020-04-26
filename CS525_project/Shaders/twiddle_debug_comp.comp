@@ -8,9 +8,8 @@ layout (binding = 1, rgba32f) writeonly uniform image2D twiddle_debug_texture;
 uniform int N = 256;
 
 void main (void){
-	//ivec2 read_loc = ivec2(gl_GlobalInvocationID.xy);
-	//ivec2 read_loc = ivec2(log2(gl_GlobalInvocationID.x), gl_GlobalInvocationID.y );
-	ivec2 read_loc = ivec2(log2(gl_GlobalInvocationID.x), gl_GlobalInvocationID.y );
+
+	ivec2 read_loc = ivec2(gl_GlobalInvocationID.x/(N/log2(N)), gl_GlobalInvocationID.y );
 
 	vec4 output_color = imageLoad(twiddle_texture, read_loc);
 	imageStore(twiddle_debug_texture, ivec2(gl_GlobalInvocationID.xy), output_color);

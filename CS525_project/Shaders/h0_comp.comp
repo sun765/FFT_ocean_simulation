@@ -50,9 +50,7 @@ vec4 gaussRND()
 }
 
 
-vec2 map(vec2 v){
-	return (v + vec2(1.0))/2;
-}
+
 
 float P_k (vec2 k){
 	
