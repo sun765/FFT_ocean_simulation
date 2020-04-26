@@ -319,9 +319,6 @@
     <None Include="Shaders\h0_comp.comp">
       <Filter>shaders</Filter>
     </None>
-    <None Include="Shaders\test.comp">
-      <Filter>shaders</Filter>
-    </None>
     <None Include="Shaders\hkt_comp.comp">
       <Filter>shaders</Filter>
     </None>
@@ -329,6 +326,9 @@
       <Filter>shaders</Filter>
     </None>
     <None Include="Shaders\displacement_comp.comp">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="Shaders\twiddle_debug_comp.comp">
       <Filter>shaders</Filter>
     </None>
   </ItemGroup>

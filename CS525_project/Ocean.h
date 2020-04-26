@@ -18,6 +18,7 @@ public:
 	GLuint get_hkt_handle();
 	GLuint get_twiddle_handle();
 	GLuint get_displacement_handle();
+	GLuint get_twiddle_debug_handle();
 
 	vector<GLuint> noise_textures;
 
@@ -31,6 +32,7 @@ private:
 	CompOutputTexture butterfly_texture;
 	CompOutputTexture twiddle_factor_texture;
 	CompOutputTexture displacement_texture;
+	CompOutputTexture twiddle_debug_texture;
 
 
 	ComputeShader h0_shader;
@@ -38,11 +40,13 @@ private:
 	ComputeShader debug_shader;
 	ComputeShader twiddle_factor_shader;
 	ComputeShader displacement_shader;
+	ComputeShader twiddle_debug_shader;
 
 	void render_hkt();
 	void render_h0();
 	void render_twiddle_factor();
 	void render_displacement();
+	void render_twiddle_debug();
 	void render_precompute_textures();
 
 	void init_shaders();

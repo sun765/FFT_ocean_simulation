@@ -38,6 +38,11 @@ GLuint Ocean::get_displacement_handle()
 	return this->displacement_texture.get_handle();
 }
 
+GLuint Ocean::get_twiddle_debug_handle()
+{
+	return this->twiddle_debug_texture.get_handle();
+}
+
 Ocean::Ocean()
 {
 	this->init();
@@ -109,6 +114,7 @@ void Ocean::init_shaders()
 	this->hkt_shader            = ComputeShader("Shaders/hkt_comp.comp");
 	this->twiddle_factor_shader = ComputeShader("Shaders/twiddle_factor_comp.comp");
 	this->displacement_shader   = ComputeShader("Shaders/displacement_comp.comp");
+	this->twiddle_debug_shader  = ComputeShader("Shaders/twiddle_debug_comp.comp");
 }
 
 void Ocean::init_textures()
@@ -118,7 +124,8 @@ void Ocean::init_textures()
 	this->h0_k_texture           =  CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION,       GL_RGBA32F);
 	this->h0_minus_k_texture     =  CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION,       GL_RGBA32F);
 	this->hkt_texture            =  CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION,       GL_RGBA32F);
-	this->twiddle_factor_texture =  CompOutputTexture(FFT_DIMENSION, log2(FFT_DIMENSION), GL_RGBA32F);
+	this->twiddle_factor_texture =  CompOutputTexture(log2(FFT_DIMENSION), FFT_DIMENSION, GL_RGBA32F);
+	this->twiddle_debug_texture  =  CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION, GL_RGBA32F);
 	this->displacement_texture   =  CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION,       GL_RGBA32F);
 
 	// init noise textures
@@ -135,8 +142,24 @@ void Ocean::init_textures()
 
 }
 
+void Ocean::render_twiddle_debug()
+{
+	// 1. bind shader
+	this->twiddle_debug_shader.bind_shader();
+
+	// 2. bind textures
+	this->twiddle_factor_texture.bind(GL_READ_ONLY, 0);
+	this->twiddle_debug_texture.bind(GL_WRITE_ONLY, 1);
+
+	// 3. dispatch compute
+	glDispatchCompute(FFT_DIMENSION / 16, FFT_DIMENSION / 16, 1);
+	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+
+}
+
 void Ocean::render_precompute_textures()
 {
 	this->render_h0();
 	this->render_twiddle_factor();
+	this->render_twiddle_debug();
 }
