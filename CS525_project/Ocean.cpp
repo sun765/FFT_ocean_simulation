@@ -33,6 +33,11 @@ GLuint Ocean::get_twiddle_handle()
 	return this->twiddle_factor_texture.get_handle();
 }
 
+GLuint Ocean::get_displacement_handle()
+{
+	return this->displacement_texture.get_handle();
+}
+
 Ocean::Ocean()
 {
 	this->init();
@@ -100,22 +105,21 @@ void Ocean::render_twiddle_factor()
 void Ocean::init_shaders()
 {
 	this->h0_shader             = ComputeShader("Shaders/h0_comp.comp");
-
 	this->debug_shader          = ComputeShader("Shaders/test.comp");
-
 	this->hkt_shader            = ComputeShader("Shaders/hkt_comp.comp");
-
 	this->twiddle_factor_shader = ComputeShader("Shaders/twiddle_factor_comp.comp");
+	this->displacement_shader   = ComputeShader("Shaders/displacement_comp.comp");
 }
 
 void Ocean::init_textures()
 {
 	
-	// init h0 textures
+	// init textures
 	this->h0_k_texture           =  CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION,       GL_RGBA32F);
 	this->h0_minus_k_texture     =  CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION,       GL_RGBA32F);
 	this->hkt_texture            =  CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION,       GL_RGBA32F);
 	this->twiddle_factor_texture =  CompOutputTexture(FFT_DIMENSION, log2(FFT_DIMENSION), GL_RGBA32F);
+	this->displacement_texture   =  CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION,       GL_RGBA32F);
 
 	// init noise textures
 	const vector<string> noise_texture_paths = { "Textures/Noise256_0.jpg",

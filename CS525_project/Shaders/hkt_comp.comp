@@ -1,5 +1,5 @@
 #version 430 core
-#define M_PI 3.1415926535897932384626433832795
+#define PI 3.1415926535897932384626433832795
 #define G 9.81
 
 layout (local_size_x = 16, local_size_y = 16) in;
@@ -37,7 +37,7 @@ void main(void)
 
 complex compute_hkt(){
 	vec2 x = ivec2(gl_GlobalInvocationID.xy) - float(FFT_dimension)/2.0;               // 
-	vec2 k = vec2(2.0 * M_PI * x.x/ocean_dimension, 2.0 * M_PI * x.y/ocean_dimension);
+	vec2 k = vec2(2.0 * PI * x.x/ocean_dimension, 2.0 * PI * x.y/ocean_dimension);
 
 	float k_mag = length(k);
 	if(k_mag< 0.0001)

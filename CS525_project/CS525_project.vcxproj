@@ -232,6 +232,7 @@
     <ClInclude Include="water.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shaders\displacement_comp.comp" />
     <None Include="Shaders\gui_fs.glsl" />
     <None Include="Shaders\gui_vs.glsl" />
     <None Include="Shaders\h0_comp.comp" />

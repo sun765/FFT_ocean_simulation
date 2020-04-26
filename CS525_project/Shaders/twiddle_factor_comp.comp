@@ -1,5 +1,5 @@
 #version 430 core
-#define M_PI 3.1415926535897932384626433832795
+#define PI 3.1415926535897932384626433832795
 #define G 9.81
 
 // log2(N) , FFT/ 16 groups
@@ -8,17 +8,86 @@ layout (local_size_x = 1, local_size_y = 16) in;
 layout (binding = 0, rgba32f) writeonly uniform image2D twiddle_factor_texture;
 
 uniform int FFT_dimension = 256;   
-uniform int ocean_dimension = 256; 
 
+//helper functions and struct for calculation
+struct complex{
+	float r;
+	float i;
+};
+
+complex compute_wnk (float k);
+complex add_complex (complex c1, complex c2);
+complex mult_complex(complex c1, complex c2);
+complex conj(complex c1);
+complex create_complex(float r, float i);
 
 
 void main(void)
 {
-	// compute stage
+	vec2 loc = gl_GlobalInvocationID.xy;
+
+	float stage = loc.x + 1;
+	// index of W_N_k
+	float k = mod(loc.y * FFT_dimension / pow(2, stage), FFT_dimension);
 
 	// compute wk , store wk in rg channel
+	complex W_n_k = compute_wnk(k);
 
-	//
-	imageStore(twiddle_factor_texture, ivec2(gl_GlobalInvocationID.xy), vec4(1.0));
+	// butterfly span and wing is used to compute  a + wb;
+	float butterfly_span = pow(2, loc.x);
+
+	// 0 is top, 1 is bottom
+	int butterfly_wing = 1;
+	if(mod(loc.y,butterfly_span) < (butterfly_span/2))
+		butterfly_wing = 0;
+	
+	if(loc.x ==0){
+		   imageStore(twiddle_factor_texture, ivec2(gl_GlobalInvocationID.xy), vec4(W_n_k.r,W_n_k.i,0.0, 1.0));
+	}
+	else{
+		// top wing: 
+		if(butterfly_wing == 0)
+																									   // a   b							
+			imageStore(twiddle_factor_texture, ivec2(gl_GlobalInvocationID.xy), vec4(W_n_k.r, W_n_k.i, loc.y, loc.y + butterfly_span));
+		// bot wing:
+		else{
+																									  // a                      b	
+		    imageStore(twiddle_factor_texture, ivec2(gl_GlobalInvocationID.xy), vec4(W_n_k.r, W_n_k.i, loc.y - butterfly_span,  loc.y));
+		}
+	}
+
+	
 }
 
+
+
+complex compute_wnk (float k){
+	float cos_part = cos(2*PI*k / FFT_dimension);
+	float sin_part = sin(2*PI*k / FFT_dimension);
+	return create_complex(cos_part, sin_part);
+}
+
+complex add_complex (complex c1, complex c2){
+	complex res;
+	res.r = c1.r + c2.r;
+	res.i = c1.i + c2.i;
+	return res;
+}
+
+complex mult_complex(complex c1, complex c2){
+	complex res;
+	res.r = c1.r*c2.r - c1.i*c2.i;
+	res.i = c1.r*c2.i + c1.i*c2.r;
+	return res;
+}
+
+complex create_complex(float r, float i){
+	complex res;
+	res.r = r;
+	res.i = i;
+	return res;
+}
+
+complex conj(complex c){
+	return create_complex(c.r, c.i);
+}
