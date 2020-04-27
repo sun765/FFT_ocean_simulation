@@ -3,8 +3,13 @@
 
 #define FFT_DIMENSION 256
 
+
 #include "CompOutputTexture.h"
 #include "ComputeShader.h"
+#include <glm/glm/glm.hpp>
+#include <glm/glm/gtc/matrix_transform.hpp>
+#include <glm/glm/gtx/transform.hpp>
+#include <glm/glm/gtc/type_ptr.hpp>
 
 class Ocean
 {
@@ -20,6 +25,7 @@ public:
 	GLuint get_displacement_handle();
 	GLuint get_twiddle_debug_handle();
 	GLuint get_ht_handle();
+	GLuint get_ifft_buffer_handle();
 	GLuint get_dxy_handle();
 	GLuint get_debug_input_handle();
 	GLuint get_debug_output_handle();
@@ -29,6 +35,11 @@ public:
 	Ocean();
 
 private:
+
+	int ocean_dimension = 256;
+	float amplitude = 20.0;
+	float windspeed = 26.0;
+	glm::vec2 wind_dir = glm::vec2(0.4, 0.6);
 
 	CompOutputTexture h0_k_texture;
 	CompOutputTexture h0_minus_k_texture;
@@ -40,7 +51,6 @@ private:
 	CompOutputTexture IFFT_buffer_texture;
 	CompOutputTexture ht_texture;
 	CompOutputTexture dxy_texture;
-
 	CompOutputTexture debug_input_texture;
 	CompOutputTexture debug_output_texture;
 

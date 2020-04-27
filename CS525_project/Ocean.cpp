@@ -12,6 +12,7 @@ void Ocean::render()
 {
 	this->render_hkt();
 	this->compute_IFFT();
+	this->render_displacement();
 }
 
 GLuint Ocean::get_h0_k_handle()
@@ -49,6 +50,11 @@ GLuint Ocean::get_ht_handle()
 	return this->ht_texture.get_handle();
 }
 
+GLuint Ocean::get_ifft_buffer_handle()
+{
+	return this->IFFT_buffer_texture.get_handle();
+}
+
 GLuint Ocean::get_dxy_handle()
 {
 	return this->dxy_texture.get_handle();
@@ -82,6 +88,8 @@ void Ocean::render_hkt()
 	// 3. update uniform
 	float time_ms = float(glutGet(GLUT_ELAPSED_TIME));
 	this->hkt_shader.set_uniform_float("time_ms", time_ms);
+	this->hkt_shader.set_uniform_int("FFT_dimension", FFT_DIMENSION);
+	this->hkt_shader.set_uniform_int("ocean_dimension", this->ocean_dimension);
 
     // 4. dispatch compute shader
 	glDispatchCompute(FFT_DIMENSION / 16, FFT_DIMENSION / 16, 1);
@@ -94,11 +102,10 @@ void Ocean::render_h0()
 	h0_shader.bind_shader();
 
 	// 2. bind h0 textures
-	int bind_loc = 0;
-	this->h0_k_texture.bind(GL_WRITE_ONLY, bind_loc++);
-	this->h0_minus_k_texture.bind(GL_WRITE_ONLY, bind_loc++);
+	this->h0_k_texture.bind(GL_WRITE_ONLY, 0);
+	this->h0_minus_k_texture.bind(GL_WRITE_ONLY, 1);
 	
-	// 3. bind noise textures 
+	// 3. bind noise textures and uniform variable
 	const vector<string> var_names = { "noise_r0" ,"noise_i0", "noise_r1", "noise_i1" };
 	const vector<GLenum> texture_ids = { GL_TEXTURE0, GL_TEXTURE1, GL_TEXTURE2, GL_TEXTURE3 };
 
@@ -108,6 +115,10 @@ void Ocean::render_h0()
 		glActiveTexture(texture_ids[i]);
 		glBindTexture(GL_TEXTURE_2D, this->noise_textures[i]);
 	}
+	h0_shader.set_uniform_int  ("ocean_dimension", this->ocean_dimension);
+	h0_shader.set_uniform_float("amplitude",       this->amplitude);
+	h0_shader.set_uniform_float("windspeed",       this->windspeed);
+	h0_shader.set_uniform_vec2 ("wind_dir",        this->wind_dir);
 
 	// 4. dispatch compute shader
 	glDispatchCompute(FFT_DIMENSION/16 , FFT_DIMENSION/16,  1);
@@ -137,8 +148,24 @@ void Ocean::render_twiddle_factor()
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, ssbo);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0); // unbind
 
+	this->twiddle_factor_shader.set_uniform_int("FFT_dimension", FFT_DIMENSION);
+
 	// 4. dispatch compute  (the size of the work group may be changed?)
 	glDispatchCompute(log2(FFT_DIMENSION), FFT_DIMENSION / 16, 1);
+	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+}
+
+void Ocean::render_displacement()
+{
+	// 1. bind shader
+	this->displacement_shader.bind_shader();
+
+	// 2. bind textures
+	this->ht_texture.bind(GL_READ_ONLY, 0);
+	this->displacement_texture.bind(GL_WRITE_ONLY, 1);
+
+	// 3. dispatch compute
+	glDispatchCompute(FFT_DIMENSION / 16, FFT_DIMENSION / 16, 1);
 	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 }
 
@@ -240,7 +267,7 @@ int Ocean::compute_IFFT_helper(CompOutputTexture* input_texture, CompOutputTextu
 		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 		pingpong = (pingpong + 1) % 2;
 	}
-
+	
 	// 3. vertical logN loops
 	IFFT_shader.set_uniform_int("horizontal", 0);
 	IFFT_shader.set_uniform_int("vertical", 1);
@@ -257,10 +284,14 @@ int Ocean::compute_IFFT_helper(CompOutputTexture* input_texture, CompOutputTextu
 
 void Ocean::compute_IFFT()
 {
-	// test this first;
-	int pingpong = compute_IFFT_helper(&this->debug_input_texture, &this->debug_output_texture);
-	//int pingpong = compute_IFFT_helper(&this->hkt_texture, &this->ht_texture);
-	// check pingpong stage and swap textures
+	// ifft on y direction 
+	int pingpong = compute_IFFT_helper(&this->hkt_texture, &this->ht_texture);
+	// swap input and output
+	if (pingpong == 0) {
+		CompOutputTexture temp = this->hkt_texture;
+		this->hkt_texture = this->ht_texture;
+		this->ht_texture = temp;
+	}
 
-	//int pingpong = compute_IFFT_helper(&this->ht_texture);
+	// ifft on x, z direction
 }

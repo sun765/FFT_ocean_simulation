@@ -12,7 +12,7 @@ layout(std430, binding = 1) buffer indices
     int reversed_bit[];
 }data;
 
-uniform int FFT_dimension = 256;   
+uniform int FFT_dimension;   
 
 //helper functions and struct for calculation
 struct complex{
@@ -49,7 +49,6 @@ void main(void)
 		butterfly_wing = 0;
 	
 	if(loc.x ==0){
-		//int bit_reverse_loc = data.reversed_bit[loc.y]
 		if(butterfly_wing ==0)
 		   imageStore(twiddle_factor_texture, ivec2(gl_GlobalInvocationID.xy), vec4(W_n_k.r,W_n_k.i, float(data.reversed_bit[int(loc.y)]) , float(data.reversed_bit[int(loc.y + 1)])));
 		else{

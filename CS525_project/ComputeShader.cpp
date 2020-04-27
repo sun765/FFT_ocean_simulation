@@ -31,6 +31,12 @@ void ComputeShader::set_uniform_float(string var_name, float val)
 	glUniform1f(var_loc, val);
 }
 
+void ComputeShader::set_uniform_vec2(string var_name, glm::vec2 val)
+{
+	GLuint var_loc = glGetUniformLocation(this->program_handle, &var_name[0]);
+	glUniform2f(var_loc, val.x, val.y);
+}
+
 GLuint ComputeShader::get_shader_handle()
 {
 	return this->shader_handle;

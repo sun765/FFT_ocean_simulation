@@ -13,6 +13,7 @@ public :
 
 	void set_uniform_int(string var_name, int val);
 	void set_uniform_float(string var_name, float val);
+	void set_uniform_vec2(string var_name, glm::vec2 val);
 
 
 	GLuint get_shader_handle();

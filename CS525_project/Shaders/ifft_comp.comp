@@ -33,12 +33,9 @@ void main (void){
 	if(horizontal ==1){
 		ivec2 twiddle_loc = ivec2(stage,loc.x);
 		// rg: wnk, b: a  a: b
-		vec4 meta_data = imageLoad(twiddle_texture, twiddle_loc);
-		//for debug purpose. delete later
-		//imageStore(ping_texture, ivec2(stage,gl_GlobalInvocationID.x), imageLoad(twiddle_texture, wnk_loc));
-	
+		vec4 meta_data = imageLoad(twiddle_texture, twiddle_loc);	
 
-		if(pingpong ==1){
+		if(pingpong ==0){
 			a = create_complex(imageLoad(ping_texture, ivec2(meta_data.b,loc.y)).r,
 			                   imageLoad(ping_texture, ivec2(meta_data.b,loc.y)).g);
 			b = create_complex(imageLoad(ping_texture, ivec2(meta_data.a,loc.y)).r,
@@ -55,7 +52,7 @@ void main (void){
 		res = add_complex( a, mult_complex(wnk, b));
 
 		// write into output buffer
-		if(pingpong ==1)
+		if(pingpong ==0)
 			imageStore(pong_texture, loc, vec4(res.r, res.i, 0.0, 1.0));
 		else{
 		    imageStore(ping_texture, loc, vec4(res.r, res.i, 0.0, 1.0));
@@ -65,7 +62,7 @@ void main (void){
 		ivec2 twiddle_loc = ivec2(stage, loc.y);
 		// rg: wnk, b: a, a: b;
 		vec4 meta_data = imageLoad(twiddle_texture, twiddle_loc);
-		if(pingpong ==1){
+		if(pingpong ==0){
 			a = create_complex( imageLoad(ping_texture, ivec2(loc.x, meta_data.b)).r,
 								imageLoad(ping_texture, ivec2(loc.x, meta_data.b)).g);
 			b = create_complex( imageLoad(ping_texture, ivec2(loc.x, meta_data.a)).r, 
@@ -81,12 +78,14 @@ void main (void){
 
 		wnk = create_complex(meta_data.r, meta_data.g);
 		res = add_complex(a, mult_complex(wnk, b));
-		if(pingpong ==1)
+
+		if(pingpong ==0)
 			imageStore(pong_texture, loc, vec4(res.r, res.i, 0.0, 1.0));
 		else{
 			imageStore(ping_texture, loc, vec4(res.r, res.i, 0.0, 1.0));
 		}
 	}
+	
 }
 
 
@@ -112,5 +111,5 @@ complex create_complex(float r, float i){
 }
 
 complex conj(complex c){
-	return create_complex(c.r, c.i);
+	return create_complex(c.r, -c.i);
 }
