@@ -1,5 +1,19 @@
 ﻿#include "Ocean.h"
 
+struct Complex
+{
+	float r;
+	float i;
+	Complex() {
+
+	}
+	Complex(float re, float im) {
+		r = re;
+		i = im;
+	}
+
+};
+
 void Ocean::init()
 {
 	this->init_shaders();
@@ -13,6 +27,16 @@ void Ocean::render()
 	this->render_hkt();
 	this->compute_IFFT();
 	this->render_displacement();
+}
+
+GLuint Ocean::get_h0_array_handle()
+{
+	return this->h0_array_texture;
+}
+
+GLuint Ocean::get_wkt_handle()
+{
+	return this->wkt_texture;
 }
 
 GLuint Ocean::get_h0_k_handle()
@@ -126,6 +150,65 @@ void Ocean::render_h0()
 
 }
 
+void Ocean::compute_h0()
+{
+	glGenTextures(1, &this->h0_array_texture);
+	glGenTextures(1, &this->wkt_texture);
+
+	glBindTexture(GL_TEXTURE_2D, this->h0_array_texture);
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RG32F, FFT_DIMENSION + 1, FFT_DIMENSION + 1);
+
+	glBindTexture(GL_TEXTURE_2D, this->wkt_texture);
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_R32F, FFT_DIMENSION + 1, FFT_DIMENSION + 1);
+
+	// n, m should be be in [-N / 2, N / 2]
+	int start = FFT_DIMENSION / 2;
+	std::mt19937 gen;
+	std::normal_distribution<> gaussian(0.0, 1.0);
+	float L = this->patch_size;
+
+	// NOTE: in order to be symmetric, this must be (N + 1) x (N + 1) in size  why?????
+	Complex* h0data = new Complex[(FFT_DIMENSION + 1) * (FFT_DIMENSION + 1)];
+	float* wdata = new float[(FFT_DIMENSION + 1) * (FFT_DIMENSION + 1)];
+	{
+		glm::vec2 w = this->wind_dir;
+		glm::vec2 wn = glm::normalize(w);
+		float V = this->windspeed;
+		float A = this->amplitude_constant;
+
+		for (int m = 0; m <= FFT_DIMENSION; ++m) {
+			glm::vec2 k;
+			k.y = (2 * PI * (start - m)) / L;
+
+			for (int n = 0; n <= FFT_DIMENSION; ++n) {
+				k.x = (2 * PI * (start - n)) / L;
+
+				int index = m * (FFT_DIMENSION + 1) + n;
+				float sqrt_P_h = 0;
+
+				if (k.x != 0.0f || k.y != 0.0f)
+					sqrt_P_h = sqrtf(Phillips(k, wn, V, A));
+
+				float sqrt_2 = sqrtf(2.0);
+				h0data[index].r = (float)(sqrt_P_h * gaussian(gen) * sqrt_2);
+				h0data[index].i = (float)(sqrt_P_h * gaussian(gen) * sqrt_2);
+
+				//std::cout << "a: " << h0data[index].a << "b: " <<h0data[index].b <<std::endl;
+				// dispersion relation \omega^2(k) = gk
+				wdata[index] = sqrtf(G * glm::length(k));
+			}
+		}
+	}
+
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, FFT_DIMENSION + 1, FFT_DIMENSION + 1, GL_RED, GL_FLOAT, wdata);
+
+	glBindTexture(GL_TEXTURE_2D, this->h0_array_texture);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, FFT_DIMENSION + 1, FFT_DIMENSION + 1, GL_RG, GL_FLOAT, h0data);
+
+	delete[] wdata;
+	delete[] h0data;
+}
+
 void Ocean::render_twiddle_factor()
 {
 	// 1. bind shader
@@ -223,6 +306,25 @@ int Ocean::reverse_bit(int i, int bit_num)
 	return ans;
 }
 
+float Ocean::Phillips(const glm::vec2& k, const glm::vec2& w, float V, float A)
+{
+	float L = (V * V) / G;	// largest possible wave for wind speed V
+	float l = L / 1000.0f;					// supress waves smaller than this
+
+	float kdotw = glm::dot(k,w);
+	float k2 = glm::dot(k,k);			// squared length of wave vector k
+
+	// k^6 because k must be normalized
+	float P_h = A * (expf(-1.0f / (k2 * L * L))) / (k2 * k2 * k2) * (kdotw * kdotw);
+
+	if (kdotw < 0.0f) {
+		// wave is moving against wind direction w
+		P_h *= 0.07f;
+	}
+
+	return P_h * expf(-k2 * l * l);
+}
+
 void Ocean::render_twiddle_debug()
 {
 	// 1. bind shader
@@ -240,12 +342,13 @@ void Ocean::render_twiddle_debug()
 
 void Ocean::render_precompute_textures()
 {
+	this->compute_h0();
 	this->render_h0();
 	this->render_twiddle_factor();
 	this->render_twiddle_debug();
 }
 
-int Ocean::compute_IFFT_helper(CompOutputTexture* input_texture, CompOutputTexture* output_texture)
+int  Ocean::compute_IFFT_helper(CompOutputTexture* input_texture, CompOutputTexture* output_texture)
 {
 	// 0. bind shader
 	this->IFFT_shader.bind_shader();
