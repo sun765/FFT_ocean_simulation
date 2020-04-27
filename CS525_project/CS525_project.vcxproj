@@ -237,6 +237,7 @@
     <None Include="Shaders\gui_vs.glsl" />
     <None Include="Shaders\h0_comp.comp" />
     <None Include="Shaders\hkt_comp.comp" />
+    <None Include="Shaders\ifft_comp.comp" />
     <None Include="Shaders\layered_mesh_fs.glsl" />
     <None Include="Shaders\lensflare_fs.glsl" />
     <None Include="Shaders\lensflare_vs.glsl" />

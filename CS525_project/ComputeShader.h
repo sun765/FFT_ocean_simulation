@@ -14,6 +14,7 @@ public :
 	void set_uniform_int(string var_name, int val);
 	void set_uniform_float(string var_name, float val);
 
+
 	GLuint get_shader_handle();
 	GLuint get_program_handle();
 

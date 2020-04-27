@@ -11,6 +11,7 @@ void Ocean::init()
 void Ocean::render()
 {
 	this->render_hkt();
+	this->compute_IFFT();
 }
 
 GLuint Ocean::get_h0_k_handle()
@@ -41,6 +42,26 @@ GLuint Ocean::get_displacement_handle()
 GLuint Ocean::get_twiddle_debug_handle()
 {
 	return this->twiddle_debug_texture.get_handle();
+}
+
+GLuint Ocean::get_ht_handle()
+{
+	return this->ht_texture.get_handle();
+}
+
+GLuint Ocean::get_dxy_handle()
+{
+	return this->dxy_texture.get_handle();
+}
+
+GLuint Ocean::get_debug_input_handle()
+{
+	return this->debug_input_texture.get_handle();
+}
+
+GLuint Ocean::get_debug_output_handle()
+{
+	return this->debug_output_texture.get_handle();
 }
 
 Ocean::Ocean()
@@ -103,9 +124,6 @@ void Ocean::render_twiddle_factor()
 	this->twiddle_factor_texture.bind(GL_WRITE_ONLY, 0);
 
 	// 3. calc bit reverse array and bind to ssbo
-	
-
-
 	vector<int> reversed_bit;
 	for (int i = 0; i <FFT_DIMENSION; i++) {
 		reversed_bit.push_back(this->reverse_bit(i, log2(FFT_DIMENSION)));
@@ -132,6 +150,7 @@ void Ocean::init_shaders()
 	this->twiddle_factor_shader = ComputeShader("Shaders/twiddle_factor_comp.comp");
 	this->displacement_shader   = ComputeShader("Shaders/displacement_comp.comp");
 	this->twiddle_debug_shader  = ComputeShader("Shaders/twiddle_debug_comp.comp");
+	this->IFFT_shader           = ComputeShader("Shaders/ifft_comp.comp");
 }
 
 void Ocean::init_textures()
@@ -144,7 +163,11 @@ void Ocean::init_textures()
 	this->twiddle_factor_texture =  CompOutputTexture(log2(FFT_DIMENSION), FFT_DIMENSION, GL_RGBA32F);
 	this->twiddle_debug_texture  =  CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION, GL_RGBA32F);
 	this->displacement_texture   =  CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION,       GL_RGBA32F);
-
+	this->IFFT_buffer_texture    =  CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION, GL_RGBA32F);
+	this->ht_texture             = CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION, GL_RGBA32F);
+	this->dxy_texture            = CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION, GL_RGBA32F);
+	this->debug_input_texture    = CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION, GL_RGBA32F);
+	this->debug_output_texture   = CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION, GL_RGBA32F);
 	// init noise textures
 	const vector<string> noise_texture_paths = { "Textures/Noise256_0.jpg",
 											     "Textures/Noise256_1.jpg",
@@ -193,4 +216,49 @@ void Ocean::render_precompute_textures()
 	this->render_h0();
 	this->render_twiddle_factor();
 	this->render_twiddle_debug();
+}
+
+int Ocean::compute_IFFT_helper(CompOutputTexture* input_texture, CompOutputTexture* output_texture)
+{
+	// 0. bind shader
+	this->IFFT_shader.bind_shader();
+
+	// 1. Create a buffer texture
+	int pingpong = 0;
+	int step = log2(FFT_DIMENSION);
+	input_texture->bind(GL_READ_WRITE, 0);
+	output_texture->bind(GL_READ_WRITE, 1);
+
+
+	// 2. horizontal logN loops (use 1 true and 0 flase as bool )
+	IFFT_shader.set_uniform_int("horizontal", 1);
+	IFFT_shader.set_uniform_int("vertical", 0);
+	for (int i = 0; i < step; i++) {
+		this->IFFT_shader.set_uniform_int("pingpong", pingpong);
+		glDispatchCompute(FFT_DIMENSION/16, FFT_DIMENSION/16, 1);
+		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+		pingpong = (pingpong + 1) % 2;
+	}
+
+	// 3. vertical logN loops
+	IFFT_shader.set_uniform_int("horizontal", 0);
+	IFFT_shader.set_uniform_int("vertical", 1);
+	for (int i = 0; i < step; i++) {
+		this->IFFT_shader.set_uniform_int("pingpong", pingpong);
+		glDispatchCompute(FFT_DIMENSION/16, FFT_DIMENSION / 16, 1);
+		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+		pingpong = (pingpong + 1) % 2;
+	}
+	
+	return pingpong;
+}
+
+void Ocean::compute_IFFT()
+{
+	// test this first;
+	int pingpong = compute_IFFT_helper(&this->debug_input_texture, &this->debug_output_texture);
+	//int pingpong = compute_IFFT_helper(&this->hkt_texture, &this->ht_texture);
+	// check pingpong stage and swap textures
+
+	//int pingpong = compute_IFFT_helper(&this->ht_texture);
 }
