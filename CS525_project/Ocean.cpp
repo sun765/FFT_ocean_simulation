@@ -228,13 +228,14 @@ int Ocean::compute_IFFT_helper(CompOutputTexture* input_texture, CompOutputTextu
 	int step = log2(FFT_DIMENSION);
 	input_texture->bind(GL_READ_WRITE, 0);
 	output_texture->bind(GL_READ_WRITE, 1);
-
+	this->twiddle_factor_texture.bind(GL_READ_ONLY, 2);
 
 	// 2. horizontal logN loops (use 1 true and 0 flase as bool )
 	IFFT_shader.set_uniform_int("horizontal", 1);
 	IFFT_shader.set_uniform_int("vertical", 0);
 	for (int i = 0; i < step; i++) {
 		this->IFFT_shader.set_uniform_int("pingpong", pingpong);
+		this->IFFT_shader.set_uniform_int("stage", i);
 		glDispatchCompute(FFT_DIMENSION/16, FFT_DIMENSION/16, 1);
 		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 		pingpong = (pingpong + 1) % 2;
@@ -245,6 +246,7 @@ int Ocean::compute_IFFT_helper(CompOutputTexture* input_texture, CompOutputTextu
 	IFFT_shader.set_uniform_int("vertical", 1);
 	for (int i = 0; i < step; i++) {
 		this->IFFT_shader.set_uniform_int("pingpong", pingpong);
+		this->IFFT_shader.set_uniform_int("stage", i);
 		glDispatchCompute(FFT_DIMENSION/16, FFT_DIMENSION / 16, 1);
 		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 		pingpong = (pingpong + 1) % 2;

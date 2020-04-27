@@ -1,7 +1,116 @@
 #version 430 core
 
+// how to improve this hardcode way?
+layout (local_size_x = 16, local_size_y = 16) in;
 
+// by default it's read and write?
+layout (binding = 0, rgba32f) uniform image2D ping_texture;
+layout (binding = 1, rgba32f) uniform image2D pong_texture;
+layout (binding = 2, rgba32f) uniform readonly image2D twiddle_texture;
+
+uniform int pingpong;   // 0 ping to pong, 1 pong to ping
+uniform int horizontal; // 1 true, 0 false
+uniform int vertical;   // 1 true, 0 false
+uniform int stage;      // 0 to logN-1 , not 1 to  logN
+
+//helper functions and struct for calculation
+struct complex{
+	float r;
+	float i;
+};
+
+complex add_complex (complex c1, complex c2);
+complex mult_complex(complex c1, complex c2);
+complex conj(complex c1);
+complex create_complex(float r, float i);
 
 void main (void){
+	ivec2 loc = ivec2(gl_GlobalInvocationID.xy);
 
+	// res = a + wnk*b;
+    complex a, b, wnk, res;
+
+	if(horizontal ==1){
+		ivec2 twiddle_loc = ivec2(stage,loc.x);
+		// rg: wnk, b: a  a: b
+		vec4 meta_data = imageLoad(twiddle_texture, twiddle_loc);
+		//for debug purpose. delete later
+		//imageStore(ping_texture, ivec2(stage,gl_GlobalInvocationID.x), imageLoad(twiddle_texture, wnk_loc));
+	
+
+		if(pingpong ==1){
+			a = create_complex(imageLoad(ping_texture, ivec2(meta_data.b,loc.y)).r,
+			                   imageLoad(ping_texture, ivec2(meta_data.b,loc.y)).g);
+			b = create_complex(imageLoad(ping_texture, ivec2(meta_data.a,loc.y)).r,
+			                   imageLoad(ping_texture, ivec2(meta_data.a,loc.y)).g);
+		}
+		else{
+			a = create_complex(imageLoad(pong_texture, ivec2(meta_data.b,loc.y)).r,
+			                   imageLoad(pong_texture, ivec2(meta_data.b,loc.y)).g);
+			b = create_complex(imageLoad(pong_texture, ivec2(meta_data.a,loc.y)).r,
+			                   imageLoad(pong_texture, ivec2(meta_data.a,loc.y)).g);
+		}
+
+		wnk = create_complex(meta_data.r, meta_data.g);
+		res = add_complex( a, mult_complex(wnk, b));
+
+		// write into output buffer
+		if(pingpong ==1)
+			imageStore(pong_texture, loc, vec4(res.r, res.i, 0.0, 1.0));
+		else{
+		    imageStore(ping_texture, loc, vec4(res.r, res.i, 0.0, 1.0));
+		}
+	}
+	else{
+		ivec2 twiddle_loc = ivec2(stage, loc.y);
+		// rg: wnk, b: a, a: b;
+		vec4 meta_data = imageLoad(twiddle_texture, twiddle_loc);
+		if(pingpong ==1){
+			a = create_complex( imageLoad(ping_texture, ivec2(loc.x, meta_data.b)).r,
+								imageLoad(ping_texture, ivec2(loc.x, meta_data.b)).g);
+			b = create_complex( imageLoad(ping_texture, ivec2(loc.x, meta_data.a)).r, 
+								imageLoad(ping_texture, ivec2(loc.x, meta_data.a)).g);
+			
+		}
+		else{
+			a = create_complex( imageLoad(pong_texture, ivec2(loc.x, meta_data.b)).r,
+								imageLoad(pong_texture, ivec2(loc.x, meta_data.b)).g);
+			b = create_complex( imageLoad(pong_texture, ivec2(loc.x, meta_data.a)).r, 
+								imageLoad(pong_texture, ivec2(loc.x, meta_data.a)).g);
+		}
+
+		wnk = create_complex(meta_data.r, meta_data.g);
+		res = add_complex(a, mult_complex(wnk, b));
+		if(pingpong ==1)
+			imageStore(pong_texture, loc, vec4(res.r, res.i, 0.0, 1.0));
+		else{
+			imageStore(ping_texture, loc, vec4(res.r, res.i, 0.0, 1.0));
+		}
+	}
+}
+
+
+complex add_complex (complex c1, complex c2){
+	complex res;
+	res.r = c1.r + c2.r;
+	res.i = c1.i + c2.i;
+	return res;
+}
+
+complex mult_complex(complex c1, complex c2){
+	complex res;
+	res.r = c1.r*c2.r - c1.i*c2.i;
+	res.i = c1.r*c2.i + c1.i*c2.r;
+	return res;
+}
+
+complex create_complex(float r, float i){
+	complex res;
+	res.r = r;
+	res.i = i;
+	return res;
+}
+
+complex conj(complex c){
+	return create_complex(c.r, c.i);
 }
