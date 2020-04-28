@@ -329,6 +329,18 @@ void draw_gui()
 	myGUIStyle();
 	ImGui::Begin("Ocean Parameters", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 
+	if (ImGui::CollapsingHeader("parameters"))
+	{
+		ImGui::SliderFloat("amplitude", &amplitude, 0.0f, +1.0f);
+		ImGui::SliderFloat("windspeed", &windspeed, 0.0f, +20.0f);
+		ImGui::SliderFloat2("wind direction", glm::value_ptr(wind_dir), -1.0f, +1.0f);
+
+		if (ImGui::Button("reconfig"))
+		{
+			ocean->reconfig(amplitude, windspeed, wind_dir);
+		}
+	}
+
 	ImGui::Image((void*)ocean->get_h0_k_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 	ImGui::SameLine();
 	ImGui::Image((void*)ocean->get_h0_minus_k_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
@@ -344,6 +356,7 @@ void draw_gui()
 	ImGui::SameLine();
 	ImGui::Image((void*)ocean->get_displacement_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 	ImGui::Image((void*)ocean->get_twiddle_debug_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
+
 	if (ImGui::CollapsingHeader("debug")) {
 		ImGui::Image((void*)comp_texture->get_handle(), ImVec2(128.0f, 128.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 	}
@@ -427,6 +440,10 @@ void init_render_class()
 	main_sky = new skybox();
 	test_gui = new screenUI(window_width,window_height, glm::vec2(0.5*window_width, 0.5*window_height), glm::vec2(0.5 * window_width, 0.5 * window_height), tsky_texture_id);
 	ocean = new Ocean();
+
+	amplitude = ocean->get_amplitude();
+	windspeed = ocean->get_windspeed();
+	wind_dir = ocean->get_wind_dir();
 
 
 }

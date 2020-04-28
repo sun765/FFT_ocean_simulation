@@ -68,6 +68,11 @@ float far_clip       = 10000.0;
 float clip_distance  = far_clip - near_clip;
 float aspect_ratio   = 1;
 
+// ocean parameters
+float amplitude;
+float windspeed;
+glm::vec2 wind_dir;
+
 // objects
 water* main_water;
 skybox* main_sky;

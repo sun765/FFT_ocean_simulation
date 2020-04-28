@@ -21,10 +21,10 @@ public:
 
 	void init();
 	void render();
+	void reconfig(float amplitude, float windspeed, glm::vec2& wind_dir);
 
 	GLuint get_h0_r_handle();
 	GLuint get_h0_i_handle();
-	GLuint get_h0_array_handle();
 	GLuint get_wkt_handle();
 	GLuint get_h0_k_handle();
 	GLuint get_h0_minus_k_handle();
@@ -37,6 +37,10 @@ public:
 	GLuint get_dxy_handle();
 	GLuint get_debug_input_handle();
 	GLuint get_debug_output_handle();
+
+	float get_amplitude();
+	float get_windspeed();
+	glm::vec2 get_wind_dir();
 
 	vector<GLuint> noise_textures;
 

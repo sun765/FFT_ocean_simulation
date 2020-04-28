@@ -25,8 +25,17 @@ void Ocean::init()
 void Ocean::render()
 {
 	this->render_hkt();
-	//this->compute_IFFT();
+	this->compute_IFFT();
 	//this->render_displacement();
+}
+
+void Ocean::reconfig(float amplitude, float windspeed, glm::vec2& wind_dir)
+{
+	this->amplitude = amplitude;
+	this->windspeed = windspeed;
+	this->wind_dir = wind_dir;
+
+	render_precompute_textures();
 }
 
 GLuint Ocean::get_h0_r_handle()
@@ -99,6 +108,21 @@ GLuint Ocean::get_debug_output_handle()
 	return this->debug_output_texture.get_handle();
 }
 
+float Ocean::get_amplitude()
+{
+	return this->amplitude;
+}
+
+float Ocean::get_windspeed()
+{
+	return this->windspeed;
+}
+
+glm::vec2 Ocean::get_wind_dir()
+{
+	return this->wind_dir;
+}
+
 Ocean::Ocean()
 {
 	this->init();
@@ -167,6 +191,9 @@ void Ocean::render_h0()
 
 void Ocean::compute_h0()
 {
+	this->h0data_r.clear();
+	this->h0data_i.clear();
+	this->wkdata.clear();
 
 	std::mt19937 gen;
 	std::normal_distribution<> gaussian(0.0, 1.0);
@@ -176,7 +203,7 @@ void Ocean::compute_h0()
 	glm::vec2 w = this->wind_dir;
 	glm::vec2 wn = glm::normalize(w);
 	float V = this->windspeed;
-	float A = this->amplitude_constant;
+	float A = this->amplitude;
 
 	for (int m = 0; m < FFT_DIMENSION; ++m) {
 		glm::vec2 k;
