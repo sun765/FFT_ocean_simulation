@@ -55,7 +55,7 @@ private:
 	vector<float> h0data_i;   // imagine part of h0k
 	vector<float> wkdata;        // sqrt(k * g);
 
-	// not used
+	// not used , just for debugging
 	CompOutputTexture h0_k_texture;     
 	CompOutputTexture h0_minus_k_texture;
 
@@ -106,6 +106,7 @@ private:
 	void compute_h0();
 	// bind float vector to a ssbo 
 	void bind_ssbo_float(vector<float>& data, int loc);
+	void bind_ssbo_int(vector<int>& data, int loc);
 
 
 	

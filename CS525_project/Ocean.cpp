@@ -25,8 +25,8 @@ void Ocean::init()
 void Ocean::render()
 {
 	this->render_hkt();
-	this->compute_IFFT();
-	this->render_displacement();
+	//this->compute_IFFT();
+	//this->render_displacement();
 }
 
 GLuint Ocean::get_h0_r_handle()
@@ -113,9 +113,6 @@ void Ocean::render_hkt()
 	this->h0_k_texture.bind(GL_READ_ONLY, 0);
 	this->h0_minus_k_texture.bind(GL_READ_ONLY, 1);
 	this->hkt_texture.bind(GL_WRITE_ONLY, 2);
-	glBindImageTexture(3, this->h0_array_texture_r, 0, GL_TRUE, 0, GL_READ_ONLY, GL_R32F);
-	glBindImageTexture(4, this->h0_array_texture_i, 0, GL_TRUE, 0, GL_READ_ONLY, GL_R32F);
-	glBindImageTexture(5, this->wkt_texture, 0, GL_TRUE, 0, GL_READ_ONLY, GL_R32F);
 	
 	// 3. update uniform
 	float time_ms = float(glutGet(GLUT_ELAPSED_TIME));
@@ -123,7 +120,12 @@ void Ocean::render_hkt()
 	this->hkt_shader.set_uniform_int("FFT_dimension", FFT_DIMENSION);
 	this->hkt_shader.set_uniform_int("ocean_dimension", this->ocean_dimension);
 
-    // 4. dispatch compute shader
+	// 4. bind ssbo
+	this->bind_ssbo_float(this->h0data_r, 6);
+	this->bind_ssbo_float(this->h0data_i, 7);
+	this->bind_ssbo_float(this->wkdata, 8);
+
+    // 5. dispatch compute shader
 	glDispatchCompute(FFT_DIMENSION / 16, FFT_DIMENSION / 16, 1);
 	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 }
@@ -131,7 +133,7 @@ void Ocean::render_hkt()
 void Ocean::render_h0()
 {
 	// 1. bind shader
-	h0_shader.bind_shader();
+	this->h0_shader.bind_shader();
 
 	// 2. bind h0 textures
 	this->h0_k_texture.bind(GL_WRITE_ONLY, 0);
@@ -147,18 +149,15 @@ void Ocean::render_h0()
 		glActiveTexture(texture_ids[i]);
 		glBindTexture(GL_TEXTURE_2D, this->noise_textures[i]);
 	}
-	h0_shader.set_uniform_int  ("ocean_dimension", this->ocean_dimension);
-	h0_shader.set_uniform_float("amplitude",       this->amplitude);
-	h0_shader.set_uniform_float("windspeed",       this->windspeed);
-	h0_shader.set_uniform_vec2 ("wind_dir",        this->wind_dir);
-
-
+	this->h0_shader.set_uniform_int  ("ocean_dimension", this->ocean_dimension);
+	this->h0_shader.set_uniform_float("amplitude",       this->amplitude);
+	this->h0_shader.set_uniform_float("windspeed",       this->windspeed);
+	this->h0_shader.set_uniform_vec2 ("wind_dir",        this->wind_dir);
+	this->h0_shader.set_uniform_int  ("FFT_dimension",   FFT_DIMENSION);
 	// 5. bind pre computed data to shader
 
-	this->bind_ssbo_float(this->h0data_r, 6);
-	this->bind_ssbo_float(this->h0data_i, 7);
-
-	this->twiddle_factor_shader.set_uniform_int("FFT_dimension", FFT_DIMENSION);
+	this->bind_ssbo_float(this->h0data_r, 3);
+	this->bind_ssbo_float(this->h0data_i, 4);
 
 	// 6. dispatch compute shader
 	glDispatchCompute(FFT_DIMENSION/16 , FFT_DIMENSION/16,  1);
@@ -214,6 +213,16 @@ void Ocean::bind_ssbo_float(vector<float>& data, int loc)
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0); // unbind
 }
 
+void Ocean::bind_ssbo_int(vector<int>& data, int loc)
+{
+	GLuint ssbo;
+	glGenBuffers(1, &ssbo);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(int) * data.size(), data.data(), GL_DYNAMIC_COPY);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, loc, ssbo);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0); // unbind
+}
+
 void Ocean::render_twiddle_factor()
 {
 	// 1. bind shader
@@ -229,12 +238,14 @@ void Ocean::render_twiddle_factor()
 		//cout << i << " " << reversed_bit[i] << endl;
 	}
 
-	GLuint ssbo;
-	glGenBuffers(1, &ssbo);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(int) * reversed_bit.size(), reversed_bit.data(), GL_DYNAMIC_COPY);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, ssbo);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0); // unbind
+	//GLuint ssbo;
+	//glGenBuffers(1, &ssbo);
+	//glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
+	//glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(int) * reversed_bit.size(), reversed_bit.data(), GL_DYNAMIC_COPY);
+	//glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, ssbo);
+	//glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0); // unbind
+
+	this->bind_ssbo_int(reversed_bit, 1);
 
 	this->twiddle_factor_shader.set_uniform_int("FFT_dimension", FFT_DIMENSION);
 

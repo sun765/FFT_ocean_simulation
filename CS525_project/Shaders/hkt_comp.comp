@@ -7,13 +7,28 @@ layout (local_size_x = 16, local_size_y = 16) in;
 layout (binding = 0, rgba32f) readonly uniform image2D h0k_image;
 layout (binding = 1, rgba32f) readonly uniform image2D h0minusk_image;
 layout (binding = 2, rgba32f) writeonly uniform image2D hkt_image;
-layout (binding = 3, r32f) uniform readonly image2D h0_r;
-layout (binding = 4, r32f) uniform readonly image2D h0_i;
+//layout (binding = 3, r32f) uniform readonly image2D h0_r_texture;
+//layout (binding = 4, r32f) uniform readonly image2D h0_i_texture;
 layout (binding = 5, r32f) uniform readonly image2D wkt;
 
 uniform float time_ms;
 uniform int FFT_dimension;   // 
 uniform int ocean_dimension; // 
+
+layout(std430, binding = 6) buffer h0data_r
+{
+    float r[];
+}h0_r;
+
+layout(std430, binding = 7) buffer h0data_i
+{
+    float i[];
+}h0_i;
+
+layout(std430, binding = 8) buffer wkdata
+{
+    float data[];
+}wk;
 
 //helper functions and struct for calculation
 struct complex{
@@ -32,9 +47,30 @@ void main(void)
 {
 	
 	ivec2 x = ivec2(gl_GlobalInvocationID.xy);
-	complex hkt = compute_hkt();
-	imageStore(hkt_image, ivec2(gl_GlobalInvocationID.xy), vec4(hkt.r, hkt.i, 0.0, 1.0));
+
+	int index_k      = x.y*FFT_dimension + x.x; 
+	int index_minusk = (FFT_dimension - x.y)*FFT_dimension + (FFT_dimension - x.x); 
+	complex h0_precomputed     = create_complex(h0_r.r[index_k], h0_i.i[index_k]);
+	complex h0_minusk_precomputed = create_complex(h0_r.r[index_minusk], h0_i.i[index_minusk]);
+	h0_minusk_precomputed = conj(h0_minusk_precomputed);
+
+	float w = wk.data[index_k];
+
+	float time_s = time_ms/ 2000.0;
+	float cos_part = cos(w* time_s);
+	float sin_part = sin(w* time_s);
+
+	complex e_k = create_complex(cos_part, sin_part);
+	complex e_mk = create_complex(cos_part, -sin_part);
+
+	complex h = add_complex( mult_complex(h0_precomputed, e_k), mult_complex(h0_minusk_precomputed, e_mk));  
+
+	//complex hkt = compute_hkt();
+	//imageStore(hkt_image, ivec2(gl_GlobalInvocationID.xy), vec4(hkt.r, hkt.i, 0.0, 1.0));
 	//imageStore(hkt_image, x, vec4(imageLoad(h0_r,x).r,imageLoad(h0_i,x).r, 0.0,1.0));
+
+
+	imageStore(hkt_image, ivec2(gl_GlobalInvocationID.xy), vec4(h.r, h.i, 0.0, 1.0));
 }
 
 

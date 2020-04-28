@@ -23,12 +23,12 @@ uniform float  l;               // what is this l?
 uniform float  alignment;
 
 
-layout(std430, binding = 6) buffer h0data_r
+layout(std430, binding = 3) buffer h0data_r
 {
     float r[];
 }h0_r;
 
-layout(std430, binding = 7) buffer h0data_i
+layout(std430, binding = 4) buffer h0data_i
 {
     float i[];
 }h0_i;
