@@ -25,8 +25,9 @@ void Ocean::init()
 void Ocean::render()
 {
 	this->render_hkt();
-	this->compute_IFFT();
-	//this->render_displacement();
+	//this->compute_IFFT();
+	this->compute_IFFT_test();
+	this->render_displacement();
 }
 
 void Ocean::reconfig(float amplitude, float windspeed, glm::vec2& wind_dir)
@@ -287,8 +288,9 @@ void Ocean::render_displacement()
 	this->displacement_shader.bind_shader();
 
 	// 2. bind textures
-	this->ht_texture.bind(GL_READ_ONLY, 0);
+	this->hkt_texture.bind(GL_READ_ONLY, 0);
 	this->displacement_texture.bind(GL_WRITE_ONLY, 1);
+	this->displacement_shader.set_uniform_int("FFT_dimension", FFT_DIMENSION);
 
 	// 3. dispatch compute
 	glDispatchCompute(FFT_DIMENSION / 16, FFT_DIMENSION / 16, 1);
@@ -304,6 +306,7 @@ void Ocean::init_shaders()
 	this->displacement_shader   = ComputeShader("Shaders/displacement_comp.comp");
 	this->twiddle_debug_shader  = ComputeShader("Shaders/twiddle_debug_comp.comp");
 	this->IFFT_shader           = ComputeShader("Shaders/ifft_comp.comp");
+	this->IFFT_test_shader =      ComputeShader("Shaders/ifft_test_comp.comp");
 }
 
 void Ocean::init_textures()
@@ -399,6 +402,7 @@ int  Ocean::compute_IFFT_helper(CompOutputTexture* input_texture, CompOutputText
 	// 1. Create a buffer texture
 	int pingpong = 0;
 	int step = log2(FFT_DIMENSION);
+	
 	input_texture->bind(GL_READ_WRITE, 0);
 	output_texture->bind(GL_READ_WRITE, 1);
 	this->twiddle_factor_texture.bind(GL_READ_ONLY, 2);
@@ -420,7 +424,7 @@ int  Ocean::compute_IFFT_helper(CompOutputTexture* input_texture, CompOutputText
 	for (int i = 0; i < step; i++) {
 		this->IFFT_shader.set_uniform_int("pingpong", pingpong);
 		this->IFFT_shader.set_uniform_int("stage", i);
-		glDispatchCompute(FFT_DIMENSION/16, FFT_DIMENSION / 16, 1);
+		glDispatchCompute(256, FFT_DIMENSION / 16, 1);
 		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 		pingpong = (pingpong + 1) % 2;
 	}
@@ -433,11 +437,44 @@ void Ocean::compute_IFFT()
 	// ifft on y direction 
 	int pingpong = compute_IFFT_helper(&this->hkt_texture, &this->ht_texture);
 	// swap input and output
+	/*
 	if (pingpong == 0) {
 		CompOutputTexture temp = this->hkt_texture;
 		this->hkt_texture = this->ht_texture;
 		this->ht_texture = temp;
 	}
-
+	*/
 	// ifft on x, z direction
+}
+
+void Ocean::compute_IFFT_test()
+{
+
+
+	// horizontal pass
+	//glBindImageTexture(0, spectrum, 0, GL_TRUE, 0, GL_READ_ONLY, GL_RG32F);
+	//glBindImageTexture(1, tempdata, 0, GL_TRUE, 0, GL_WRITE_ONLY, GL_RG32F);
+
+	this->hkt_texture.bind(GL_READ_ONLY, 0);
+	this->ht_texture.bind(GL_WRITE_ONLY, 1);
+
+	this->IFFT_test_shader.bind_shader();
+	this->IFFT_test_shader.set_uniform_int("FFT_dimension", FFT_DIMENSION);
+
+	glDispatchCompute(FFT_DIMENSION, 1, 1);
+
+
+	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+
+	// vertical pass
+
+	this->ht_texture.bind(GL_READ_ONLY, 0);
+	this->hkt_texture.bind(GL_WRITE_ONLY, 1);
+
+		//I think this should be  glDispatchCompute(1, DISP_MAP_SIZE, 1);.  why is not????
+	this->IFFT_test_shader.bind_shader();
+	this->IFFT_test_shader.set_uniform_int("FFT_dimension", FFT_DIMENSION);
+	glDispatchCompute(FFT_DIMENSION, 1, 1);
+
+
 }

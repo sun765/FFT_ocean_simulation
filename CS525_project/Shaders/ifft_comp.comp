@@ -52,11 +52,15 @@ void main (void){
 		res = add_complex( a, mult_complex(wnk, b));
 
 		// write into output buffer
-		if(pingpong ==0)
+		
+		if(pingpong ==0){
 			imageStore(pong_texture, loc, vec4(res.r, res.i, 0.0, 1.0));
+		}
 		else{
 		    imageStore(ping_texture, loc, vec4(res.r, res.i, 0.0, 1.0));
 		}
+		
+
 	}
 	else{
 		ivec2 twiddle_loc = ivec2(stage, loc.y);

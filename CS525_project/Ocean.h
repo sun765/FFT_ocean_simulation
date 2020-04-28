@@ -86,6 +86,7 @@ private:
 	ComputeShader displacement_shader;
 	ComputeShader twiddle_debug_shader;
 	ComputeShader IFFT_shader;
+	ComputeShader IFFT_test_shader;
 
 	void render_hkt();
 	void render_h0();   // this is just for debugging now
@@ -94,10 +95,12 @@ private:
 	void render_displacement();
 	void render_twiddle_debug();
 	void render_precompute_textures();
+
 	
 	// return value is the pingpong stage
 	int compute_IFFT_helper(CompOutputTexture * input_texture, CompOutputTexture* output_texture);
 	void compute_IFFT();
+	void compute_IFFT_test();
 
 	void init_shaders();
 	void init_textures();
