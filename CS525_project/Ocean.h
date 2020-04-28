@@ -51,6 +51,10 @@ private:
 	float patch_size = 20.0f;
 	glm::vec2 wind_dir = glm::vec2(1.0, 1.0);
 
+	vector<float> h0data_r;  // real part of h0k
+	vector<float> h0data_i;   // imagine part of h0k
+	vector<float> wkdata;        // sqrt(k * g);
+
 	// not used
 	CompOutputTexture h0_k_texture;     
 	CompOutputTexture h0_minus_k_texture;
@@ -58,8 +62,7 @@ private:
 	GLuint h0_array_texture_r;
 	GLuint h0_array_texture_i;
 	GLuint wkt_texture;
-	//CompOutputTexture h0_array_texture;
-	//CompOutputTexture wkt_texture;
+
 	CompOutputTexture hkt_texture;
 	CompOutputTexture butterfly_texture;
 	CompOutputTexture twiddle_factor_texture;
@@ -81,8 +84,8 @@ private:
 	ComputeShader IFFT_shader;
 
 	void render_hkt();
-	void render_h0();
-	void compute_h0();
+	void render_h0();   // this is just for debugging now
+	
 	void render_twiddle_factor();
 	void render_displacement();
 	void render_twiddle_debug();
@@ -99,6 +102,11 @@ private:
 	int reverse_bit(int i, int bit_num);
 	// helper function to compute phillis component of spectrum
 	float Phillips(const glm::vec2& k, const glm::vec2& w, float V, float A);
+	// precompute h0 data into vectors
+	void compute_h0();
+	// bind float vector to a ssbo 
+	void bind_ssbo_float(vector<float>& data, int loc);
+
 
 	
 };

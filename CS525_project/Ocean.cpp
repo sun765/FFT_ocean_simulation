@@ -152,84 +152,14 @@ void Ocean::render_h0()
 	h0_shader.set_uniform_float("windspeed",       this->windspeed);
 	h0_shader.set_uniform_vec2 ("wind_dir",        this->wind_dir);
 
-	// 4. bind gaussin random number to ssbo
-	std::mt19937 gen;
-	std::normal_distribution<> gaussian(0.0, 1.0);
-	vector<int> gauss_r, gauss_i;
-	for (int i = 0; i < FFT_DIMENSION; i++) {
-		for (int j = 0; j < FFT_DIMENSION; j++) {
-			gauss_r.push_back(gaussian(gen));
-			gauss_i.push_back(gaussian(gen));
-		}
-	}
-
-	GLuint ssbo_r;
-	glGenBuffers(1, &ssbo_r);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo_r);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(int) * gauss_r.size(), gauss_r.data(), GL_DYNAMIC_COPY);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 6, ssbo_r);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0); // unbind
-
-	GLuint ssbo_i;
-	glGenBuffers(1, &ssbo_i);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo_i);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(int) * gauss_i.size(), gauss_i.data(), GL_DYNAMIC_COPY);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, ssbo_i);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0); // unbind
 
 	// 5. bind pre computed data to shader
-	float L = this->patch_size;
-	int start = FFT_DIMENSION / 2;
-	// NOTE: in order to be symmetric, this must be (N + 1) x (N + 1) in size  why?????
-	//float* h0data_r = new float[(FFT_DIMENSION) * (FFT_DIMENSION)];
-	//float* h0data_i = new float[(FFT_DIMENSION) * (FFT_DIMENSION)];
-	//float* wdata = new float[(FFT_DIMENSION) * (FFT_DIMENSION)];
-	vector<float> h0data_r, h0data_i, wdata;
-	{
-		glm::vec2 w = this->wind_dir;
-		glm::vec2 wn = glm::normalize(w);
-		float V = this->windspeed;
-		float A = this->amplitude_constant;
 
-		for (int m = 0; m < FFT_DIMENSION; ++m) {
-			glm::vec2 k;
-			k.y = (2 * PI * (start - m)) / L;
-
-			for (int n = 0; n < FFT_DIMENSION; ++n) {
-				k.x = (2 * PI * (start - n)) / L;
-
-				int index = m * (FFT_DIMENSION)+n;
-				float sqrt_P_h = 0;
-
-				if (k.x != 0.0f || k.y != 0.0f)
-					sqrt_P_h = sqrtf(Phillips(k, wn, V, A));
-
-				float sqrt_2 = sqrtf(2.0);
-				h0data_r.push_back ( (float)(sqrt_P_h * gaussian(gen) * sqrt_2));
-				h0data_i.push_back ((float)(sqrt_P_h * gaussian(gen) * sqrt_2));
-
-				//std::cout << "a: " << h0data_r[index] << "b: " <<h0data_i[index] <<std::endl;
-				// dispersion relation \omega^2(k) = gk
-				wdata.push_back(sqrtf(G * glm::length(k)));
-			}
-		}
-	}
-
-	GLuint ssbo_h0r;
-	glGenBuffers(1, &ssbo_h0r);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo_h0r);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(float) * h0data_r.size(),h0data_r.data(), GL_DYNAMIC_COPY);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 8, ssbo_h0r);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0); // unbind
-
-	GLuint ssbo_h0i;
-	glGenBuffers(1, &ssbo_h0i);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo_h0i);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(float) * h0data_i.size(), h0data_i.data(), GL_DYNAMIC_COPY);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 9, ssbo_h0i);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0); // unbind
+	this->bind_ssbo_float(this->h0data_r, 6);
+	this->bind_ssbo_float(this->h0data_i, 7);
 
 	this->twiddle_factor_shader.set_uniform_int("FFT_dimension", FFT_DIMENSION);
+
 	// 6. dispatch compute shader
 	glDispatchCompute(FFT_DIMENSION/16 , FFT_DIMENSION/16,  1);
 	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
@@ -239,69 +169,49 @@ void Ocean::render_h0()
 void Ocean::compute_h0()
 {
 
-	glGenTextures(1, &this->h0_array_texture_r);
-	glGenTextures(1, &this->h0_array_texture_i);
-	glGenTextures(1, &this->wkt_texture);
-
-	glBindTexture(GL_TEXTURE_2D, this->h0_array_texture_r);
-	glTexStorage2D(GL_TEXTURE_2D, 1, GL_R32F, FFT_DIMENSION, FFT_DIMENSION);
-
-	glBindTexture(GL_TEXTURE_2D, this->h0_array_texture_i);
-	glTexStorage2D(GL_TEXTURE_2D, 1, GL_R32F, FFT_DIMENSION , FFT_DIMENSION );
-
-	glBindTexture(GL_TEXTURE_2D, this->wkt_texture);
-	glTexStorage2D(GL_TEXTURE_2D, 1, GL_R32F, FFT_DIMENSION , FFT_DIMENSION );
-
-	// n, m should be be in [-N / 2, N / 2]
-	int start = FFT_DIMENSION / 2;
 	std::mt19937 gen;
 	std::normal_distribution<> gaussian(0.0, 1.0);
 	float L = this->patch_size;
+	int start = FFT_DIMENSION / 2;
 
-	// NOTE: in order to be symmetric, this must be (N + 1) x (N + 1) in size  why?????
-	float* h0data_r = new float[(FFT_DIMENSION ) * (FFT_DIMENSION )];
-	float* h0data_i = new float[(FFT_DIMENSION ) * (FFT_DIMENSION) ];
-	float* wdata = new float[(FFT_DIMENSION ) * (FFT_DIMENSION )];
-	{
-		glm::vec2 w = this->wind_dir;
-		glm::vec2 wn = glm::normalize(w);
-		float V = this->windspeed;
-		float A = this->amplitude_constant;
+	glm::vec2 w = this->wind_dir;
+	glm::vec2 wn = glm::normalize(w);
+	float V = this->windspeed;
+	float A = this->amplitude_constant;
 
-		for (int m = 0; m < FFT_DIMENSION; ++m) {
-			glm::vec2 k;
-			k.y = (2 * PI * (start - m)) / L;
+	for (int m = 0; m < FFT_DIMENSION; ++m) {
+		glm::vec2 k;
+		k.y = (2 * PI * (start - m)) / L;
 
-			for (int n = 0; n < FFT_DIMENSION; ++n) {
-				k.x = (2 * PI * (start - n)) / L;
+		for (int n = 0; n < FFT_DIMENSION; ++n) {
+			k.x = (2 * PI * (start - n)) / L;
 
-				int index = m * (FFT_DIMENSION ) + n;
-				float sqrt_P_h = 0;
+			int index = m * (FFT_DIMENSION)+n;
+			float sqrt_P_h = 0;
 
-				if (k.x != 0.0f || k.y != 0.0f)
-					sqrt_P_h = sqrtf(Phillips(k, wn, V, A));
+			if (k.x != 0.0f || k.y != 0.0f)
+				sqrt_P_h = sqrtf(Phillips(k, wn, V, A));
 
-				float sqrt_2 = sqrtf(2.0);
-				h0data_r[index] = (float)(sqrt_P_h * gaussian(gen) * sqrt_2);
-				h0data_i[index] = (float)(sqrt_P_h * gaussian(gen) * sqrt_2);
+			float sqrt_2 = sqrtf(2.0);
+			this->h0data_r.push_back((float)(sqrt_P_h * gaussian(gen) * sqrt_2));
+			this->h0data_i.push_back((float)(sqrt_P_h * gaussian(gen) * sqrt_2));
 
-				//std::cout << "a: " << h0data_r[index] << "b: " <<h0data_i[index] <<std::endl;
-				// dispersion relation \omega^2(k) = gk
-				wdata[index] = sqrtf(G * glm::length(k));
-			}
+			//std::cout << "a: " << h0data_r[index] << "b: " <<h0data_i[index] <<std::endl;
+			// dispersion relation \omega^2(k) = gk
+			this->wkdata.push_back(sqrtf(G * glm::length(k)));
 		}
 	}
 
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, FFT_DIMENSION , FFT_DIMENSION , GL_RED, GL_FLOAT, wdata);
+}
 
-	glBindTexture(GL_TEXTURE_2D, this->h0_array_texture_r);
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, FFT_DIMENSION , FFT_DIMENSION , GL_RG, GL_FLOAT, h0data_r);
-
-	glBindTexture(GL_TEXTURE_2D, this->h0_array_texture_i);
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, FFT_DIMENSION , FFT_DIMENSION , GL_RG, GL_FLOAT, h0data_i);
-	delete[] wdata;
-	delete[] h0data_r;
-	delete[] h0data_i;
+void Ocean::bind_ssbo_float(vector<float>& data, int loc)
+{
+	GLuint ssbo;
+	glGenBuffers(1, &ssbo);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(float) * data.size(), data.data(), GL_DYNAMIC_COPY);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, loc, ssbo);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0); // unbind
 }
 
 void Ocean::render_twiddle_factor()
@@ -437,7 +347,7 @@ void Ocean::render_twiddle_debug()
 
 void Ocean::render_precompute_textures()
 {
-	//this->compute_h0();
+	this->compute_h0();
 	this->render_h0();
 	this->render_twiddle_factor();
 	this->render_twiddle_debug();
