@@ -162,17 +162,10 @@ GLuint terrain::create_terrain_posvbo()
 			terrain_verts.push_back(normal(i, j).x);
 			terrain_verts.push_back(normal(i, j).y);
 			terrain_verts.push_back(normal(i, j).z);
-			//if (i==5 && j ==5)
-			//{
-			//	std::cout << terrainPos(i, j).x << "    "
-			//		<< terrainPos(i, j).y <<"       "<< terrainPos(i, j).z << std::endl;
-
-			//}
 	
 		}
 	}
 
-	std::cout << get_height(5, 5) << std::endl;
 	for (int i = 0; i < NUM_INDEX; i++)
 	{
 		int tail = i % (N * 2 + 1);
@@ -214,7 +207,6 @@ void terrain::draw_terrain(int shading_mode,  glm::mat4 M, glm::mat4 V, glm::mat
 {
 
 		glUseProgram(shader);
-		//std::cout <<"pass"<< pass<<std::endl;
 		glUniform1i(UniformLoc::pass_loc, pass);
 		glUniform4f(UniformLoc::plane_loc, plane.x, plane.y, plane.z, plane.a);
 		glUniformMatrix4fv(UniformLoc::M_loc, 1, false, glm::value_ptr(this->M));
@@ -296,11 +288,6 @@ void terrain::initVao()
 void terrain::initShader()
 {
 	shader = InitShader(vertex_shader.c_str(), geometry_shader.c_str(), fragment_shader.c_str());
-	//layered_shader = InitShader(vertex_shader.c_str(), geometry_shader.c_str(), fragment_shader.c_str());
-	// shader = InitShader(layered_vertex_shader.c_str(), layered_geometry_shader.c_str(), layered_fragment_shader.c_str());
-	// layered_shader = InitShader(vertex_shader.c_str(), layered_geometry_shader.c_str(), fragment_shader.c_str());
-	// layered_shader = InitShader(vertex_shader.c_str(), geometry_shader.c_str(),fragment_shader.c_str());
-	
 }
 
 void terrain::update(float clipDistance,terrainP * tP, quadP * qP, fog * f,directionalLight *dl)

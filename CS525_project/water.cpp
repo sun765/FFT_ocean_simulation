@@ -65,6 +65,7 @@ GLuint water::create_water_vao()
 	GLuint vbo = create_water_posvbo();
 	glEnableVertexAttribArray(AttribLoc::Pos_loc); //Enable the position attribute.
 	glEnableVertexAttribArray(AttribLoc::TexCoord_loc);
+
 	//Tell opengl how to get the attribute values out of the vbo (stride and offset).
 	//In this case, the vertices are at the beginning of the VBO and are tightly packed.
 	glVertexAttribPointer(AttribLoc::Pos_loc, 3, GL_FLOAT, false, 5 * sizeof(float), 0);
@@ -249,8 +250,8 @@ void water::reload_shader()
 void water::init()
 {
 	initVao();
-	//initShader();
 }
+
 float water::get_clipDistance()
 {
 	return clip_distance;
