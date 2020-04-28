@@ -23,6 +23,7 @@ void QuadMesh::render()
 	glBindVertexArray(this->vao);
 	glEnable(GL_PRIMITIVE_RESTART);
 	glPrimitiveRestartIndex(this->get_restart_index());
+	// bug is here
 	glDrawElementsInstanced(GL_TRIANGLE_STRIP, this->get_indices_num(), GL_UNSIGNED_INT, NULL, 1);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
@@ -81,9 +82,9 @@ int QuadMesh::get_indices_num()
 void QuadMesh::init_vertices()
 {
 	int vertices_num = this->N * this->N;
-	for (int x = 0; x < N; x++)
+	for (int x = 0; x < this->N; x++)
 	{
-		for (int z = 0; z < N; z++)
+		for (int z = 0; z < this->N; z++)
 		{
 			this->vertices.push_back(float(x)); // x
 			this->vertices.push_back(0.0);      // y 

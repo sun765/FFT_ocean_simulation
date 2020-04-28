@@ -8,6 +8,7 @@
 
 #include "CompOutputTexture.h"
 #include "ComputeShader.h"
+#include "VertexFragShader.h"
 #include "QuadMesh.h"
 
 #include <random>
@@ -82,6 +83,8 @@ private:
 	ComputeShader displacement_shader;
 	ComputeShader twiddle_debug_shader;
 	ComputeShader IFFT_shader;
+
+	VertexFragShader render_shader;
 
 	QuadMesh ocean_surface;
 

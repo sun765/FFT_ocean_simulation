@@ -278,8 +278,6 @@ void terrain::draw_terrain(int shading_mode,  glm::mat4 M, glm::mat4 V, glm::mat
 	
 
 
-
-
 void terrain::initVao()
 {
 	this->vao = create_terrain_vao();

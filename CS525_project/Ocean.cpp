@@ -13,6 +13,9 @@ void Ocean::render()
 	this->render_hkt();
 	this->compute_IFFT(this->hkt_texture);
 	this->render_displacement();
+
+	this->render_shader.bind_shader();
+	this->ocean_surface.render();
 }
 
 void Ocean::reconfig(float amplitude, float windspeed, float alignment, glm::vec2& wind_dir)
@@ -108,7 +111,7 @@ Ocean::Ocean(int dimension)
 {
 	this->ocean_dimension = dimension;
 	this->init();
-	this->ocean_surface = QuadMesh(dimension);
+	this->ocean_surface = QuadMesh(20);
 }
 
 void Ocean::render_hkt()
@@ -288,6 +291,8 @@ void Ocean::init_shaders()
 	this->displacement_shader   = ComputeShader("Shaders/displacement_comp.comp");
 	this->twiddle_debug_shader  = ComputeShader("Shaders/twiddle_debug_comp.comp");
 	this->IFFT_shader           = ComputeShader("Shaders/ifft_comp.comp");
+
+	this->render_shader         = VertexFragShader("Shaders/ocean_vs.glsl", "Shaders/ocean_fs.glsl");
 }
 
 void Ocean::init_textures()
