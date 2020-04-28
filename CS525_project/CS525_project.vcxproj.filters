@@ -70,6 +70,9 @@
     <Filter Include="Common">
       <UniqueIdentifier>{00d4f01b-673b-43ad-8fa0-f10530c36bab}</UniqueIdentifier>
     </Filter>
+    <Filter Include="rendering classes\quadmesh">
+      <UniqueIdentifier>{0b5da2e4-9b77-4a4b-95a7-f5a6454c329e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="InitShader.cpp">
@@ -155,6 +158,9 @@
     </ClCompile>
     <ClCompile Include="Ocean.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="QuadMesh.cpp">
+      <Filter>rendering classes\quadmesh</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -253,6 +259,9 @@
     </ClInclude>
     <ClInclude Include="Ocean.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="QuadMesh.h">
+      <Filter>rendering classes\quadmesh</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

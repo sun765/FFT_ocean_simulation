@@ -186,6 +186,7 @@
     <ClCompile Include="mesh.cpp" />
     <ClCompile Include="mousePicking.cpp" />
     <ClCompile Include="Ocean.cpp" />
+    <ClCompile Include="QuadMesh.cpp" />
     <ClCompile Include="query.cpp" />
     <ClCompile Include="screenUI.cpp" />
     <ClCompile Include="Shader.cpp" />
@@ -219,6 +220,7 @@
     <ClInclude Include="mesh.h" />
     <ClInclude Include="mousePicking.h" />
     <ClInclude Include="Ocean.h" />
+    <ClInclude Include="QuadMesh.h" />
     <ClInclude Include="query.h" />
     <ClInclude Include="screenUI.h" />
     <ClInclude Include="Shader.h" />

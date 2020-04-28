@@ -437,7 +437,7 @@ void init_render_class()
 	main_sun = new sun(glm::vec2(window_width, window_height), &sP, &main_camera);
 	main_sky = new skybox();
 	test_gui = new screenUI(window_width,window_height, glm::vec2(0.5*window_width, 0.5*window_height), glm::vec2(0.5 * window_width, 0.5 * window_height), tsky_texture_id);
-	ocean = new Ocean();
+	ocean = new Ocean(256);
 
 	amplitude = ocean->get_amplitude();
 	windspeed = ocean->get_windspeed();

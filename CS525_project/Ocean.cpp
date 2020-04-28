@@ -1,19 +1,5 @@
 ﻿#include "Ocean.h"
 
-struct Complex
-{
-	float r;
-	float i;
-	Complex() {
-
-	}
-	Complex(float re, float im) {
-		r = re;
-		i = im;
-	}
-
-};
-
 void Ocean::init()
 {
 	this->init_shaders();
@@ -36,21 +22,6 @@ void Ocean::reconfig(float amplitude, float windspeed, float alignment, glm::vec
 	this->wind_dir = wind_dir;
 	this->alignment = alignment;
 	render_precompute_textures();
-}
-
-GLuint Ocean::get_h0_r_handle()
-{
-	return this->h0_array_texture_r;
-}
-
-GLuint Ocean::get_h0_i_handle()
-{
-	return this->h0_array_texture_i;
-}
-
-GLuint Ocean::get_wkt_handle()
-{
-	return this->wkt_texture;
 }
 
 GLuint Ocean::get_h0_k_handle()
@@ -131,6 +102,13 @@ glm::vec2 Ocean::get_wind_dir()
 Ocean::Ocean()
 {
 	this->init();
+}
+
+Ocean::Ocean(int dimension)
+{
+	this->ocean_dimension = dimension;
+	this->init();
+	this->ocean_surface = QuadMesh(dimension);
 }
 
 void Ocean::render_hkt()

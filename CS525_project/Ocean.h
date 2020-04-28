@@ -8,6 +8,7 @@
 
 #include "CompOutputTexture.h"
 #include "ComputeShader.h"
+#include "QuadMesh.h"
 
 #include <random>
 #include <glm/glm/glm.hpp>
@@ -23,9 +24,6 @@ public:
 	void render();
 	void reconfig(float amplitude, float windspeed, float alignment, glm::vec2& wind_dir);
 
-	GLuint get_h0_r_handle();
-	GLuint get_h0_i_handle();
-	GLuint get_wkt_handle();
 	GLuint get_h0_k_handle();
 	GLuint get_h0_minus_k_handle();
 	GLuint get_hkt_handle();
@@ -46,10 +44,11 @@ public:
 	vector<GLuint> noise_textures;
 
 	Ocean();
+	Ocean(int dimension);
 
 private:
 
-	int ocean_dimension = 256;           
+	int   ocean_dimension = 256;           
 	float amplitude = 0.45f * 1e-3f;  // A
 	float windspeed = 6.5f;     
 	float alignment = 2.0;            // |k * w|^ (alignment);
@@ -63,10 +62,6 @@ private:
 	// not used , just for debugging
 	CompOutputTexture h0_k_texture;     
 	CompOutputTexture h0_minus_k_texture;
-
-	GLuint h0_array_texture_r;
-	GLuint h0_array_texture_i;
-	GLuint wkt_texture;
 
 	CompOutputTexture hkt_texture;
 	CompOutputTexture butterfly_texture;
@@ -88,6 +83,7 @@ private:
 	ComputeShader twiddle_debug_shader;
 	ComputeShader IFFT_shader;
 
+	QuadMesh ocean_surface;
 
 	void render_hkt();
 	void render_h0();   // this is just for debugging now

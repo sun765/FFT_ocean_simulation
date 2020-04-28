@@ -34,7 +34,7 @@ public:
 	GLuint create_terrain_vao();
 	GLuint create_terrain_posvbo();
 	void draw_terrain( int shading_mode, glm::mat4 M, glm::mat4 V, glm::mat4 P, GLuint texture_id[], int pass, glm::vec4 plane, glm::vec3 camPos);// fog
-	//void update(directionalLight *dl);
+
 
 	void init();
 	static void reload_shader();
