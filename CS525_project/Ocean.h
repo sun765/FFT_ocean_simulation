@@ -22,6 +22,8 @@ public:
 	void init();
 	void render();
 
+	GLuint get_h0_r_handle();
+	GLuint get_h0_i_handle();
 	GLuint get_h0_array_handle();
 	GLuint get_wkt_handle();
 	GLuint get_h0_k_handle();
@@ -42,19 +44,22 @@ public:
 
 private:
 
-	int ocean_dimension = 256;
-	float amplitude = 20.0;
-	float windspeed = 26.0;
+	int ocean_dimension = 512;
+	float amplitude = 0.45f * 1e-3f;
+	float windspeed = 6.5f;
 	float amplitude_constant = 0.45f * 1e-3f;
 	float patch_size = 20.0f;
-	glm::vec2 wind_dir = glm::vec2(0.4, 0.6);
+	glm::vec2 wind_dir = glm::vec2(1.0, 1.0);
 
 	// not used
 	CompOutputTexture h0_k_texture;     
 	CompOutputTexture h0_minus_k_texture;
 
-	GLuint h0_array_texture;
+	GLuint h0_array_texture_r;
+	GLuint h0_array_texture_i;
 	GLuint wkt_texture;
+	//CompOutputTexture h0_array_texture;
+	//CompOutputTexture wkt_texture;
 	CompOutputTexture hkt_texture;
 	CompOutputTexture butterfly_texture;
 	CompOutputTexture twiddle_factor_texture;

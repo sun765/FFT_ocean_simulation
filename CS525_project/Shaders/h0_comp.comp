@@ -22,7 +22,15 @@ uniform vec2   wind_dir ;     // wind speed vector
 uniform float  l;               // what is this l?
 uniform float  alignment;
 
+layout(std430, binding = 6) buffer gauss_real
+{
+    int r[];
+}gauss_r;
 
+layout(std430, binding = 7) buffer gauss_image
+{
+    int i[];
+}gauss_i;
 
 const float g = 9.81;
 
@@ -49,7 +57,11 @@ vec4 gaussRND()
 	return rnd;
 }
 
-
+vec2 get_gauss(){
+	ivec2 x = ivec2(gl_GlobalInvocationID.xy);
+	int index = x.y * FFT_dimension  + x.x;
+	return vec2(gauss_r.r[index], gauss_i.i[index]);
+}
 
 
 float P_k (vec2 k){
@@ -92,13 +104,19 @@ void main(void)
 	float h0k = h0_k(k);
 
 	float h0minusk = h0_k(-k);
-	vec4 gauss_random = gaussRND();
-
+	//vec4 gauss_random = gaussRND();
+	vec2 gauss = get_gauss();
+	/*
 	vec2 h0k_r_i      = h0k *gauss_random.xy;
 	vec2 h0minusk_r_i = h0minusk* gauss_random.zw;
+	*/
+	vec2 h0k_r_i      = h0k *gauss.xy;
+	vec2 h0minusk_r_i = h0minusk* gauss.xy;
 
 	imageStore(tilde_h0k,      ivec2(gl_GlobalInvocationID.xy), vec4(h0k_r_i, 0, 1));
+	//imageStore(tilde_h0k,      ivec2(gl_GlobalInvocationID.xy), vec4(vec3(gauss.r), 1));
 	imageStore(tilde_h0minusk, ivec2(gl_GlobalInvocationID.xy), vec4(h0minusk_r_i,0, 1));
+	//imageStore(tilde_h0minusk, ivec2(gl_GlobalInvocationID.xy), vec4(vec3(gauss.g), 1));
 }
 
 

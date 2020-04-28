@@ -7,6 +7,9 @@ layout (local_size_x = 16, local_size_y = 16) in;
 layout (binding = 0, rgba32f) readonly uniform image2D h0k_image;
 layout (binding = 1, rgba32f) readonly uniform image2D h0minusk_image;
 layout (binding = 2, rgba32f) writeonly uniform image2D hkt_image;
+layout (binding = 3, r32f) uniform readonly image2D h0_r;
+layout (binding = 4, r32f) uniform readonly image2D h0_i;
+layout (binding = 5, r32f) uniform readonly image2D wkt;
 
 uniform float time_ms;
 uniform int FFT_dimension;   // 
@@ -28,9 +31,10 @@ complex compute_hkt();
 void main(void)
 {
 	
-	
+	ivec2 x = ivec2(gl_GlobalInvocationID.xy);
 	complex hkt = compute_hkt();
 	imageStore(hkt_image, ivec2(gl_GlobalInvocationID.xy), vec4(hkt.r, hkt.i, 0.0, 1.0));
+	//imageStore(hkt_image, x, vec4(imageLoad(h0_r,x).r,imageLoad(h0_i,x).r, 0.0,1.0));
 }
 
 

@@ -20,10 +20,20 @@ void CompOutputTexture::bind(GLenum access_mode, int bind_loc)
 	glBindImageTexture(bind_loc, this->handle, 0, GL_TRUE, 0, access_mode, this->color_mode);
 }
 
+void CompOutputTexture::bind_data(void* data)
+{
+}
+
+
+
 CompOutputTexture::CompOutputTexture(int width, int height, GLenum color_mode): Texture(width, height)
 {
 	this->color_mode = color_mode;
 	this->init();
+}
+
+CompOutputTexture::CompOutputTexture(int width, int height, GLenum color_mode, void* data_ptr) : Texture(width, height)
+{
 }
 
 CompOutputTexture::CompOutputTexture()

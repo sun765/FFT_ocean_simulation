@@ -10,8 +10,10 @@ public:
 	GLuint get_handle() override;
 
 	void bind(GLenum access_mode, int bind_loc);
+	void bind_data(void* data);
 
 	CompOutputTexture(int width, int height, GLenum color_mode);
+	CompOutputTexture(int width, int height, GLenum color_mode, void * data_ptr);
 	CompOutputTexture();
 
 private:

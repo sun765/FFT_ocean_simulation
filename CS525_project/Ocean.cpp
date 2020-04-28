@@ -29,10 +29,16 @@ void Ocean::render()
 	this->render_displacement();
 }
 
-GLuint Ocean::get_h0_array_handle()
+GLuint Ocean::get_h0_r_handle()
 {
-	return this->h0_array_texture;
+	return this->h0_array_texture_r;
 }
+
+GLuint Ocean::get_h0_i_handle()
+{
+	return this->h0_array_texture_i;
+}
+
 
 GLuint Ocean::get_wkt_handle()
 {
@@ -108,6 +114,9 @@ void Ocean::render_hkt()
 	this->h0_k_texture.bind(GL_READ_ONLY, 0);
 	this->h0_minus_k_texture.bind(GL_READ_ONLY, 1);
 	this->hkt_texture.bind(GL_WRITE_ONLY, 2);
+	glBindImageTexture(3, this->h0_array_texture_r, 0, GL_TRUE, 0, GL_READ_ONLY, GL_R32F);
+	glBindImageTexture(4, this->h0_array_texture_i, 0, GL_TRUE, 0, GL_READ_ONLY, GL_R32F);
+	glBindImageTexture(5, this->wkt_texture, 0, GL_TRUE, 0, GL_READ_ONLY, GL_R32F);
 	
 	// 3. update uniform
 	float time_ms = float(glutGet(GLUT_ELAPSED_TIME));
@@ -144,7 +153,33 @@ void Ocean::render_h0()
 	h0_shader.set_uniform_float("windspeed",       this->windspeed);
 	h0_shader.set_uniform_vec2 ("wind_dir",        this->wind_dir);
 
-	// 4. dispatch compute shader
+	// 4. bind gaussin random number to ssbo
+	std::mt19937 gen;
+	std::normal_distribution<> gaussian(0.0, 1.0);
+	vector<int> gauss_r, gauss_i;
+	for (int i = 0; i < FFT_DIMENSION; i++) {
+		for (int j = 0; j < FFT_DIMENSION; j++) {
+			gauss_r.push_back(gaussian(gen));
+			gauss_i.push_back(gaussian(gen));
+		}
+	}
+
+	GLuint ssbo_r;
+	glGenBuffers(1, &ssbo_r);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo_r);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(int) * gauss_r.size(), gauss_r.data(), GL_DYNAMIC_COPY);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 6, ssbo_r);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0); // unbind
+
+	GLuint ssbo_i;
+	glGenBuffers(1, &ssbo_i);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo_i);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(int) * gauss_i.size(), gauss_i.data(), GL_DYNAMIC_COPY);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, ssbo_i);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0); // unbind
+
+	this->twiddle_factor_shader.set_uniform_int("FFT_dimension", FFT_DIMENSION);
+	// 5. dispatch compute shader
 	glDispatchCompute(FFT_DIMENSION/16 , FFT_DIMENSION/16,  1);
 	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 
@@ -152,14 +187,19 @@ void Ocean::render_h0()
 
 void Ocean::compute_h0()
 {
-	glGenTextures(1, &this->h0_array_texture);
+
+	glGenTextures(1, &this->h0_array_texture_r);
+	glGenTextures(1, &this->h0_array_texture_i);
 	glGenTextures(1, &this->wkt_texture);
 
-	glBindTexture(GL_TEXTURE_2D, this->h0_array_texture);
-	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RG32F, FFT_DIMENSION + 1, FFT_DIMENSION + 1);
+	glBindTexture(GL_TEXTURE_2D, this->h0_array_texture_r);
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_R32F, FFT_DIMENSION, FFT_DIMENSION);
+
+	glBindTexture(GL_TEXTURE_2D, this->h0_array_texture_i);
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_R32F, FFT_DIMENSION , FFT_DIMENSION );
 
 	glBindTexture(GL_TEXTURE_2D, this->wkt_texture);
-	glTexStorage2D(GL_TEXTURE_2D, 1, GL_R32F, FFT_DIMENSION + 1, FFT_DIMENSION + 1);
+	glTexStorage2D(GL_TEXTURE_2D, 1, GL_R32F, FFT_DIMENSION , FFT_DIMENSION );
 
 	// n, m should be be in [-N / 2, N / 2]
 	int start = FFT_DIMENSION / 2;
@@ -168,45 +208,49 @@ void Ocean::compute_h0()
 	float L = this->patch_size;
 
 	// NOTE: in order to be symmetric, this must be (N + 1) x (N + 1) in size  why?????
-	Complex* h0data = new Complex[(FFT_DIMENSION + 1) * (FFT_DIMENSION + 1)];
-	float* wdata = new float[(FFT_DIMENSION + 1) * (FFT_DIMENSION + 1)];
+	float* h0data_r = new float[(FFT_DIMENSION ) * (FFT_DIMENSION )];
+	float* h0data_i = new float[(FFT_DIMENSION ) * (FFT_DIMENSION) ];
+	float* wdata = new float[(FFT_DIMENSION ) * (FFT_DIMENSION )];
 	{
 		glm::vec2 w = this->wind_dir;
 		glm::vec2 wn = glm::normalize(w);
 		float V = this->windspeed;
 		float A = this->amplitude_constant;
 
-		for (int m = 0; m <= FFT_DIMENSION; ++m) {
+		for (int m = 0; m < FFT_DIMENSION; ++m) {
 			glm::vec2 k;
 			k.y = (2 * PI * (start - m)) / L;
 
-			for (int n = 0; n <= FFT_DIMENSION; ++n) {
+			for (int n = 0; n < FFT_DIMENSION; ++n) {
 				k.x = (2 * PI * (start - n)) / L;
 
-				int index = m * (FFT_DIMENSION + 1) + n;
+				int index = m * (FFT_DIMENSION ) + n;
 				float sqrt_P_h = 0;
 
 				if (k.x != 0.0f || k.y != 0.0f)
 					sqrt_P_h = sqrtf(Phillips(k, wn, V, A));
 
 				float sqrt_2 = sqrtf(2.0);
-				h0data[index].r = (float)(sqrt_P_h * gaussian(gen) * sqrt_2);
-				h0data[index].i = (float)(sqrt_P_h * gaussian(gen) * sqrt_2);
+				h0data_r[index] = (float)(sqrt_P_h * gaussian(gen) * sqrt_2);
+				h0data_i[index] = (float)(sqrt_P_h * gaussian(gen) * sqrt_2);
 
-				//std::cout << "a: " << h0data[index].a << "b: " <<h0data[index].b <<std::endl;
+				//std::cout << "a: " << h0data_r[index] << "b: " <<h0data_i[index] <<std::endl;
 				// dispersion relation \omega^2(k) = gk
 				wdata[index] = sqrtf(G * glm::length(k));
 			}
 		}
 	}
 
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, FFT_DIMENSION + 1, FFT_DIMENSION + 1, GL_RED, GL_FLOAT, wdata);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, FFT_DIMENSION , FFT_DIMENSION , GL_RED, GL_FLOAT, wdata);
 
-	glBindTexture(GL_TEXTURE_2D, this->h0_array_texture);
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, FFT_DIMENSION + 1, FFT_DIMENSION + 1, GL_RG, GL_FLOAT, h0data);
+	glBindTexture(GL_TEXTURE_2D, this->h0_array_texture_r);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, FFT_DIMENSION , FFT_DIMENSION , GL_RG, GL_FLOAT, h0data_r);
 
+	glBindTexture(GL_TEXTURE_2D, this->h0_array_texture_i);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, FFT_DIMENSION , FFT_DIMENSION , GL_RG, GL_FLOAT, h0data_i);
 	delete[] wdata;
-	delete[] h0data;
+	delete[] h0data_r;
+	delete[] h0data_i;
 }
 
 void Ocean::render_twiddle_factor()
@@ -292,7 +336,7 @@ void Ocean::init_textures()
 
 }
 
-int Ocean::reverse_bit(int i, int bit_num)
+int  Ocean::reverse_bit(int i, int bit_num)
 {
 	int ans = 0;
 
@@ -342,7 +386,7 @@ void Ocean::render_twiddle_debug()
 
 void Ocean::render_precompute_textures()
 {
-	this->compute_h0();
+	//this->compute_h0();
 	this->render_h0();
 	this->render_twiddle_factor();
 	this->render_twiddle_debug();

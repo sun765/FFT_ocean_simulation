@@ -272,7 +272,8 @@ void render_scene(int pass, glm::vec4 plane, camera camera)
 			   }
 			   else
 			   {
-				   tsky->drawUI(glm::vec2(window_width, window_height), glm::vec2(0.5*window_width, 0.5*window_height), tsky_texture_id, 1.0, 1.0);
+				   //test->drawUI(glm::vec2(window_width, window_height), glm::vec2(0.5*window_width, 0.5*window_height), tsky_texture_id, 1.0, 1.0);
+				   test_gui->drawUI(glm::vec2(window_width, window_height), glm::vec2(0.5 * window_width, 0.5 * window_height), tsky_texture_id, 1.0, 1.0);
 			   }
 
 			   main_sun->draw_sun(P);
@@ -285,7 +286,7 @@ void render_scene(int pass, glm::vec4 plane, camera camera)
 			   {
 				   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			   }
-			   main_water->draw_water(shading_mode, test, M_water, V, P, waterTexture_id, pass, float(time_ms), cameraPos);
+			   main_water->draw_water(shading_mode, test_gui, M_water, V, P, waterTexture_id, pass, float(time_ms), cameraPos);
 			   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 			   ocean->render();
@@ -327,29 +328,23 @@ void draw_gui()
 	ImGui_ImplGlut_NewFrame();
 	myGUIStyle();
 	ImGui::Begin("Ocean Parameters", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
-	ImGui::Image((void*)ocean->get_h0_array_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
+	ImGui::Image((void*)ocean->get_h0_r_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 	ImGui::SameLine();
-	ImGui::Image((void*)ocean->get_wkt_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
-	/*
+	ImGui::Image((void*)ocean->get_h0_i_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 	ImGui::Image((void*)ocean->get_h0_k_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 	ImGui::SameLine();
 	ImGui::Image((void*)ocean->get_h0_minus_k_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
-	*/
-	ImGui::Image((void*)ocean->get_hkt_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
-	ImGui::SameLine();
-	ImGui::Image((void*)ocean->get_twiddle_handle(), ImVec2(8.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
-	ImGui::SameLine();
-	ImGui::Image((void*)ocean->get_twiddle_debug_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
-	ImGui::Image((void*)ocean->get_hkt_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
-	ImGui::SameLine();
-	ImGui::Image((void*)ocean->get_ht_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
-
-	ImGui::Image((void*)ocean->get_displacement_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 	/*
 	ImGui::Image((void*)ocean->get_debug_input_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 	ImGui::SameLine();
 	ImGui::Image((void*)ocean->get_debug_output_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 	*/
+
+	ImGui::Image((void*)ocean->get_hkt_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
+	ImGui::SameLine();
+	ImGui::Image((void*)ocean->get_ht_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
+	ImGui::SameLine();
+	ImGui::Image((void*)ocean->get_displacement_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 	if (ImGui::CollapsingHeader("debug")) {
 		ImGui::Image((void*)comp_texture->get_handle(), ImVec2(128.0f, 128.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 	}
@@ -431,7 +426,7 @@ void init_render_class()
 	main_water = new water(clip_distance, &p, &f, &wP, &qP, depth_camera, &tP);
 	main_sun = new sun(glm::vec2(window_width, window_height), &sP, &main_camera);
 	main_sky = new skybox();
-	tsky = new screenUI(window_width, window_height, glm::vec2(window_width, window_height), glm::vec2(0.5 * window_width, 0.5 * window_height), tsky_texture_id);
+	test_gui = new screenUI(window_width,window_height, glm::vec2(0.5*window_width, 0.5*window_height), glm::vec2(0.5 * window_width, 0.5 * window_height), tsky_texture_id);
 	ocean = new Ocean();
 
 

@@ -24,6 +24,7 @@
 #include "VideoMux.h"
 #include "DebugCallback.h"
 #include "VAO.h"
+#include "screenUI.h"
 #include "camera.h"
 #include "location.h"
 #include "water.h"
@@ -41,7 +42,7 @@
 
 // bool
 bool creating_mode  = false;
-bool test           = false;
+//bool test_gui         = false;
 bool skybox_on      = false;
 bool renderScene    = true;
 bool is_recording   = false;
@@ -71,7 +72,7 @@ float aspect_ratio   = 1;
 water* main_water;
 skybox* main_sky;
 sun* main_sun;
-screenUI* tsky;
+screenUI* test_gui;
 camera main_camera;
 camera reflect_camera;
 camera depth_camera;
