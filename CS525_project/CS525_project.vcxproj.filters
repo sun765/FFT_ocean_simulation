@@ -162,6 +162,9 @@
     <ClCompile Include="QuadMesh.cpp">
       <Filter>rendering classes\quadmesh</Filter>
     </ClCompile>
+    <ClCompile Include="VertexFragShader.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="InitShader.h">
@@ -262,6 +265,9 @@
     </ClInclude>
     <ClInclude Include="QuadMesh.h">
       <Filter>rendering classes\quadmesh</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexFragShader.h">
+      <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
