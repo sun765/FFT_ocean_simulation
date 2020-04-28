@@ -49,16 +49,15 @@ public:
 
 private:
 
-	int ocean_dimension = 256;
-	float amplitude = 0.45f * 1e-3f;
-	float windspeed = 6.5f;
-	float alignment = 2.0;    // |k * w|^ (alignment);
-	//float amplitude_constant = 0.45f * 1e-3f;
+	int ocean_dimension = 256;           
+	float amplitude = 0.45f * 1e-3f;  // A
+	float windspeed = 6.5f;     
+	float alignment = 2.0;            // |k * w|^ (alignment);
 	float patch_size = 20.0f;
 	glm::vec2 wind_dir = glm::vec2(1.0, 1.0);
 
-	vector<float> h0data_r;  // real part of h0k
-	vector<float> h0data_i;   // imagine part of h0k
+	vector<float> h0data_r;      // real part of h0k
+	vector<float> h0data_i;      // imagine part of h0k
 	vector<float> wkdata;        // sqrt(k * g);
 
 	// not used , just for debugging
@@ -88,7 +87,7 @@ private:
 	ComputeShader displacement_shader;
 	ComputeShader twiddle_debug_shader;
 	ComputeShader IFFT_shader;
-	ComputeShader IFFT_test_shader;
+
 
 	void render_hkt();
 	void render_h0();   // this is just for debugging now

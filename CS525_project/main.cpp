@@ -331,10 +331,10 @@ void draw_gui()
 
 	if (ImGui::CollapsingHeader("parameters"))
 	{
-		ImGui::SliderFloat("amplitude", &amplitude, 0.0f, +1.0f);
-		ImGui::SliderFloat("windspeed", &windspeed, 0.0f, +20.0f);
+		ImGui::SliderFloat ("amplitude", &amplitude, 0.0f, +1.0f);
+		ImGui::SliderFloat ("windspeed", &windspeed, 0.0f, +20.0f);
 		ImGui::SliderFloat2("wind direction", glm::value_ptr(wind_dir), -1.0f, +1.0f);
-		ImGui::SliderFloat("alignment", &alignment, 0.0f, 10.0f);
+		ImGui::SliderFloat ("alignment", &alignment, 0.0f, 10.0f);
 
 		if (ImGui::Button("reconfig"))
 		{

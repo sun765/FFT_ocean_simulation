@@ -1,17 +1,24 @@
-#version 430 core
 
-// how to improve this hardcode way?
-layout (local_size_x = 16, local_size_y = 16) in;
+#version 430
 
-// by default it's read and write?
-layout (binding = 0, rgba32f) uniform image2D ping_texture;
-layout (binding = 1, rgba32f) uniform image2D pong_texture;
-layout (binding = 2, rgba32f) uniform readonly image2D twiddle_texture;
+#define PI		3.1415926535897932
+#define FFT_DIMENSION 256
 
-uniform int pingpong;   // 0 ping to pong, 1 pong to ping
-uniform int horizontal; // 1 true, 0 false
-uniform int vertical;   // 1 true, 0 false
-uniform int stage;      // 0 to logN-1 , not 1 to  logN
+layout(rgba32f, binding = 0) uniform readonly image2D readbuff;
+layout(rgba32f, binding = 1) uniform writeonly image2D writebuff;
+
+vec2 ComplexMul(vec2 z, vec2 w) {
+	return vec2(z.x * w.x - z.y * w.y, z.y * w.x + z.x * w.y);
+}
+
+// each work group use a shared 2-D array as a pingpong buffer
+shared vec2 pingpong_buffer[2][FFT_DIMENSION];
+
+
+layout (local_size_x = FFT_DIMENSION) in;
+
+int bit_reverse(int x, int step);
+int get_w_index(int x, int stage);
 
 //helper functions and struct for calculation
 struct complex{
@@ -21,77 +28,76 @@ struct complex{
 
 complex add_complex (complex c1, complex c2);
 complex mult_complex(complex c1, complex c2);
-complex conj(complex c1);
 complex create_complex(float r, float i);
 
-void main (void){
-	ivec2 loc = ivec2(gl_GlobalInvocationID.xy);
+void main()
+{
+	// local group size?
+	const float N  = float(FFT_DIMENSION);
+	const int step = int(log2(FFT_DIMENSION));
 
-	// res = a + wnk*b;
-    complex a, b, wnk, res;
+	int z = int(gl_WorkGroupID.x);
+	int x = int(gl_LocalInvocationID.x);
 
-	if(horizontal ==1){
-		ivec2 twiddle_loc = ivec2(stage,loc.x);
-		// rg: wnk, b: a  a: b
-		vec4 meta_data = imageLoad(twiddle_texture, twiddle_loc);	
+	// STEP 1: load row/column and reorder them by bit reverse index
+	int bit_reversed_index = bit_reverse(x, step);
+	pingpong_buffer[0][bit_reversed_index ] = imageLoad(readbuff, ivec2(z, x)).rg;
 
-		if(pingpong ==0){
-			a = create_complex(imageLoad(ping_texture, ivec2(meta_data.b,loc.y)).r,
-			                   imageLoad(ping_texture, ivec2(meta_data.b,loc.y)).g);
-			b = create_complex(imageLoad(ping_texture, ivec2(meta_data.a,loc.y)).r,
-			                   imageLoad(ping_texture, ivec2(meta_data.a,loc.y)).g);
-		}
-		else{
-			a = create_complex(imageLoad(pong_texture, ivec2(meta_data.b,loc.y)).r,
-			                   imageLoad(pong_texture, ivec2(meta_data.b,loc.y)).g);
-			b = create_complex(imageLoad(pong_texture, ivec2(meta_data.a,loc.y)).r,
-			                   imageLoad(pong_texture, ivec2(meta_data.a,loc.y)).g);
-		}
+	barrier();
 
-		wnk = create_complex(meta_data.r, meta_data.g);
-		res = add_complex( a, mult_complex(wnk, b));
+	// STEP 2: perform butterfly passes
+	int pingpong = 0;
 
-		// write into output buffer
-		
-		if(pingpong ==0){
-			imageStore(pong_texture, loc, vec4(res.r, res.i, 0.0, 1.0));
-		}
-		else{
-		    imageStore(ping_texture, loc, vec4(res.r, res.i, 0.0, 1.0));
-		}
-		
+	// compute  a + w_n_k * b;
+	for (int stage = 1; stage <= step; ++stage) {
+		int butterfly_groupsize = int(pow(2, stage));				// butterfly group height
+		int butterfly_wingsize = butterfly_groupsize /2;			// butterfly group half height
 
+		int k = get_w_index(x, stage);
+		int i = (x & ~(butterfly_groupsize  - 1));		// butterfly group starting offset
+		int j = (x &  (butterfly_wingsize   - 1));		// butterfly index in group
+
+		// twiddle factor W_N^k
+		float theta = (2 * PI * float(k)) / N;
+
+		// Euler formula
+		vec2 w_n_k = vec2(cos(theta), sin(theta));
+
+		vec2 b = pingpong_buffer[pingpong][i + j + butterfly_wingsize];
+		vec2 a = pingpong_buffer[pingpong][i + j];
+
+		complex b_complex   = create_complex(b.r, b.g);
+		complex a_complex   = create_complex(a.r, a.g);
+		complex wnk_complex = create_complex(w_n_k.r, w_n_k.g);
+
+		pingpong = 1 - pingpong;
+
+		// write from ping to pong  or pong to ping
+		complex ht = add_complex(a_complex, mult_complex(b_complex, wnk_complex));
+		pingpong_buffer[pingpong][x] = vec2(ht.r, ht.i);
+
+		barrier();
 	}
-	else{
-		ivec2 twiddle_loc = ivec2(stage, loc.y);
-		// rg: wnk, b: a, a: b;
-		vec4 meta_data = imageLoad(twiddle_texture, twiddle_loc);
-		if(pingpong ==0){
-			a = create_complex( imageLoad(ping_texture, ivec2(loc.x, meta_data.b)).r,
-								imageLoad(ping_texture, ivec2(loc.x, meta_data.b)).g);
-			b = create_complex( imageLoad(ping_texture, ivec2(loc.x, meta_data.a)).r, 
-								imageLoad(ping_texture, ivec2(loc.x, meta_data.a)).g);
-			
-		}
-		else{
-			a = create_complex( imageLoad(pong_texture, ivec2(loc.x, meta_data.b)).r,
-								imageLoad(pong_texture, ivec2(loc.x, meta_data.b)).g);
-			b = create_complex( imageLoad(pong_texture, ivec2(loc.x, meta_data.a)).r, 
-								imageLoad(pong_texture, ivec2(loc.x, meta_data.a)).g);
-		}
 
-		wnk = create_complex(meta_data.r, meta_data.g);
-		res = add_complex(a, mult_complex(wnk, b));
+	// STEP 3: write output
+	vec2 result = pingpong_buffer[pingpong][x];
 
-		if(pingpong ==0)
-			imageStore(pong_texture, loc, vec4(res.r, res.i, 0.0, 1.0));
-		else{
-			imageStore(ping_texture, loc, vec4(res.r, res.i, 0.0, 1.0));
-		}
-	}
-	
+	// reverse the order
+	imageStore(writebuff, ivec2(x, z), vec4(result, 0.0, 1.0));
+
 }
 
+
+int bit_reverse(int x, int step){
+	int res = (bitfieldReverse(x) >> (32 - step))&(FFT_DIMENSION - 1);
+	return res;
+}
+
+
+int get_w_index(int x, int stage){
+	int k = int(x* FFT_DIMENSION /(pow(2, stage)));
+	return k;
+}
 
 complex add_complex (complex c1, complex c2){
 	complex res;
@@ -114,6 +120,3 @@ complex create_complex(float r, float i){
 	return res;
 }
 
-complex conj(complex c){
-	return create_complex(c.r, -c.i);
-}

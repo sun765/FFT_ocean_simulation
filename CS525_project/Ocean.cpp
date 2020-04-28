@@ -310,7 +310,6 @@ void Ocean::init_shaders()
 	this->displacement_shader   = ComputeShader("Shaders/displacement_comp.comp");
 	this->twiddle_debug_shader  = ComputeShader("Shaders/twiddle_debug_comp.comp");
 	this->IFFT_shader           = ComputeShader("Shaders/ifft_comp.comp");
-	this->IFFT_test_shader =      ComputeShader("Shaders/ifft_test_comp.comp");
 }
 
 void Ocean::init_textures()
@@ -462,8 +461,8 @@ void Ocean::compute_IFFT(CompOutputTexture& input_texture)
 	input_texture.bind(GL_READ_ONLY, 0);
 	this->IFFT_buffer_texture.bind(GL_WRITE_ONLY, 1);
 
-	this->IFFT_test_shader.bind_shader();
-	this->IFFT_test_shader.set_uniform_int("FFT_dimension", FFT_DIMENSION);
+	this->IFFT_shader.bind_shader();
+	this->IFFT_shader.set_uniform_int("FFT_dimension", FFT_DIMENSION);
 
 	glDispatchCompute(FFT_DIMENSION, 1, 1);
 
@@ -476,8 +475,8 @@ void Ocean::compute_IFFT(CompOutputTexture& input_texture)
 	input_texture.bind(GL_WRITE_ONLY, 1);
 
 		//I think this should be  glDispatchCompute(1, DISP_MAP_SIZE, 1);.  why is not????
-	this->IFFT_test_shader.bind_shader();
-	this->IFFT_test_shader.set_uniform_int("FFT_dimension", FFT_DIMENSION);
+	this->IFFT_shader.bind_shader();
+	this->IFFT_shader.set_uniform_int("FFT_dimension", FFT_DIMENSION);
 	glDispatchCompute(FFT_DIMENSION, 1, 1);
 
 
