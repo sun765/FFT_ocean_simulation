@@ -334,21 +334,18 @@ void draw_gui()
 		ImGui::SliderFloat("amplitude", &amplitude, 0.0f, +1.0f);
 		ImGui::SliderFloat("windspeed", &windspeed, 0.0f, +20.0f);
 		ImGui::SliderFloat2("wind direction", glm::value_ptr(wind_dir), -1.0f, +1.0f);
+		ImGui::SliderFloat("alignment", &alignment, 0.0f, 10.0f);
 
 		if (ImGui::Button("reconfig"))
 		{
-			ocean->reconfig(amplitude, windspeed, wind_dir);
+			ocean->reconfig(amplitude, windspeed, alignment, wind_dir);
 		}
 	}
 
 	ImGui::Image((void*)ocean->get_h0_k_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 	ImGui::SameLine();
 	ImGui::Image((void*)ocean->get_h0_minus_k_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
-	/*
-	ImGui::Image((void*)ocean->get_debug_input_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
-	ImGui::SameLine();
-	ImGui::Image((void*)ocean->get_debug_output_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
-	*/
+
 
 	ImGui::Image((void*)ocean->get_hkt_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 	ImGui::SameLine();
@@ -419,11 +416,9 @@ void draw_gui()
 		ImGui::Checkbox("skybox", &skybox_on);
 	}
 
-
 	ImGui::End();
 
 	ImGui::Render();
-
 
 }
 
@@ -443,8 +438,8 @@ void init_render_class()
 
 	amplitude = ocean->get_amplitude();
 	windspeed = ocean->get_windspeed();
-	wind_dir = ocean->get_wind_dir();
-
+	wind_dir  = ocean->get_wind_dir();
+	alignment = ocean->get_alignment();
 
 }
 

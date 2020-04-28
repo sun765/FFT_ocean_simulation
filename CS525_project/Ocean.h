@@ -21,7 +21,7 @@ public:
 
 	void init();
 	void render();
-	void reconfig(float amplitude, float windspeed, glm::vec2& wind_dir);
+	void reconfig(float amplitude, float windspeed, float alignment, glm::vec2& wind_dir);
 
 	GLuint get_h0_r_handle();
 	GLuint get_h0_i_handle();
@@ -40,6 +40,7 @@ public:
 
 	float get_amplitude();
 	float get_windspeed();
+	float get_alignment();
 	glm::vec2 get_wind_dir();
 
 	vector<GLuint> noise_textures;
@@ -51,7 +52,8 @@ private:
 	int ocean_dimension = 256;
 	float amplitude = 0.45f * 1e-3f;
 	float windspeed = 6.5f;
-	float amplitude_constant = 0.45f * 1e-3f;
+	float alignment = 2.0;    // |k * w|^ (alignment);
+	//float amplitude_constant = 0.45f * 1e-3f;
 	float patch_size = 20.0f;
 	glm::vec2 wind_dir = glm::vec2(1.0, 1.0);
 
@@ -98,9 +100,9 @@ private:
 
 	
 	// return value is the pingpong stage
-	int compute_IFFT_helper(CompOutputTexture * input_texture, CompOutputTexture* output_texture);
+	int  compute_IFFT_helper(CompOutputTexture * input_texture, CompOutputTexture* output_texture);
 	void compute_IFFT();
-	void compute_IFFT_test();
+	void compute_IFFT(CompOutputTexture& input_texture);
 
 	void init_shaders();
 	void init_textures();

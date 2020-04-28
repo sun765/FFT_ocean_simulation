@@ -72,6 +72,7 @@ float aspect_ratio   = 1;
 float amplitude;
 float windspeed;
 glm::vec2 wind_dir;
+float alignment;
 
 // objects
 water* main_water;

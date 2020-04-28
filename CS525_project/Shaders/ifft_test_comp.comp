@@ -13,6 +13,7 @@ vec2 ComplexMul(vec2 z, vec2 w) {
 	return vec2(z.x * w.x - z.y * w.y, z.y * w.x + z.x * w.y);
 }
 
+// each work group use a shared 2-D array as a pingpong buffer
 shared vec2 pingpong[2][FFT_DIMENSION];
 
 //uniform int FFT_dimension;
@@ -33,8 +34,10 @@ void main()
 	barrier();
 
 	// STEP 2: perform butterfly passes
+	// pingpong 
 	int src = 0;
 
+	// s is stage
 	for (int s = 1; s <= STEP; ++s) {
 		int m = 1 << s;				// butterfly group height
 		int mh = m >> 1;			// butterfly group half height
@@ -58,6 +61,8 @@ void main()
 
 	// STEP 3: write output
 	vec2 result = pingpong[src][x];
+
+	// reverse the order
 	imageStore(writebuff, ivec2(x, z), vec4(result, 0.0, 1.0));
 
 	// NOTE: do sign correction later

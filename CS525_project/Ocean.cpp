@@ -25,17 +25,16 @@ void Ocean::init()
 void Ocean::render()
 {
 	this->render_hkt();
-	//this->compute_IFFT();
-	this->compute_IFFT_test();
+	this->compute_IFFT(this->hkt_texture);
 	this->render_displacement();
 }
 
-void Ocean::reconfig(float amplitude, float windspeed, glm::vec2& wind_dir)
+void Ocean::reconfig(float amplitude, float windspeed, float alignment, glm::vec2& wind_dir)
 {
 	this->amplitude = amplitude;
 	this->windspeed = windspeed;
 	this->wind_dir = wind_dir;
-
+	this->alignment = alignment;
 	render_precompute_textures();
 }
 
@@ -117,6 +116,11 @@ float Ocean::get_amplitude()
 float Ocean::get_windspeed()
 {
 	return this->windspeed;
+}
+
+float Ocean::get_alignment()
+{
+	return this->alignment;
 }
 
 glm::vec2 Ocean::get_wind_dir()
@@ -361,7 +365,7 @@ float Ocean::Phillips(const glm::vec2& k, const glm::vec2& w, float V, float A)
 	float k2 = glm::dot(k,k);			// squared length of wave vector k
 
 	// k^6 because k must be normalized
-	float P_h = A * (expf(-1.0f / (k2 * L * L))) / (k2 * k2 * k2) * (kdotw * kdotw);
+	float P_h = A * (expf(-1.0f / (k2 * L * L))) / (k2 * k2 * k2) * pow(kdotw, this->alignment);
 
 	if (kdotw < 0.0f) {
 		// wave is moving against wind direction w
@@ -447,7 +451,7 @@ void Ocean::compute_IFFT()
 	// ifft on x, z direction
 }
 
-void Ocean::compute_IFFT_test()
+void Ocean::compute_IFFT(CompOutputTexture& input_texture)
 {
 
 
@@ -455,8 +459,8 @@ void Ocean::compute_IFFT_test()
 	//glBindImageTexture(0, spectrum, 0, GL_TRUE, 0, GL_READ_ONLY, GL_RG32F);
 	//glBindImageTexture(1, tempdata, 0, GL_TRUE, 0, GL_WRITE_ONLY, GL_RG32F);
 
-	this->hkt_texture.bind(GL_READ_ONLY, 0);
-	this->ht_texture.bind(GL_WRITE_ONLY, 1);
+	input_texture.bind(GL_READ_ONLY, 0);
+	this->IFFT_buffer_texture.bind(GL_WRITE_ONLY, 1);
 
 	this->IFFT_test_shader.bind_shader();
 	this->IFFT_test_shader.set_uniform_int("FFT_dimension", FFT_DIMENSION);
@@ -468,8 +472,8 @@ void Ocean::compute_IFFT_test()
 
 	// vertical pass
 
-	this->ht_texture.bind(GL_READ_ONLY, 0);
-	this->hkt_texture.bind(GL_WRITE_ONLY, 1);
+	this->IFFT_buffer_texture.bind(GL_READ_ONLY, 0);
+	input_texture.bind(GL_WRITE_ONLY, 1);
 
 		//I think this should be  glDispatchCompute(1, DISP_MAP_SIZE, 1);.  why is not????
 	this->IFFT_test_shader.bind_shader();
