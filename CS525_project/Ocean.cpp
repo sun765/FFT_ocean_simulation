@@ -39,7 +39,6 @@ GLuint Ocean::get_h0_i_handle()
 	return this->h0_array_texture_i;
 }
 
-
 GLuint Ocean::get_wkt_handle()
 {
 	return this->wkt_texture;
@@ -178,8 +177,60 @@ void Ocean::render_h0()
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, ssbo_i);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0); // unbind
 
+	// 5. bind pre computed data to shader
+	float L = this->patch_size;
+	int start = FFT_DIMENSION / 2;
+	// NOTE: in order to be symmetric, this must be (N + 1) x (N + 1) in size  why?????
+	//float* h0data_r = new float[(FFT_DIMENSION) * (FFT_DIMENSION)];
+	//float* h0data_i = new float[(FFT_DIMENSION) * (FFT_DIMENSION)];
+	//float* wdata = new float[(FFT_DIMENSION) * (FFT_DIMENSION)];
+	vector<float> h0data_r, h0data_i, wdata;
+	{
+		glm::vec2 w = this->wind_dir;
+		glm::vec2 wn = glm::normalize(w);
+		float V = this->windspeed;
+		float A = this->amplitude_constant;
+
+		for (int m = 0; m < FFT_DIMENSION; ++m) {
+			glm::vec2 k;
+			k.y = (2 * PI * (start - m)) / L;
+
+			for (int n = 0; n < FFT_DIMENSION; ++n) {
+				k.x = (2 * PI * (start - n)) / L;
+
+				int index = m * (FFT_DIMENSION)+n;
+				float sqrt_P_h = 0;
+
+				if (k.x != 0.0f || k.y != 0.0f)
+					sqrt_P_h = sqrtf(Phillips(k, wn, V, A));
+
+				float sqrt_2 = sqrtf(2.0);
+				h0data_r.push_back ( (float)(sqrt_P_h * gaussian(gen) * sqrt_2));
+				h0data_i.push_back ((float)(sqrt_P_h * gaussian(gen) * sqrt_2));
+
+				//std::cout << "a: " << h0data_r[index] << "b: " <<h0data_i[index] <<std::endl;
+				// dispersion relation \omega^2(k) = gk
+				wdata.push_back(sqrtf(G * glm::length(k)));
+			}
+		}
+	}
+
+	GLuint ssbo_h0r;
+	glGenBuffers(1, &ssbo_h0r);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo_h0r);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(float) * h0data_r.size(),h0data_r.data(), GL_DYNAMIC_COPY);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 8, ssbo_h0r);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0); // unbind
+
+	GLuint ssbo_h0i;
+	glGenBuffers(1, &ssbo_h0i);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo_h0i);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(float) * h0data_i.size(), h0data_i.data(), GL_DYNAMIC_COPY);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 9, ssbo_h0i);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0); // unbind
+
 	this->twiddle_factor_shader.set_uniform_int("FFT_dimension", FFT_DIMENSION);
-	// 5. dispatch compute shader
+	// 6. dispatch compute shader
 	glDispatchCompute(FFT_DIMENSION/16 , FFT_DIMENSION/16,  1);
 	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 

@@ -14,7 +14,7 @@ layout (binding = 4) uniform sampler2D noise_r1;
 layout (binding = 5) uniform sampler2D noise_i1;
 
 
-uniform	int    FFT_dimension = 256;            //FFT resolution
+uniform	int    FFT_dimension ;            //FFT resolution
 uniform int    ocean_dimension;           //Ocean dimension
 uniform float  amplitude ;           //apmtitude of what ???s
 uniform float  windspeed ;
@@ -31,6 +31,16 @@ layout(std430, binding = 7) buffer gauss_image
 {
     int i[];
 }gauss_i;
+
+layout(std430, binding = 8) buffer h0data_r
+{
+    float r[];
+}h0_r;
+
+layout(std430, binding = 9) buffer h0data_i
+{
+    float i[];
+}h0_i;
 
 const float g = 9.81;
 
@@ -97,7 +107,7 @@ float h0_k (vec2 k){
 void main(void)
 {
 	vec2 coord = vec2(gl_GlobalInvocationID.xy) - vec2(float(FFT_dimension/2)) ;
-	
+	ivec2 x = ivec2(gl_GlobalInvocationID.xy);
 	vec2 k = vec2(2.0 * PI * coord.x/ocean_dimension, 2.0 * PI * coord.y/ocean_dimension);
 
 
@@ -113,7 +123,11 @@ void main(void)
 	vec2 h0k_r_i      = h0k *gauss.xy;
 	vec2 h0minusk_r_i = h0minusk* gauss.xy;
 
-	imageStore(tilde_h0k,      ivec2(gl_GlobalInvocationID.xy), vec4(h0k_r_i, 0, 1));
+	int index = x.y*FFT_dimension + x.x; 
+	vec2 h0_precomputed = 10000*vec2(h0_r.r[index], h0_i.i[index]);
+
+	//imageStore(tilde_h0k,      ivec2(gl_GlobalInvocationID.xy), vec4(h0k_r_i, 0, 1));
+	imageStore(tilde_h0k,      ivec2(gl_GlobalInvocationID.xy), vec4(h0_precomputed, 0, 1));
 	//imageStore(tilde_h0k,      ivec2(gl_GlobalInvocationID.xy), vec4(vec3(gauss.r), 1));
 	imageStore(tilde_h0minusk, ivec2(gl_GlobalInvocationID.xy), vec4(h0minusk_r_i,0, 1));
 	//imageStore(tilde_h0minusk, ivec2(gl_GlobalInvocationID.xy), vec4(vec3(gauss.g), 1));

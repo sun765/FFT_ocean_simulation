@@ -44,7 +44,7 @@ public:
 
 private:
 
-	int ocean_dimension = 512;
+	int ocean_dimension = 256;
 	float amplitude = 0.45f * 1e-3f;
 	float windspeed = 6.5f;
 	float amplitude_constant = 0.45f * 1e-3f;
