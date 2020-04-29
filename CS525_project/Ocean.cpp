@@ -15,6 +15,7 @@ void Ocean::render(glm::mat4 M, glm::mat4 V, glm::mat4 P)
 	this->compute_IFFT(this->xkt_texture);
 	this->compute_IFFT(this->zkt_texture);
 	this->render_displacement();
+	this->render_normal_map();
 
 	this->render_shader.bind_shader();
 	this->render_shader.set_uniform_mat4("M", M);
@@ -82,20 +83,17 @@ GLuint Ocean::get_twiddle_debug_handle()
 	return this->twiddle_debug_texture.get_handle();
 }
 
-GLuint Ocean::get_ht_handle()
+GLuint Ocean::get_normal_handle()
 {
-	return this->ht_texture.get_handle();
+	return this->normal_texture.get_handle();
 }
+
 
 GLuint Ocean::get_ifft_buffer_handle()
 {
 	return this->IFFT_buffer_texture.get_handle();
 }
 
-GLuint Ocean::get_dxy_handle()
-{
-	return this->dxy_texture.get_handle();
-}
 
 GLuint Ocean::get_debug_input_handle()
 {
@@ -324,6 +322,20 @@ void Ocean::render_displacement()
 	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 }
 
+void Ocean::render_normal_map()
+{
+	// 1. bind shader
+	this->normal_shader.bind_shader();
+
+	// 2. bind texture
+	this->displacement_texture.bind(GL_READ_ONLY,  0);
+	this->normal_texture.bind(GL_WRITE_ONLY, 1);
+
+	// 3. dispatch compute
+	glDispatchCompute(FFT_DIMENSION / 16, FFT_DIMENSION / 16, 1);
+	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+}
+
 void Ocean::init_shaders()
 {
 	this->h0_shader             = ComputeShader("Shaders/h0_comp.comp");
@@ -333,6 +345,7 @@ void Ocean::init_shaders()
 	this->displacement_shader   = ComputeShader("Shaders/displacement_comp.comp");
 	this->twiddle_debug_shader  = ComputeShader("Shaders/twiddle_debug_comp.comp");
 	this->IFFT_shader           = ComputeShader("Shaders/ifft_comp.comp");
+	this->normal_shader         = ComputeShader("Shaders/normal_comp.comp");
 
 	this->render_shader         = VertexFragShader("Shaders/ocean_vs.glsl", "Shaders/ocean_fs.glsl");
 }
@@ -348,12 +361,11 @@ void Ocean::init_textures()
 	this->twiddle_debug_texture  =  CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION, GL_RGBA32F);
 	this->displacement_texture   =  CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION,       GL_RGBA32F);
 	this->IFFT_buffer_texture    =  CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION, GL_RGBA32F);
-	this->ht_texture             =  CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION, GL_RGBA32F);
-	this->dxy_texture            =  CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION, GL_RGBA32F);
 	this->debug_input_texture    =  CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION, GL_RGBA32F);
 	this->debug_output_texture   =  CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION, GL_RGBA32F);
 	this->xkt_texture            =  CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION, GL_RGBA32F);
 	this->zkt_texture            =  CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION, GL_RGBA32F);
+	this->normal_texture         =  CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION, GL_RGBA32F);
 
 	// init noise textures
 	const vector<string> noise_texture_paths = { "Textures/Noise256_0.jpg",

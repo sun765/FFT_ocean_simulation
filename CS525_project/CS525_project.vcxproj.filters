@@ -355,6 +355,9 @@
     <None Include="Shaders\ocean_vs.glsl">
       <Filter>shaders</Filter>
     </None>
+    <None Include="Shaders\normal_comp.comp">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="data.txt" />

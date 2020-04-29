@@ -34,9 +34,8 @@ public:
 	GLuint get_twiddle_handle();
 	GLuint get_displacement_handle();
 	GLuint get_twiddle_debug_handle();
-	GLuint get_ht_handle();
+	GLuint get_normal_handle();
 	GLuint get_ifft_buffer_handle();
-	GLuint get_dxy_handle();
 	GLuint get_debug_input_handle();
 	GLuint get_debug_output_handle();
 
@@ -63,7 +62,7 @@ private:
 	float patch_size      = 20.0f;
 
 	// parameters (real time)
-	int   choppy_on = 1;              // 1 on, 0 off
+	int   choppy_on = 1;                    // 1 on, 0 off
 	float choppy_factor   = 1.3f;           // how choppy the ocean is 
 	
 	glm::vec2 wind_dir    = glm::vec2(1.0, 1.0);
@@ -85,11 +84,9 @@ private:
 	CompOutputTexture displacement_texture;
 	CompOutputTexture twiddle_debug_texture;
 	CompOutputTexture IFFT_buffer_texture;
-	CompOutputTexture ht_texture;
-	CompOutputTexture dxy_texture;
+	CompOutputTexture normal_texture;
 	CompOutputTexture debug_input_texture;
 	CompOutputTexture debug_output_texture;
-
 
 	ComputeShader h0_shader;
 	ComputeShader hkt_shader;
@@ -98,6 +95,7 @@ private:
 	ComputeShader displacement_shader;
 	ComputeShader twiddle_debug_shader;
 	ComputeShader IFFT_shader;
+	ComputeShader normal_shader;
 
 	VertexFragShader render_shader;
 
@@ -108,10 +106,10 @@ private:
 	
 	void render_twiddle_factor();
 	void render_displacement();
+	void render_normal_map();
 	void render_twiddle_debug();
 	void render_precompute_textures();
 
-	
 	// return value is the pingpong stage
 	int  compute_IFFT_helper(CompOutputTexture * input_texture, CompOutputTexture* output_texture);
 	void compute_IFFT(CompOutputTexture& input_texture);
@@ -129,8 +127,6 @@ private:
 	void bind_ssbo_float(vector<float>& data, int loc);
 	void bind_ssbo_int(vector<int>& data, int loc);
 
-
-	
 };
 
 #endif 

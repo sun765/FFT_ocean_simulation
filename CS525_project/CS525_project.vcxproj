@@ -250,6 +250,7 @@
     <None Include="Shaders\mesh_tc.glsl" />
     <None Include="Shaders\mesh_te.glsl" />
     <None Include="Shaders\mesh_vs.glsl" />
+    <None Include="Shaders\normal_comp.comp" />
     <None Include="Shaders\ocean_fs.glsl" />
     <None Include="Shaders\ocean_vs.glsl" />
     <None Include="Shaders\skybox_fs.glsl" />

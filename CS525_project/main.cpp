@@ -346,13 +346,16 @@ void draw_gui()
 		ImGui::SameLine();
 		ImGui::Image((void*)ocean->get_h0_minus_k_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 
-
 		ImGui::Image((void*)ocean->get_hkt_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 		ImGui::SameLine();
 		ImGui::Image((void*)ocean->get_xkt_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 		ImGui::SameLine();
 		ImGui::Image((void*)ocean->get_zkt_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
+
 		ImGui::Image((void*)ocean->get_displacement_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
+		ImGui::SameLine();
+		ImGui::Image((void*)ocean->get_normal_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
+
 		ImGui::Image((void*)ocean->get_twiddle_debug_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 	}
 
