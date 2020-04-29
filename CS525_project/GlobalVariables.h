@@ -49,7 +49,7 @@ bool renderScene    = true;
 bool is_recording   = false;
 bool pause          = false;
 bool water_linemode = false;
-bool ocean_linemode = true;
+bool ocean_linemode = false;
 
 // int 
 int window_width, window_height;

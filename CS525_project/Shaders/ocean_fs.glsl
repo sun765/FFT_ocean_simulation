@@ -10,6 +10,8 @@ out vec4 fragcolor;
 in vec2 tex_coord;
 in vec3 view_dir;
 in vec3 test_color;
+in vec3 normal;
+in float J;
 
 uniform vec4 ambient_color;
 
@@ -19,11 +21,10 @@ const vec3 sundir			= vec3(0.603, 0.240, -0.761);
 void main(void)
 {
 
-	
 	// calculate thingies
 	vec4 normal_j = imageLoad(normal_map, ivec2(tex_coord));
 
-	vec3 n = normalize(normal_j.xyz);
+	vec3 n = normalize(normal);
 	vec3 v = normalize(view_dir);
 	vec3 l = reflect(-v, n);
 
@@ -34,8 +35,7 @@ void main(void)
 	vec3 refl = texture(envmap, l).rgb;
 
 	// tweaked from ARM/Mali's sample
-	float J = normal_j.w;
-	float turbulence = max(1.6 - J, 0.0);
+	float turbulence = max(1.6 - 0.05 *J, 0.0);
 	float color_mod = 1.0 + 3.0 * smoothstep(1.2, 1.8, turbulence);
 
 
@@ -60,10 +60,12 @@ void main(void)
 	float spec = pow(clamp(dot(sundir, l), 0.0, 1.0), 400.0);
 	*/
 
+	spec = pow(clamp(dot(sundir, l), 0.0, 1.0), 400.0);
+
 	fragcolor = vec4(mix(ambient_color.xyz, refl * color_mod, F) + sunColor * spec, 1.0);
 	
 
 
-	//fragcolor = ambient_color;
+	fragcolor = vec4(sunColor * spec, 1.0);
 }
 
