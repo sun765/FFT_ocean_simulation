@@ -8,7 +8,7 @@ void Ocean::init()
 
 }
 
-void Ocean::render(glm::mat4 M, glm::mat4 V, glm::mat4 P)
+void Ocean::render(glm::mat4& M, glm::mat4& V, glm::mat4& P, glm::vec3& eye_world_pos)
 {
 	this->render_hkt();
 	this->compute_IFFT(this->hkt_texture);
@@ -28,9 +28,8 @@ void Ocean::render(glm::mat4 M, glm::mat4 V, glm::mat4 P)
 	this->render_shader.set_uniform_mat4("M", M);
 	this->render_shader.set_uniform_mat4("V", V);
 	this->render_shader.set_uniform_mat4("P", P);
-	this->render_shader.set_uniform_vec4("color", this->color);
-
-	
+	this->render_shader.set_uniform_vec4("ambient_color", this->color);
+	this->render_shader.set_uniform_vec3("eye_world_pos", eye_world_pos);
 
 	this->ocean_surface.render();
 }

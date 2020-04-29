@@ -10,6 +10,8 @@ uniform int FFT_dimension ;
 vec3 central_normal();
 float Jacobian();
 
+const float tile_size = 1.0;
+
 void main (void){
 	ivec2 loc = ivec2(gl_GlobalInvocationID.xy);
 
@@ -54,8 +56,8 @@ float Jacobian(){
 	vec2 bot_D   = imageLoad(displacement_map, bot_loc).xz;
 
 	// not sure about how much should the ax be
-	vec2 DX = (right_D - left_D) / 2.0;
-	vec2 DY = (bot_D - top_D)    / 2.0;
+	vec2 DX = (right_D - left_D) / (2.0 * tile_size);
+	vec2 DY = (bot_D - top_D)    / (2.0 * tile_size);
 
 	return (1.0 + DX.x) * (1.0 + DY.y)  - DX.y * DY.x ;
 

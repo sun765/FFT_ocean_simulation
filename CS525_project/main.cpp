@@ -273,7 +273,7 @@ void render_scene(int pass, glm::vec4 plane, camera camera)
 	   if (ocean_linemode) {
 		   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	   }
-	   ocean->render(M_water, V, P);
+	   ocean->render(M_water, V, P, cameraPos);
 	   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 		

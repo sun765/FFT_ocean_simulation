@@ -76,6 +76,12 @@ void VertexFragShader::set_uniform_vec4(string var_name, glm::vec4& var)
 	glUniform4f(var_loc, var.x, var.y, var.z, var.w);
 }
 
+void VertexFragShader::set_uniform_vec3(string var_name, glm::vec3& var)
+{
+	GLuint var_loc = glGetUniformLocation(this->program_handle, &var_name[0]);
+	glUniform3f(var_loc, var.x, var.y, var.z);
+}
+
 GLuint VertexFragShader::get_program_handle()
 {
 	return this->program_handle;
