@@ -23,7 +23,8 @@ public:
 
 	void init();
 	void render(glm::mat4 M, glm::mat4 V, glm::mat4 P);
-	void reconfig(float amplitude, float windspeed, float alignment, glm::vec2& wind_dir, int choppy_on, float choppy_factor);
+	void reconfig(float amplitude, float windspeed, float alignment, glm::vec2& wind_dir);
+	void update  (int choppy_on, float choppy_factor);
 
 	GLuint get_h0_k_handle();
 	GLuint get_h0_minus_k_handle();
@@ -54,13 +55,15 @@ public:
 
 private:
 
-	// parameters
-	int   choppy_on       = 1;              // 1 on, 0 off
+	// parameters (pre compute)
 	int   ocean_dimension = 256;           
 	float amplitude       = 0.45f * 1e-3f;  // A
 	float windspeed       = 6.5f;     
 	float alignment       = 2.0;            // |k * w|^ (alignment);
 	float patch_size      = 20.0f;
+
+	// parameters (real time)
+	int   choppy_on = 1;              // 1 on, 0 off
 	float choppy_factor   = 1.3f;           // how choppy the ocean is 
 	
 	glm::vec2 wind_dir    = glm::vec2(1.0, 1.0);

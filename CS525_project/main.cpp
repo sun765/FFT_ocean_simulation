@@ -281,10 +281,9 @@ void render_scene(int pass, glm::vec4 plane, camera camera)
 
 void update()
 {
-
 	main_water->update(clip_distance,&p, &f, &wP, &qP,&tP);
 	main_sun->update(&main_camera, &sP);
-
+	ocean->update(choppy_on, choppy_factor);
 }
 
 void reload_shader()
@@ -311,18 +310,24 @@ void draw_gui()
 	myGUIStyle();
 	ImGui::Begin("Ocean Parameters", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 
-	if (ImGui::CollapsingHeader("parameters"))
+	if (ImGui::CollapsingHeader("parameters (pre compute) "))
 	{
 		ImGui::SliderFloat ("amplitude",     &amplitude, 0.0f, +1.0f);
 		ImGui::SliderFloat ("windspeed",     &windspeed, 0.0f, +20.0f);
 		ImGui::SliderFloat2("wind direction", glm::value_ptr(wind_dir), -1.0f, +1.0f);
 		ImGui::SliderFloat ("alignment",     &alignment, 0.0f, 10.0f);
-		ImGui::SliderFloat ("choppy factor", &choppy_factor, +1.0f, +5.0f);
 
 		if (ImGui::Button("reconfig"))
 		{
-			ocean->reconfig(amplitude, windspeed, alignment, wind_dir, choppy_on, choppy_factor);
+			ocean->reconfig(amplitude, windspeed, alignment, wind_dir);
 		}
+
+	}
+
+	if (ImGui::CollapsingHeader("parameters (real time) "))
+	{
+
+		ImGui::SliderFloat("choppy factor", &choppy_factor, +1.0f, +5.0f);
 
 		if (ImGui::Button("switch render mode"))
 		{
@@ -334,6 +339,7 @@ void draw_gui()
 			choppy_on = 1 - choppy_on;
 		}
 	}
+
 
 	if ((ImGui::CollapsingHeader("textures"))) {
 		ImGui::Image((void*)ocean->get_h0_k_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));

@@ -27,15 +27,19 @@ void Ocean::render(glm::mat4 M, glm::mat4 V, glm::mat4 P)
 	this->ocean_surface.render();
 }
 
-void Ocean::reconfig(float amplitude, float windspeed, float alignment, glm::vec2& wind_dir, int choppy_on, float choppy_factor)
+void Ocean::reconfig(float amplitude, float windspeed, float alignment, glm::vec2& wind_dir)
 {
 	this->amplitude     = amplitude;
 	this->windspeed     = windspeed;
 	this->wind_dir      = wind_dir;
 	this->alignment     = alignment;
-	this->choppy_on     = choppy_on;
-	this->choppy_factor = choppy_factor;
 	render_precompute_textures();
+}
+
+void Ocean::update(int choppy_on, float choppy_factor)
+{
+	this->choppy_on = choppy_on;
+	this->choppy_factor = choppy_factor;
 }
 
 GLuint Ocean::get_h0_k_handle()
