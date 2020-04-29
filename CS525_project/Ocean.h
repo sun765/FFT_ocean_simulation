@@ -49,13 +49,15 @@ public:
 
 private:
 
+	// parameters
 	int   ocean_dimension = 256;           
 	float amplitude = 0.45f * 1e-3f;  // A
 	float windspeed = 6.5f;     
 	float alignment = 2.0;            // |k * w|^ (alignment);
 	float patch_size = 20.0f;
 	glm::vec2 wind_dir = glm::vec2(1.0, 1.0);
-
+	//glm::vec4 color   = glm::vec4(0.0056f, 0.0194f, 0.0331f, 1);
+	glm::vec4 color = glm::vec4(0.056f, 0.194f, 0.331f, 1);
 	vector<float> h0data_r;      // real part of h0k
 	vector<float> h0data_i;      // imagine part of h0k
 	vector<float> wkdata;        // sqrt(k * g);

@@ -18,6 +18,9 @@ void Ocean::render(glm::mat4 M, glm::mat4 V, glm::mat4 P)
 	this->render_shader.set_uniform_mat4("M", M);
 	this->render_shader.set_uniform_mat4("V", V);
 	this->render_shader.set_uniform_mat4("P", P);
+	this->render_shader.set_uniform_vec4("color", this->color);
+
+	this->displacement_texture.bind(GL_READ_ONLY, 0);
 
 	this->ocean_surface.render();
 }

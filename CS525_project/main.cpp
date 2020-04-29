@@ -252,47 +252,29 @@ void render_scene(int pass, glm::vec4 plane, camera camera)
 	   glm::mat4 M_tree2 = R * glm::scale(glm::vec3(3.0)) *glm::translate(glm::vec3(-30.0, 10.0, 30.0));
 
 
+	   if (skybox_on)
 
-	   //render reflection and refraction textures
-	   if (pass == 1 || pass == 2)
-	   {		
-
-	   }
-
-	   //render scene
-	   else if (pass == 4)
 	   {
-		   if (renderScene)
-		   {
-			   
-			   if (skybox_on)
-
-			   {
-				   //main_sky->draw_sky(skybox_id, V, P, pass);
-			   }
-			   else
-			   {
-				   //test->drawUI(glm::vec2(window_width, window_height), glm::vec2(0.5*window_width, 0.5*window_height), tsky_texture_id, 1.0, 1.0);
-				   test_gui->drawUI(glm::vec2(window_width, window_height), glm::vec2(0.5 * window_width, 0.5 * window_height), tsky_texture_id, 1.0, 1.0);
-			   }
-
-			   //main_sun->draw_sun(P);
-			  
-
-			   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-			 
-			   if (water_linemode)
-			   {
-				   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-			   }
-			   //main_water->draw_water(shading_mode, test_gui, M_water, V, P, waterTexture_id, pass, float(time_ms), cameraPos);
-			   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-			   ocean->render(M_water, V, P);
-			   
-		   }
+		   //main_sky->draw_sky(skybox_id, V, P, pass);
 	   }
+	   else
+	   {
+		   //test->drawUI(glm::vec2(window_width, window_height), glm::vec2(0.5*window_width, 0.5*window_height), tsky_texture_id, 1.0, 1.0);
+		   test_gui->drawUI(glm::vec2(window_width, window_height), glm::vec2(0.5 * window_width, 0.5 * window_height), tsky_texture_id, 1.0, 1.0);
+	   }
+
+	   //main_sun->draw_sun(P);
+
+
+	   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+	   //main_water->draw_water(shading_mode, test_gui, M_water, V, P, waterTexture_id, pass, float(time_ms), cameraPos);
+	   
+	   if (ocean_linemode) {
+		   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	   }
+	   ocean->render(M_water, V, P);
+	   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 		
 }
@@ -339,6 +321,11 @@ void draw_gui()
 		if (ImGui::Button("reconfig"))
 		{
 			ocean->reconfig(amplitude, windspeed, alignment, wind_dir);
+		}
+
+		if (ImGui::Button("switch render mode"))
+		{
+			ocean_linemode = !ocean_linemode;
 		}
 	}
 

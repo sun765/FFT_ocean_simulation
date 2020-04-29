@@ -10,6 +10,7 @@ public:
 	void bind_shader() override;
 
 	void set_uniform_mat4(string var_name, glm::mat4& var);
+	void set_uniform_vec4(string var_name, glm::vec4& var);
 
 	GLuint get_program_handle();
 

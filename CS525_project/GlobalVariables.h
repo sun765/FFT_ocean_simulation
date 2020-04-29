@@ -49,6 +49,7 @@ bool renderScene    = true;
 bool is_recording   = false;
 bool pause          = false;
 bool water_linemode = false;
+bool ocean_linemode = true;
 
 // int 
 int window_width, window_height;
@@ -74,7 +75,18 @@ float amplitude;
 float windspeed;
 glm::vec2 wind_dir;
 float alignment;
-
+/*
+Math::Color OceanColors[] = {
+	{ 0.0056f, 0.0194f, 0.0331f, 1 },	// deep blue
+	{ 0.1812f, 0.4678f, 0.5520f, 1 },	// carribbean
+	{ 0.0000f, 0.2307f, 0.3613f, 1 },	// light blue
+	{ 0.2122f, 0.6105f, 1.0000f, 1 },
+	{ 0.0123f, 0.3613f, 0.6867f, 1 },
+	{ 0.0000f, 0.0999f, 0.4508f, 1 },
+	{ 0.0000f, 0.0331f, 0.1329f, 1 },
+	{ 0.0000f, 0.0103f, 0.0331f, 1 }
+};
+*/
 // objects
 water* main_water;
 skybox* main_sky;
