@@ -331,7 +331,10 @@ void Ocean::render_normal_map()
 	this->displacement_texture.bind(GL_READ_ONLY,  0);
 	this->normal_texture.bind(GL_WRITE_ONLY, 1);
 
-	// 3. dispatch compute
+	// 3. bind uniform variable
+	this->normal_shader.set_uniform_int("FFT_dimension", FFT_DIMENSION);
+
+	// 4. dispatch compute
 	glDispatchCompute(FFT_DIMENSION / 16, FFT_DIMENSION / 16, 1);
 	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 }

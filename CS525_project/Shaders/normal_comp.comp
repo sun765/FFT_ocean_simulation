@@ -5,11 +5,31 @@ layout (binding = 0, rgba32f) readonly   uniform image2D displacement_map;
 layout (binding = 1, rgba32f) writeonly  uniform image2D normal_map;
 
 uniform int FFT_dimension ;
-uniform float choppy_factor ;
-uniform int choppy_on ;     // 1 on, 0 off
 
+vec3 central_normal();
 
 void main (void){
 	ivec2 loc = ivec2(gl_GlobalInvocationID.xy);
-	imageStore(normal_map, loc, vec4(vec3(1.0), 1.0));
+	vec3 n = central_normal();
+	imageStore(normal_map, loc, vec4(n, 1.0));
+}
+
+vec3 central_normal(){
+	
+	ivec2 loc       = ivec2(gl_GlobalInvocationID.xy);
+	ivec2 right_loc = ivec2((loc.x + 1) % FFT_dimension, loc.y);
+	ivec2 left_loc  = ivec2((loc.x - 1) % FFT_dimension, loc.y);
+	ivec2 top_loc   = ivec2(loc.x                       , (loc.y - 1) % FFT_dimension);  // -1 or +1?
+	ivec2 bot_loc   = ivec2(loc.x                       , (loc.y + 1) % FFT_dimension);
+
+	float right_height = imageLoad(displacement_map, right_loc).y;
+	float left_height  = imageLoad(displacement_map, left_loc).y;
+	float top_height   = imageLoad(displacement_map, top_loc).y;
+	float bot_height   = imageLoad(displacement_map, bot_loc).y;
+
+	// central differnce normal equation from 
+	// direction may be changed
+	vec3 n = vec3( 2* (right_height - left_height), 2* (bot_height - top_height), -4.0      ) /4.0;
+
+	return normalize(n);
 }
