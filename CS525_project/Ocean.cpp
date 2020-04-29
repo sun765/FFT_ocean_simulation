@@ -8,14 +8,18 @@ void Ocean::init()
 
 }
 
-void Ocean::render()
+void Ocean::render(glm::mat4 M, glm::mat4 V, glm::mat4 P)
 {
 	this->render_hkt();
 	this->compute_IFFT(this->hkt_texture);
 	this->render_displacement();
 
 	this->render_shader.bind_shader();
-	//this->ocean_surface.render();
+	this->render_shader.set_uniform_mat4("M", M);
+	this->render_shader.set_uniform_mat4("V", V);
+	this->render_shader.set_uniform_mat4("P", P);
+
+	this->ocean_surface.render();
 }
 
 void Ocean::reconfig(float amplitude, float windspeed, float alignment, glm::vec2& wind_dir)
@@ -111,7 +115,7 @@ Ocean::Ocean(int dimension)
 {
 	this->ocean_dimension = dimension;
 	this->init();
-	this->ocean_surface = QuadMesh(20);
+	this->ocean_surface = QuadMesh(dimension);
 }
 
 void Ocean::render_hkt()

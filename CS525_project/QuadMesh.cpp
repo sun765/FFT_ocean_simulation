@@ -20,6 +20,7 @@ QuadMesh::QuadMesh(int N)
 void QuadMesh::render()
 {
 	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_DEPTH_TEST);
 	glBindVertexArray(this->vao);
 	glEnable(GL_PRIMITIVE_RESTART);
 	glPrimitiveRestartIndex(this->get_restart_index());
@@ -28,7 +29,6 @@ void QuadMesh::render()
 	int vertices_num = this->get_vertices_num();
 
 	glDrawElementsInstanced(GL_TRIANGLE_STRIP, indices_num, GL_UNSIGNED_INT, NULL, 1);
-	//glDrawElements(GL_TRIANGLES, vertices_num, GL_UNSIGNED_INT, 0);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
@@ -75,17 +75,17 @@ void QuadMesh::init()
 	this->init_vao();
 }
 
-int QuadMesh::get_restart_index()
+int  QuadMesh::get_restart_index()
 {
 	return  N * N * 10;
 }
 
-int QuadMesh::get_indices_num()
+int  QuadMesh::get_indices_num()
 {
 	return (this->N - 1)* (2 * this->N + 1);
 }
 
-int QuadMesh::get_vertices_num()
+int  QuadMesh::get_vertices_num()
 {
 	return this->N * this->N;
 }

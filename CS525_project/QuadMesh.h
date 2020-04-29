@@ -30,7 +30,7 @@ private:
 	int N;
 
 	vector<float> vertices;
-	vector<int> indices;    //index to tell opengl to draw next triangle
+	vector<int>   indices;    //index to tell opengl to draw next triangle
 
 	void init_vertices();
 	void init_indices();

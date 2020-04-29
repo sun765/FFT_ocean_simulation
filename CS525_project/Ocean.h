@@ -22,7 +22,7 @@ class Ocean
 public:
 
 	void init();
-	void render();
+	void render(glm::mat4 M, glm::mat4 V, glm::mat4 P);
 	void reconfig(float amplitude, float windspeed, float alignment, glm::vec2& wind_dir);
 
 	GLuint get_h0_k_handle();

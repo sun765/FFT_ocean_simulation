@@ -268,7 +268,7 @@ void render_scene(int pass, glm::vec4 plane, camera camera)
 			   if (skybox_on)
 
 			   {
-				   main_sky->draw_sky(skybox_id, V, P, pass);
+				   //main_sky->draw_sky(skybox_id, V, P, pass);
 			   }
 			   else
 			   {
@@ -276,7 +276,7 @@ void render_scene(int pass, glm::vec4 plane, camera camera)
 				   test_gui->drawUI(glm::vec2(window_width, window_height), glm::vec2(0.5 * window_width, 0.5 * window_height), tsky_texture_id, 1.0, 1.0);
 			   }
 
-			   main_sun->draw_sun(P);
+			   //main_sun->draw_sun(P);
 			  
 
 			   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -286,12 +286,11 @@ void render_scene(int pass, glm::vec4 plane, camera camera)
 			   {
 				   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			   }
-			   main_water->draw_water(shading_mode, test_gui, M_water, V, P, waterTexture_id, pass, float(time_ms), cameraPos);
+			   //main_water->draw_water(shading_mode, test_gui, M_water, V, P, waterTexture_id, pass, float(time_ms), cameraPos);
 			   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-			   ocean->render();
+			   ocean->render(M_water, V, P);
 			   
-			   test_quad->render();
 		   }
 	   }
 
