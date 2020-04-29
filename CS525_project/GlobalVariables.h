@@ -71,6 +71,8 @@ float clip_distance  = far_clip - near_clip;
 float aspect_ratio   = 1;
 
 // ocean parameters
+int   choppy_on;
+float choppy_factor;
 float amplitude;
 float windspeed;
 glm::vec2 wind_dir;

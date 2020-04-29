@@ -23,11 +23,13 @@ public:
 
 	void init();
 	void render(glm::mat4 M, glm::mat4 V, glm::mat4 P);
-	void reconfig(float amplitude, float windspeed, float alignment, glm::vec2& wind_dir);
+	void reconfig(float amplitude, float windspeed, float alignment, glm::vec2& wind_dir, int choppy_on, float choppy_factor);
 
 	GLuint get_h0_k_handle();
 	GLuint get_h0_minus_k_handle();
 	GLuint get_hkt_handle();
+	GLuint get_xkt_handle();
+	GLuint get_zkt_handle();
 	GLuint get_twiddle_handle();
 	GLuint get_displacement_handle();
 	GLuint get_twiddle_debug_handle();
@@ -40,6 +42,9 @@ public:
 	float get_amplitude();
 	float get_windspeed();
 	float get_alignment();
+	float get_choppy_factor();
+
+	int   get_choppy_status();
 	glm::vec2 get_wind_dir();
 
 	vector<GLuint> noise_textures;
@@ -50,12 +55,15 @@ public:
 private:
 
 	// parameters
+	int   choppy_on       = 1;              // 1 on, 0 off
 	int   ocean_dimension = 256;           
-	float amplitude = 0.45f * 1e-3f;  // A
-	float windspeed = 6.5f;     
-	float alignment = 2.0;            // |k * w|^ (alignment);
-	float patch_size = 20.0f;
-	glm::vec2 wind_dir = glm::vec2(1.0, 1.0);
+	float amplitude       = 0.45f * 1e-3f;  // A
+	float windspeed       = 6.5f;     
+	float alignment       = 2.0;            // |k * w|^ (alignment);
+	float patch_size      = 20.0f;
+	float choppy_factor   = 1.3f;           // how choppy the ocean is 
+	
+	glm::vec2 wind_dir    = glm::vec2(1.0, 1.0);
 	//glm::vec4 color   = glm::vec4(0.0056f, 0.0194f, 0.0331f, 1);
 	glm::vec4 color = glm::vec4(0.056f, 0.194f, 0.331f, 1);
 	vector<float> h0data_r;      // real part of h0k
@@ -66,7 +74,9 @@ private:
 	CompOutputTexture h0_k_texture;     
 	CompOutputTexture h0_minus_k_texture;
 
-	CompOutputTexture hkt_texture;
+	CompOutputTexture hkt_texture;            // frequency value in y  direction     
+	CompOutputTexture xkt_texture;            // frequency value in x  direction
+	CompOutputTexture zkt_texture;            // frequency value in z  direction
 	CompOutputTexture butterfly_texture;
 	CompOutputTexture twiddle_factor_texture;
 	CompOutputTexture displacement_texture;
@@ -101,7 +111,6 @@ private:
 	
 	// return value is the pingpong stage
 	int  compute_IFFT_helper(CompOutputTexture * input_texture, CompOutputTexture* output_texture);
-	void compute_IFFT();
 	void compute_IFFT(CompOutputTexture& input_texture);
 
 	void init_shaders();

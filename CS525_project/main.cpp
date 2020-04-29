@@ -313,19 +313,25 @@ void draw_gui()
 
 	if (ImGui::CollapsingHeader("parameters"))
 	{
-		ImGui::SliderFloat ("amplitude", &amplitude, 0.0f, +1.0f);
-		ImGui::SliderFloat ("windspeed", &windspeed, 0.0f, +20.0f);
+		ImGui::SliderFloat ("amplitude",     &amplitude, 0.0f, +1.0f);
+		ImGui::SliderFloat ("windspeed",     &windspeed, 0.0f, +20.0f);
 		ImGui::SliderFloat2("wind direction", glm::value_ptr(wind_dir), -1.0f, +1.0f);
-		ImGui::SliderFloat ("alignment", &alignment, 0.0f, 10.0f);
+		ImGui::SliderFloat ("alignment",     &alignment, 0.0f, 10.0f);
+		ImGui::SliderFloat ("choppy factor", &choppy_factor, +1.0f, +5.0f);
 
 		if (ImGui::Button("reconfig"))
 		{
-			ocean->reconfig(amplitude, windspeed, alignment, wind_dir);
+			ocean->reconfig(amplitude, windspeed, alignment, wind_dir, choppy_on, choppy_factor);
 		}
 
 		if (ImGui::Button("switch render mode"))
 		{
 			ocean_linemode = !ocean_linemode;
+		}
+
+		if (ImGui::Button("turn on/off choppy"))
+		{
+			choppy_on = 1 - choppy_on;
 		}
 	}
 
@@ -337,8 +343,9 @@ void draw_gui()
 
 		ImGui::Image((void*)ocean->get_hkt_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 		ImGui::SameLine();
-		ImGui::Image((void*)ocean->get_ht_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
+		ImGui::Image((void*)ocean->get_xkt_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 		ImGui::SameLine();
+		ImGui::Image((void*)ocean->get_zkt_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 		ImGui::Image((void*)ocean->get_displacement_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 		ImGui::Image((void*)ocean->get_twiddle_debug_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
 	}
@@ -427,10 +434,12 @@ void init_render_class()
 	ocean = new Ocean(256);
 	test_quad = new QuadMesh(20);
 
-	amplitude = ocean->get_amplitude();
-	windspeed = ocean->get_windspeed();
-	wind_dir  = ocean->get_wind_dir();
-	alignment = ocean->get_alignment();
+	amplitude     = ocean->get_amplitude();
+	windspeed     = ocean->get_windspeed();
+	wind_dir      = ocean->get_wind_dir();
+	alignment     = ocean->get_alignment();
+	choppy_factor = ocean->get_choppy_factor();
+	choppy_on     = ocean->get_choppy_status();
 
 }
 

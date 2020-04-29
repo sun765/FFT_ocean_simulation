@@ -12,6 +12,8 @@ void Ocean::render(glm::mat4 M, glm::mat4 V, glm::mat4 P)
 {
 	this->render_hkt();
 	this->compute_IFFT(this->hkt_texture);
+	this->compute_IFFT(this->xkt_texture);
+	this->compute_IFFT(this->zkt_texture);
 	this->render_displacement();
 
 	this->render_shader.bind_shader();
@@ -25,12 +27,14 @@ void Ocean::render(glm::mat4 M, glm::mat4 V, glm::mat4 P)
 	this->ocean_surface.render();
 }
 
-void Ocean::reconfig(float amplitude, float windspeed, float alignment, glm::vec2& wind_dir)
+void Ocean::reconfig(float amplitude, float windspeed, float alignment, glm::vec2& wind_dir, int choppy_on, float choppy_factor)
 {
-	this->amplitude = amplitude;
-	this->windspeed = windspeed;
-	this->wind_dir = wind_dir;
-	this->alignment = alignment;
+	this->amplitude     = amplitude;
+	this->windspeed     = windspeed;
+	this->wind_dir      = wind_dir;
+	this->alignment     = alignment;
+	this->choppy_on     = choppy_on;
+	this->choppy_factor = choppy_factor;
 	render_precompute_textures();
 }
 
@@ -47,6 +51,16 @@ GLuint Ocean::get_h0_minus_k_handle()
 GLuint Ocean::get_hkt_handle()
 {
 	return this->hkt_texture.get_handle();
+}
+
+GLuint Ocean::get_xkt_handle()
+{
+	return this->xkt_texture.get_handle();
+}
+
+GLuint Ocean::get_zkt_handle()
+{
+	return this->zkt_texture.get_handle();
 }
 
 GLuint Ocean::get_twiddle_handle()
@@ -104,6 +118,16 @@ float Ocean::get_alignment()
 	return this->alignment;
 }
 
+float Ocean::get_choppy_factor()
+{
+	return this->choppy_factor;
+}
+
+int Ocean::get_choppy_status()
+{
+	return this->choppy_on;
+}
+
 glm::vec2 Ocean::get_wind_dir()
 {
 	return this->wind_dir;
@@ -130,6 +154,8 @@ void Ocean::render_hkt()
 	this->h0_k_texture.bind(GL_READ_ONLY, 0);
 	this->h0_minus_k_texture.bind(GL_READ_ONLY, 1);
 	this->hkt_texture.bind(GL_WRITE_ONLY, 2);
+	this->xkt_texture.bind(GL_WRITE_ONLY, 3);
+	this->zkt_texture.bind(GL_WRITE_ONLY, 4);
 	
 	// 3. update uniform
 	float time_ms = float(glutGet(GLUT_ELAPSED_TIME));
@@ -281,8 +307,13 @@ void Ocean::render_displacement()
 
 	// 2. bind textures
 	this->hkt_texture.bind(GL_READ_ONLY, 0);
-	this->displacement_texture.bind(GL_WRITE_ONLY, 1);
-	this->displacement_shader.set_uniform_int("FFT_dimension", FFT_DIMENSION);
+	this->xkt_texture.bind(GL_READ_ONLY, 1);
+	this->zkt_texture.bind(GL_READ_ONLY, 2);
+	this->displacement_texture.bind(GL_WRITE_ONLY, 3);
+
+	this->displacement_shader.set_uniform_int  ("FFT_dimension", FFT_DIMENSION);
+	this->displacement_shader.set_uniform_float("choppy_factor", this->choppy_factor);
+	this->displacement_shader.set_uniform_int("choppy_on",       this->choppy_on);
 
 	// 3. dispatch compute
 	glDispatchCompute(FFT_DIMENSION / 16, FFT_DIMENSION / 16, 1);
@@ -313,10 +344,13 @@ void Ocean::init_textures()
 	this->twiddle_debug_texture  =  CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION, GL_RGBA32F);
 	this->displacement_texture   =  CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION,       GL_RGBA32F);
 	this->IFFT_buffer_texture    =  CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION, GL_RGBA32F);
-	this->ht_texture             = CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION, GL_RGBA32F);
-	this->dxy_texture            = CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION, GL_RGBA32F);
-	this->debug_input_texture    = CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION, GL_RGBA32F);
-	this->debug_output_texture   = CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION, GL_RGBA32F);
+	this->ht_texture             =  CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION, GL_RGBA32F);
+	this->dxy_texture            =  CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION, GL_RGBA32F);
+	this->debug_input_texture    =  CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION, GL_RGBA32F);
+	this->debug_output_texture   =  CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION, GL_RGBA32F);
+	this->xkt_texture            =  CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION, GL_RGBA32F);
+	this->zkt_texture            =  CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION, GL_RGBA32F);
+
 	// init noise textures
 	const vector<string> noise_texture_paths = { "Textures/Noise256_0.jpg",
 											     "Textures/Noise256_1.jpg",
@@ -423,21 +457,6 @@ int  Ocean::compute_IFFT_helper(CompOutputTexture* input_texture, CompOutputText
 	}
 	
 	return pingpong;
-}
-
-void Ocean::compute_IFFT()
-{
-	// ifft on y direction 
-	int pingpong = compute_IFFT_helper(&this->hkt_texture, &this->ht_texture);
-	// swap input and output
-	/*
-	if (pingpong == 0) {
-		CompOutputTexture temp = this->hkt_texture;
-		this->hkt_texture = this->ht_texture;
-		this->ht_texture = temp;
-	}
-	*/
-	// ifft on x, z direction
 }
 
 void Ocean::compute_IFFT(CompOutputTexture& input_texture)

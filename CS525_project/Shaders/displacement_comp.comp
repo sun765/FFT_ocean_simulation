@@ -2,13 +2,28 @@
 
 layout (local_size_x = 16, local_size_y = 16) in;
 layout (binding = 0, rgba32f) readonly  uniform image2D ht_texture;
-layout (binding = 1, rgba32f) writeonly uniform image2D displacement_texture;
+layout (binding = 1, rgba32f) readonly  uniform image2D xt_texture;
+layout (binding = 2, rgba32f) readonly  uniform image2D zt_texture;
+layout (binding = 3, rgba32f) writeonly uniform image2D displacement_texture;
 
 uniform int FFT_dimension ;
+uniform float choppy_factor ;
+uniform int choppy_on ;     // 1 on, 0 off
+
+
 void main (void){
 	ivec2 loc = ivec2(gl_GlobalInvocationID.xy);
 	int sign = (loc.x + loc.y) %2 ==0? 1: -1;
+
 	//float h =  imageLoad(ht_texture, loc).r * sign /(FFT_dimension*FFT_dimension);
 	float h =  imageLoad(ht_texture, loc).r * sign ;
-	imageStore(displacement_texture,  loc, vec4(h,h,h,1.0));
+	float x =  imageLoad(xt_texture, loc).r * sign ;
+	float z =  imageLoad(zt_texture, loc).r * sign ;
+
+	vec3 disp = vec3(0.0, h, 0.0);
+	if(choppy_on == 1){
+		disp = vec3(choppy_factor * x, h, choppy_factor * z);
+	}
+	
+	imageStore(displacement_texture,  loc, vec4(disp,1.0));
 }

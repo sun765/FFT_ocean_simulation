@@ -7,7 +7,9 @@ layout (local_size_x = 16, local_size_y = 16) in;
 layout (binding = 0, rgba32f) readonly uniform image2D h0k_image;
 layout (binding = 1, rgba32f) readonly uniform image2D h0minusk_image;
 layout (binding = 2, rgba32f) writeonly uniform image2D hkt_image;
-layout (binding = 5, r32f) uniform readonly image2D wkt;
+layout (binding = 3, rgba32f) writeonly uniform image2D xkt_image;
+layout (binding = 4, rgba32f) writeonly uniform image2D zkt_image;
+
 
 uniform float time_ms;
 uniform int FFT_dimension;   // 
@@ -44,11 +46,11 @@ complex compute_hkt();
 void main(void)
 {
 	
-	ivec2 x = ivec2(gl_GlobalInvocationID.xy);
+	ivec2 loc = ivec2(gl_GlobalInvocationID.xy);
 
-	int index_k      = x.y*FFT_dimension + x.x; 
-	int index_minusk = (FFT_dimension - x.y)*FFT_dimension + (FFT_dimension - x.x); 
-	complex h0_precomputed     = create_complex(h0_r.r[index_k], h0_i.i[index_k]);
+	int index_k                   = loc.y*FFT_dimension + loc.x; 
+	int index_minusk              = (FFT_dimension - loc.y) * FFT_dimension + (FFT_dimension - loc.x); 
+	complex h0_precomputed        = create_complex(h0_r.r[index_k], h0_i.i[index_k]);
 	complex h0_minusk_precomputed = create_complex(h0_r.r[index_minusk], h0_i.i[index_minusk]);
 	h0_minusk_precomputed = conj(h0_minusk_precomputed);
 
@@ -61,9 +63,23 @@ void main(void)
 	complex e_k = create_complex(cos_part, sin_part);
 	complex e_mk = create_complex(cos_part, -sin_part);
 
-	complex h = add_complex( mult_complex(h0_precomputed, e_k), mult_complex(h0_minusk_precomputed, e_mk));  
+	complex h  = add_complex( mult_complex(h0_precomputed, e_k), mult_complex(h0_minusk_precomputed, e_mk));  
 
-	imageStore(hkt_image, ivec2(gl_GlobalInvocationID.xy), vec4(h.r, h.i, 0.0, 1.0));
+	
+	vec2 k = vec2(FFT_dimension/2 - loc.x, FFT_dimension/2 - loc.y);
+	vec2 normalized_k = vec2(0.0);
+	float k_length_square = dot(k,k);
+	
+	if(k_length_square > 1e-12)
+		normalized_k = normalize(k);
+
+	complex xkt = mult_complex(create_complex(0, -normalized_k.x),  h);
+	complex zkt = mult_complex(create_complex(0, -normalized_k.y),  h);
+	
+
+	imageStore(hkt_image,  ivec2(gl_GlobalInvocationID.xy), vec4(h.r, h.i, 0.0, 1.0));
+	imageStore(xkt_image, ivec2(gl_GlobalInvocationID.xy), vec4(xkt.r, xkt.i, 0.0, 1.0));
+	imageStore(zkt_image, ivec2(gl_GlobalInvocationID.xy), vec4(zkt.r, zkt.i, 0.0, 1.0));
 }
 
 
@@ -82,7 +98,6 @@ complex compute_hkt(){
     ivec2 h0k_loc	    = ivec2(gl_GlobalInvocationID.xy);
 	ivec2 h0minusk_loc	= ivec2(FFT_dimension -  h0k_loc.x, FFT_dimension -  h0k_loc.y);          // use this for -k?
 	complex h0k =      create_complex( imageLoad(h0k_image, h0k_loc).r , imageLoad(h0k_image, h0k_loc).g);
-	//complex h0minusk = create_complex( imageLoad(h0k_image, h0minusk_loc).r , imageLoad(h0k_image, h0minusk_loc).g);
 	complex h0minusk = create_complex( imageLoad(h0minusk_image, h0k_loc).r , imageLoad(h0minusk_image, h0k_loc).g);
 	h0minusk = conj(h0minusk);
 
