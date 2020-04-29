@@ -17,13 +17,20 @@ void Ocean::render(glm::mat4 M, glm::mat4 V, glm::mat4 P)
 	this->render_displacement();
 	this->render_normal_map();
 
+	// bind shader
 	this->render_shader.bind_shader();
+
+	// bind textures
+	this->displacement_texture.bind(GL_READ_ONLY, 0);
+	this->normal_texture.bind(GL_READ_ONLY, 1);
+
+	// bind uniform variables
 	this->render_shader.set_uniform_mat4("M", M);
 	this->render_shader.set_uniform_mat4("V", V);
 	this->render_shader.set_uniform_mat4("P", P);
 	this->render_shader.set_uniform_vec4("color", this->color);
 
-	this->displacement_texture.bind(GL_READ_ONLY, 0);
+	
 
 	this->ocean_surface.render();
 }
@@ -86,6 +93,11 @@ GLuint Ocean::get_twiddle_debug_handle()
 GLuint Ocean::get_normal_handle()
 {
 	return this->normal_texture.get_handle();
+}
+
+GLuint Ocean::get_Jacobian_handle()
+{
+	return this->Jacobian_texture.get_handle();
 }
 
 
@@ -330,6 +342,7 @@ void Ocean::render_normal_map()
 	// 2. bind texture
 	this->displacement_texture.bind(GL_READ_ONLY,  0);
 	this->normal_texture.bind(GL_WRITE_ONLY, 1);
+	this->Jacobian_texture.bind(GL_WRITE_ONLY, 2);
 
 	// 3. bind uniform variable
 	this->normal_shader.set_uniform_int("FFT_dimension", FFT_DIMENSION);
@@ -369,6 +382,7 @@ void Ocean::init_textures()
 	this->xkt_texture            =  CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION, GL_RGBA32F);
 	this->zkt_texture            =  CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION, GL_RGBA32F);
 	this->normal_texture         =  CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION, GL_RGBA32F);
+	this->Jacobian_texture       = CompOutputTexture(FFT_DIMENSION, FFT_DIMENSION, GL_RGBA32F);
 
 	// init noise textures
 	const vector<string> noise_texture_paths = { "Textures/Noise256_0.jpg",

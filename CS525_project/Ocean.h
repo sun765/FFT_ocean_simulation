@@ -35,6 +35,7 @@ public:
 	GLuint get_displacement_handle();
 	GLuint get_twiddle_debug_handle();
 	GLuint get_normal_handle();
+	GLuint get_Jacobian_handle();
 	GLuint get_ifft_buffer_handle();
 	GLuint get_debug_input_handle();
 	GLuint get_debug_output_handle();
@@ -85,6 +86,7 @@ private:
 	CompOutputTexture twiddle_debug_texture;
 	CompOutputTexture IFFT_buffer_texture;
 	CompOutputTexture normal_texture;
+	CompOutputTexture Jacobian_texture;
 	CompOutputTexture debug_input_texture;
 	CompOutputTexture debug_output_texture;
 

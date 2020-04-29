@@ -9,12 +9,14 @@ uniform mat4 M;
 uniform mat4 V;
 uniform mat4 P;
 
+out vec2 tex_coord;
+
 const float disp_scale = 5.0;
 
 void main(void)
 {		
-	ivec2 tex_coord = ivec2(pos_attrib.x,  pos_attrib.z);
-	vec3 disp = disp_scale * imageLoad(displacement_texture, tex_coord).rgb;
+	tex_coord = vec2(pos_attrib.x,  pos_attrib.z);
+	vec3 disp = disp_scale * imageLoad(displacement_texture, ivec2(tex_coord)).rgb;
 	//vec3 local_pos = vec3(pos_attrib.x, h, pos_attrib.z);
 
 	vec3 local_pos = pos_attrib + disp;
