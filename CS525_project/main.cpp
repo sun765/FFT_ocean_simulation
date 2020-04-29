@@ -291,6 +291,7 @@ void render_scene(int pass, glm::vec4 plane, camera camera)
 
 			   ocean->render();
 			   
+			   test_quad->render();
 		   }
 	   }
 
@@ -438,6 +439,7 @@ void init_render_class()
 	main_sky = new skybox();
 	test_gui = new screenUI(window_width,window_height, glm::vec2(0.5*window_width, 0.5*window_height), glm::vec2(0.5 * window_width, 0.5 * window_height), tsky_texture_id);
 	ocean = new Ocean(256);
+	test_quad = new QuadMesh(20);
 
 	amplitude = ocean->get_amplitude();
 	windspeed = ocean->get_windspeed();

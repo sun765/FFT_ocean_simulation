@@ -23,8 +23,12 @@ void QuadMesh::render()
 	glBindVertexArray(this->vao);
 	glEnable(GL_PRIMITIVE_RESTART);
 	glPrimitiveRestartIndex(this->get_restart_index());
-	// bug is here
-	glDrawElementsInstanced(GL_TRIANGLE_STRIP, this->get_indices_num(), GL_UNSIGNED_INT, NULL, 1);
+
+	int indices_num  = this->get_indices_num();
+	int vertices_num = this->get_vertices_num();
+
+	glDrawElementsInstanced(GL_TRIANGLE_STRIP, indices_num, GL_UNSIGNED_INT, NULL, 1);
+	//glDrawElements(GL_TRIANGLES, vertices_num, GL_UNSIGNED_INT, 0);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
@@ -50,6 +54,9 @@ void QuadMesh::init_vao()
 	//Binding vao means that bindbuffer, enablevertexattribarray and vertexattribpointer state will be remembered by vao
 	glBindVertexArray(this->vao);
 
+	// must bind the vbo under the vao
+	this->init_vbo();
+
 	glEnableVertexAttribArray(POS_LOC); //Enable the position attribute.
 
 	//Tell opengl how to get the attribute values out of the vbo (stride and offset).
@@ -65,7 +72,6 @@ void QuadMesh::init()
 {
 	this->init_vertices();
 	this->init_indices();
-	this->init_vbo();
 	this->init_vao();
 }
 
@@ -77,6 +83,11 @@ int QuadMesh::get_restart_index()
 int QuadMesh::get_indices_num()
 {
 	return (this->N - 1)* (2 * this->N + 1);
+}
+
+int QuadMesh::get_vertices_num()
+{
+	return this->N * this->N;
 }
 
 void QuadMesh::init_vertices()

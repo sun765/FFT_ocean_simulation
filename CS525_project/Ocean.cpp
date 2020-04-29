@@ -15,7 +15,7 @@ void Ocean::render()
 	this->render_displacement();
 
 	this->render_shader.bind_shader();
-	this->ocean_surface.render();
+	//this->ocean_surface.render();
 }
 
 void Ocean::reconfig(float amplitude, float windspeed, float alignment, glm::vec2& wind_dir)

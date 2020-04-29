@@ -32,7 +32,6 @@ glm::vec2 water::texCoord(int i, int j)
 
 // blend 0 -->1   , a-->b ;
 
-
 glm::vec3 water::waterPos(int i, int j)
 {
 	return glm::vec3(float(i), 0.0, float(j));
@@ -45,12 +44,10 @@ glm::vec3 water::normal(int i, int j)
 	return glm::normalize(glm::cross(du, dv));
 }
 
-
 glm::vec2 water::get_terrain_wh()
 {
 	return glm::vec2(float(q.N), float(q.N));
 }
-
 
 GLuint water::create_water_vao()
 {

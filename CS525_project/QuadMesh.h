@@ -40,6 +40,7 @@ private:
 
 	int get_restart_index();
 	int get_indices_num();
+	int get_vertices_num();
 
 
 };
