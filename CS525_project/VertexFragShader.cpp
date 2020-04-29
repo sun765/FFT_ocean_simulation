@@ -82,6 +82,12 @@ void VertexFragShader::set_uniform_vec3(string var_name, glm::vec3& var)
 	glUniform3f(var_loc, var.x, var.y, var.z);
 }
 
+void VertexFragShader::set_uniform_int(string var_name, int var)
+{
+	GLuint var_loc = glGetUniformLocation(this->program_handle, &var_name[0]);
+	glUniform1i(var_loc, var);
+}
+
 GLuint VertexFragShader::get_program_handle()
 {
 	return this->program_handle;

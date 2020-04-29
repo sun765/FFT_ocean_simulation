@@ -22,7 +22,7 @@ class Ocean
 public:
 
 	void init();
-	void render(glm::mat4& M, glm::mat4& V, glm::mat4& P, glm::vec3& eye_world_pos);
+	void render(glm::mat4& M, glm::mat4& V, glm::mat4& P, glm::vec3& eye_world_pos, GLuint skybox_handle);
 	void reconfig(float amplitude, float windspeed, float alignment, glm::vec2& wind_dir);
 	void update  (int choppy_on, float choppy_factor);
 

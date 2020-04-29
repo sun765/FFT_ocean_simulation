@@ -2,6 +2,7 @@
 #version 430
 #define PI 3.1415926535897932384626433832795
 
+layout (binding = 0) uniform samplerCube envmap;
 layout (binding = 1, rgba32f) readonly  uniform image2D normal_map;
 
 out vec4 fragcolor;    
@@ -29,8 +30,8 @@ void main(void)
 	float F0 = 0.020018673;
 	float F = F0 + (1.0 - F0) * pow(1.0 - dot(n, l), 5.0);
 
-	vec3 refl = vec3(0.0,0.0,1.0);
-	//vec3 refl = texture(envmap, l).rgb;
+	//vec3 refl = vec3(0.0,0.0,1.0);
+	vec3 refl = texture(envmap, l).rgb;
 
 	// tweaked from ARM/Mali's sample
 	float J = normal_j.w;

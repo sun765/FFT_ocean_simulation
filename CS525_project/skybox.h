@@ -20,6 +20,8 @@ public:
 	void reload_shader();
 	
 	void draw_sky( GLuint cubemap_id, glm::mat4 V, glm::mat4 P, int pass);
+
+
 	~skybox();
 
 private:

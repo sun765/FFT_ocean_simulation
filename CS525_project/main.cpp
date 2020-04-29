@@ -255,7 +255,7 @@ void render_scene(int pass, glm::vec4 plane, camera camera)
 	   if (skybox_on)
 
 	   {
-		   //main_sky->draw_sky(skybox_id, V, P, pass);
+		   main_sky->draw_sky(skybox_id, V, P, pass);
 	   }
 	   else
 	   {
@@ -273,7 +273,7 @@ void render_scene(int pass, glm::vec4 plane, camera camera)
 	   if (ocean_linemode) {
 		   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	   }
-	   ocean->render(M_water, V, P, cameraPos);
+	   ocean->render(M_water, V, P, cameraPos, skybox_id);
 	   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 		

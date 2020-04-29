@@ -8,7 +8,7 @@ void Ocean::init()
 
 }
 
-void Ocean::render(glm::mat4& M, glm::mat4& V, glm::mat4& P, glm::vec3& eye_world_pos)
+void Ocean::render(glm::mat4& M, glm::mat4& V, glm::mat4& P, glm::vec3& eye_world_pos, GLuint skybox_handle)
 {
 	this->render_hkt();
 	this->compute_IFFT(this->hkt_texture);
@@ -23,6 +23,10 @@ void Ocean::render(glm::mat4& M, glm::mat4& V, glm::mat4& P, glm::vec3& eye_worl
 	// bind textures
 	this->displacement_texture.bind(GL_READ_ONLY, 0);
 	this->normal_texture.bind(GL_READ_ONLY, 1);
+
+	this->render_shader.set_uniform_int("skybox", 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, skybox_handle);
 
 	// bind uniform variables
 	this->render_shader.set_uniform_mat4("M", M);
@@ -99,12 +103,10 @@ GLuint Ocean::get_Jacobian_handle()
 	return this->Jacobian_texture.get_handle();
 }
 
-
 GLuint Ocean::get_ifft_buffer_handle()
 {
 	return this->IFFT_buffer_texture.get_handle();
 }
-
 
 GLuint Ocean::get_debug_input_handle()
 {

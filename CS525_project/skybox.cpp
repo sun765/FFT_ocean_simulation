@@ -102,6 +102,7 @@ void skybox::draw_sky(  GLuint cubemap_id, glm::mat4 V, glm::mat4 P, int pass)
 	glDepthMask(GL_TRUE);
 	glUseProgram(0);
 }
+
 void skybox::initVao()
 {
 	this->vao = create_cube_vao();
