@@ -66,9 +66,8 @@ void main(void)
 	fragcolor = vec4(mix(ambient_color.xyz, refl * color_mod, F) + sun_color * spec, 1.0);
 	
 
-
 	fragcolor = vec4(mix(ambient_color.xyz, refl * color_mod, F), 1.0);
 
-	fragcolor = vec4(normal,  1.0);
+	fragcolor = vec4(vec3(1.0),  1.0);
 }
 

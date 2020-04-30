@@ -70,6 +70,7 @@ float clip_distance  = far_clip - near_clip;
 float aspect_ratio   = 1;
 
 // ocean parameters
+float patch_size;
 int   choppy_on;
 float choppy_factor;
 float amplitude;

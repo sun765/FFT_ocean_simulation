@@ -40,12 +40,13 @@ void Ocean::render(glm::mat4& M, glm::mat4& V, glm::mat4& P, glm::vec3& eye_worl
 	this->ocean_surface.render();
 }
 
-void Ocean::reconfig(float amplitude, float windspeed, float alignment, glm::vec2& wind_dir)
+void Ocean::reconfig(float amplitude, float windspeed, float alignment, glm::vec2& wind_dir, int patch_size)
 {
 	this->amplitude     = amplitude;
 	this->windspeed     = windspeed;
 	this->wind_dir      = wind_dir;
 	this->alignment     = alignment;
+	this->patch_size    = patch_size;
 	render_precompute_textures();
 }
 
@@ -146,6 +147,11 @@ float Ocean::get_choppy_factor()
 int Ocean::get_choppy_status()
 {
 	return this->choppy_on;
+}
+
+int Ocean::get_patch_size()
+{
+	return this->patch_size;
 }
 
 glm::vec2 Ocean::get_wind_dir()

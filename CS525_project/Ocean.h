@@ -23,7 +23,7 @@ public:
 
 	void init();
 	void render(glm::mat4& M, glm::mat4& V, glm::mat4& P, glm::vec3& eye_world_pos, GLuint skybox_handle);
-	void reconfig(float amplitude, float windspeed, float alignment, glm::vec2& wind_dir);
+	void reconfig(float amplitude, float windspeed, float alignment, glm::vec2& wind_dir, int patch_size);
 	void update  (int choppy_on, float choppy_factor, glm::vec3& sun_color, glm::vec3 & sun_dir);
 
 	GLuint get_h0_k_handle();
@@ -46,6 +46,7 @@ public:
 	float get_choppy_factor();
 
 	int   get_choppy_status();
+	int   get_patch_size();
 	glm::vec2 get_wind_dir();
 
 	glm::vec3 get_sun_color();

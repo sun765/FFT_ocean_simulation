@@ -312,6 +312,7 @@ void draw_gui()
 
 	if (ImGui::CollapsingHeader("parameters (pre compute) "))
 	{
+		ImGui::SliderFloat ("patch size",    &patch_size, 0.0f, +256.0f);
 		ImGui::SliderFloat ("amplitude",     &amplitude, 0.0f, +1.0f);
 		ImGui::SliderFloat ("windspeed",     &windspeed, 0.0f, +20.0f);
 		ImGui::SliderFloat2("wind direction", glm::value_ptr(wind_dir), -1.0f, +1.0f);
@@ -319,7 +320,7 @@ void draw_gui()
 
 		if (ImGui::Button("reconfig"))
 		{
-			ocean->reconfig(amplitude, windspeed, alignment, wind_dir);
+			ocean->reconfig(amplitude, windspeed, alignment, wind_dir, patch_size);
 		}
 
 	}
@@ -450,6 +451,7 @@ void init_render_class()
 	ocean = new Ocean(256);
 	test_quad = new QuadMesh(20);
 
+	patch_size    = ocean->get_patch_size();
 	amplitude     = ocean->get_amplitude();
 	windspeed     = ocean->get_windspeed();
 	wind_dir      = ocean->get_wind_dir();
