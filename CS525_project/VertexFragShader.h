@@ -13,6 +13,7 @@ public:
 	void set_uniform_vec4(string var_name, glm::vec4& var);
 	void set_uniform_vec3(string var_name, glm::vec3& var);
 	void set_uniform_int(string var_name, int var);
+	void set_uniform_float(string var_name, float var);
 
 	GLuint get_program_handle();
 

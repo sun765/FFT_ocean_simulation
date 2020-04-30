@@ -21,21 +21,34 @@ void Ocean::render(glm::mat4& M, glm::mat4& V, glm::mat4& P, glm::vec3& eye_worl
 	this->render_shader.bind_shader();
 
 	// bind textures
+	/*
 	this->displacement_texture.bind(GL_READ_ONLY, 0);
 	this->normal_texture.bind(GL_READ_ONLY, 1);
+	*/
 
 	this->render_shader.set_uniform_int("skybox", 0);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, skybox_handle);
 
+	this->render_shader.set_uniform_int("normal_map", 1);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, this->normal_texture.get_handle());
+
+	this->render_shader.set_uniform_int("displacement_map", 2);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, this->displacement_texture.get_handle());
+
+
 	// bind uniform variables
 	this->render_shader.set_uniform_mat4("M", M);
 	this->render_shader.set_uniform_mat4("V", V);
 	this->render_shader.set_uniform_mat4("P", P);
-	this->render_shader.set_uniform_vec4("ambient_color", this->color);
+	this->render_shader.set_uniform_vec4("ambient_color", this->ocean_color);
 	this->render_shader.set_uniform_vec3("eye_world_pos", eye_world_pos);
 	this->render_shader.set_uniform_vec3("sun_color", this->sun_color);
 	this->render_shader.set_uniform_vec3("sun_dir", this->sun_dir);
+	this->render_shader.set_uniform_float("patch_size", this->patch_size);
+	this->render_shader.set_uniform_int("shading_mode", this->shading_mode);
 
 	this->ocean_surface.render();
 }
@@ -50,13 +63,16 @@ void Ocean::reconfig(float amplitude, float windspeed, float alignment, glm::vec
 	render_precompute_textures();
 }
 
-void Ocean::update(int choppy_on, float choppy_factor, glm::vec3& sun_color, glm::vec3& sun_dir)
+void Ocean::update(int choppy_on, float choppy_factor, glm::vec3& sun_color, glm::vec3& sun_dir, glm::vec3& ocean_color, int shading_mode)
 {
-	this->choppy_on = choppy_on;
+	this->choppy_on    = choppy_on;
 	this->choppy_factor = choppy_factor;
 
-	this->sun_color = sun_color;
-	this->sun_dir   = sun_dir;
+	this->sun_color   = sun_color;
+	this->sun_dir     = sun_dir;
+	this->ocean_color = glm::vec4(ocean_color.r, ocean_color.g, ocean_color.b, 1.0);
+
+	this->shading_mode = shading_mode;
 }
 
 GLuint Ocean::get_h0_k_handle()
@@ -154,9 +170,19 @@ int Ocean::get_patch_size()
 	return this->patch_size;
 }
 
+int Ocean::get_shading_mode()
+{
+	return this->shading_mode;
+}
+
 glm::vec2 Ocean::get_wind_dir()
 {
 	return this->wind_dir;
+}
+
+glm::vec3 Ocean::get_ocean_color()
+{
+	return this->ocean_color;
 }
 
 glm::vec3 Ocean::get_sun_color()
@@ -178,7 +204,7 @@ Ocean::Ocean(int dimension)
 {
 	this->ocean_dimension = dimension;
 	this->init();
-	this->ocean_surface = QuadMesh(dimension);
+	this->ocean_surface = QuadMesh(dimension *4 );
 }
 
 void Ocean::render_hkt()

@@ -283,7 +283,7 @@ void update()
 {
 	main_water->update(clip_distance,&p, &f, &wP, &qP,&tP);
 	main_sun->update(&main_camera, &sP);
-	ocean->update(choppy_on, choppy_factor, sun_color, sun_direction);
+	ocean->update(choppy_on, choppy_factor, sun_color, sun_direction, ocean_color, ocean_shading_mode);
 }
 
 void reload_shader()
@@ -342,10 +342,11 @@ void draw_gui()
 	}
 
 	if (ImGui::CollapsingHeader("Shading ")) {
+		ImGui::SliderInt("shading mode", &ocean_shading_mode, 0, 1);
 		ImGui::ColorEdit3  ("sun color", glm::value_ptr(sun_color));
+		ImGui::ColorEdit3  ("ocean color", glm::value_ptr(ocean_color));
 		ImGui::SliderFloat3("sun dir", glm::value_ptr(sun_direction), -1.0f, +1.0f);
 	}
-
 
 	if ((ImGui::CollapsingHeader("textures"))) {
 		ImGui::Image((void*)ocean->get_h0_k_handle(), ImVec2(256.0f, 256.0f), ImVec2(0.0, 1.0), ImVec2(1.0, 0.0));
@@ -461,6 +462,8 @@ void init_render_class()
 
 	sun_color     = ocean->get_sun_color();
 	sun_direction = ocean->get_sun_dir();
+	ocean_color   = ocean->get_ocean_color();
+	ocean_shading_mode = ocean->get_shading_mode();
 
 }
 

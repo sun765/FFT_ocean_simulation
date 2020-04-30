@@ -81,7 +81,8 @@ float alignment;
 // shading parameters
 glm::vec3 sun_color;
 glm::vec3 sun_direction;
-
+glm::vec3 ocean_color;
+int ocean_shading_mode;
 
 /*
 Math::Color OceanColors[] = {
@@ -150,7 +151,7 @@ static const std::string texture_name[]   = { "Textures/blend.png",
 static const std::string skybox_name       = "Textures/skybox";
 static const std::string dudv              = "Textures/waterDUDV.png";
 static const std::string water_normal      = "Textures/matchingNormalMap.png";
-static const std::string tsky_texture_name = "Textures/tsky4.png";
+static const std::string tsky_texture_name = "Textures/sky_box_ocean.dds";
 
 
 bool load()

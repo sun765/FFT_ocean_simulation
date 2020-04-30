@@ -1,3 +1,5 @@
+/*
+
 #version 430 core
 
 layout (local_size_x = 16, local_size_y = 16) in;
@@ -18,7 +20,7 @@ void main (void){
 	vec3 n = central_normal();
 	float J = Jacobian();
 
-	imageStore(normal_map, loc, vec4(n , 1.0));
+	imageStore(normal_map, loc,   vec4(n , J));
 	imageStore(Jacobian_map, loc, vec4(vec3(J), 1.0));
 }
 
@@ -27,8 +29,8 @@ vec3 central_normal(){
 	ivec2 loc       = ivec2(gl_GlobalInvocationID.xy);
 	ivec2 right_loc = ivec2((loc.x + 1) % FFT_dimension, loc.y);
 	ivec2 left_loc  = ivec2((loc.x - 1) % FFT_dimension, loc.y);
-	ivec2 top_loc   = ivec2(loc.x                       , (loc.y - 1) % FFT_dimension);  // -1 or +1?
-	ivec2 bot_loc   = ivec2(loc.x                       , (loc.y + 1) % FFT_dimension);
+	ivec2 top_loc   = ivec2(loc.x                       , (loc.y + 1) % FFT_dimension);  // -1 or +1?
+	ivec2 bot_loc   = ivec2(loc.x                       , (loc.y - 1) % FFT_dimension);
 
 	float right_height = imageLoad(displacement_map, right_loc).y;
 	float left_height  = imageLoad(displacement_map, left_loc).y;
@@ -47,8 +49,8 @@ float Jacobian(){
 	ivec2 loc       = ivec2(gl_GlobalInvocationID.xy);
 	ivec2 right_loc = ivec2((loc.x + 1) % FFT_dimension, loc.y);
 	ivec2 left_loc  = ivec2((loc.x - 1) % FFT_dimension, loc.y);
-	ivec2 top_loc   = ivec2(loc.x                       , (loc.y - 1) % FFT_dimension);  // -1 or +1?
-	ivec2 bot_loc   = ivec2(loc.x                       , (loc.y + 1) % FFT_dimension);
+	ivec2 top_loc   = ivec2(loc.x                       , (loc.y + 1) % FFT_dimension);  // -1 or +1?
+	ivec2 bot_loc   = ivec2(loc.x                       , (loc.y - 1) % FFT_dimension);
 
 	vec2 right_D = imageLoad(displacement_map, right_loc).xz;
 	vec2 left_D  = imageLoad(displacement_map, left_loc).xz;
@@ -56,11 +58,58 @@ float Jacobian(){
 	vec2 bot_D   = imageLoad(displacement_map, bot_loc).xz;
 
 	// not sure about how much should the ax be
-	vec2 DX = (right_D - left_D) / (2.0 * tile_size);
-	vec2 DY = (bot_D - top_D)    / (2.0 * tile_size);
+	vec2 DX = (right_D - left_D) / (1.0 * tile_size);
+	vec2 DY = (bot_D - top_D)    / (1.0 * tile_size);
 
 	return (1.0 + DX.x) * (1.0 + DY.y)  - DX.y * DY.x ;
 
 
 
+}
+
+*/
+
+
+
+#version 430
+
+layout(rgba32f, binding = 0) uniform readonly image2D displacement;
+layout(rgba16f, binding = 1) uniform writeonly image2D gradients;
+
+layout (local_size_x = 16, local_size_y = 16) in;
+void main()
+{
+
+	const float tile_size = 20.0 /256.0;
+	const float TILE_SIZE_X2 = tile_size *2;
+	const float INV_TILE_SIZE = 1.0 / tile_size;
+	const int DISP_MAP_SIZE = 256;
+
+	ivec2 loc = ivec2(gl_GlobalInvocationID.xy);
+
+	// gradient
+	ivec2 left			= (loc - ivec2(1, 0)) & (DISP_MAP_SIZE - 1);
+	ivec2 right			= (loc + ivec2(1, 0)) & (DISP_MAP_SIZE - 1);
+	ivec2 bottom		= (loc - ivec2(0, 1)) & (DISP_MAP_SIZE - 1);
+	ivec2 top			= (loc + ivec2(0, 1)) & (DISP_MAP_SIZE - 1);
+
+	vec3 disp_left		= imageLoad(displacement, left).xyz;
+	vec3 disp_right		= imageLoad(displacement, right).xyz;
+	vec3 disp_bottom	= imageLoad(displacement, bottom).xyz;
+	vec3 disp_top		= imageLoad(displacement, top).xyz;
+
+	vec2 gradient		= vec2(disp_left.y - disp_right.y, disp_bottom.y - disp_top.y);
+
+	// Jacobian
+	vec2 dDx = (disp_right.xz - disp_left.xz) * INV_TILE_SIZE;
+	vec2 dDy = (disp_top.xz - disp_bottom.xz) * INV_TILE_SIZE;
+
+	float J = (1.0 + dDx.x) * (1.0 + dDy.y) - dDx.y * dDy.x;
+
+	//float J = 0.0;
+
+	// NOTE: normals are in tangent space for now
+	imageStore(gradients, loc, vec4(gradient,  TILE_SIZE_X2, J));
+	//imageStore(gradients, loc, vec4(vec3(J), 1.0));
+	
 }

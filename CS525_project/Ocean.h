@@ -24,7 +24,7 @@ public:
 	void init();
 	void render(glm::mat4& M, glm::mat4& V, glm::mat4& P, glm::vec3& eye_world_pos, GLuint skybox_handle);
 	void reconfig(float amplitude, float windspeed, float alignment, glm::vec2& wind_dir, int patch_size);
-	void update  (int choppy_on, float choppy_factor, glm::vec3& sun_color, glm::vec3 & sun_dir);
+	void update  (int choppy_on, float choppy_factor, glm::vec3& sun_color, glm::vec3 & sun_dir, glm::vec3& ocean_color, int shading_mode, float height_factor);
 
 	GLuint get_h0_k_handle();
 	GLuint get_h0_minus_k_handle();
@@ -47,8 +47,10 @@ public:
 
 	int   get_choppy_status();
 	int   get_patch_size();
-	glm::vec2 get_wind_dir();
+	int   get_shading_mode();
 
+	glm::vec2 get_wind_dir();
+	glm::vec3 get_ocean_color();
 	glm::vec3 get_sun_color();
 	glm::vec3 get_sun_dir();
 
@@ -60,7 +62,7 @@ public:
 private:
 
 	// parameters (pre compute)
-	int   ocean_dimension = 256;           
+	int   ocean_dimension = 256;       
 	float amplitude       = 0.45f * 1e-3f;  // A
 	float windspeed       = 6.5f;     
 	float alignment       = 2.0;            // |k * w|^ (alignment);
@@ -69,15 +71,20 @@ private:
 	// parameters (real time)
 	int   choppy_on = 1;                    // 1 on, 0 off
 	float choppy_factor   = 1.3f;           // how choppy the ocean is 
-	
+	float height_factor   = 1.0f;
+
+
 	glm::vec2 wind_dir    = glm::vec2(1.0, 1.0);
-	glm::vec4 color   = glm::vec4(0.0056f, 0.0194f, 0.0331f, 1);
+	//glm::vec4 ocean_color   = glm::vec4(0.0056f, 0.0194f, 0.0331f, 1);
+	//glm::vec4 ocean_color = glm::vec4(0.1812f, 0.4678f, 0.5520f, 1);
+	glm::vec4 ocean_color = glm::vec4(4.0/255.0, 16.0 / 255.0, 28.0 /255.0, 1);
 	vector<float> h0data_r;      // real part of h0k
 	vector<float> h0data_i;      // imagine part of h0k
 	vector<float> wkdata;        // sqrt(k * g);
 
 	// shading parameters
-	glm::vec3 sun_color = glm::vec3(1.0, 1.0, 0.47);
+	int shading_mode = 0; // 0 ward model, 1 blin phong
+	glm::vec3 sun_color = glm::vec3(169.0/255.0, 169.0 / 255.0, 159.0 /255.0);
 	glm::vec3 sun_dir   = glm::vec3(0.603, 0.240, -0.761);
 
 	// not used , just for debugging
@@ -135,6 +142,8 @@ private:
 	// bind float vector to a ssbo 
 	void bind_ssbo_float(vector<float>& data, int loc);
 	void bind_ssbo_int(vector<int>& data, int loc);
+
+
 
 };
 
