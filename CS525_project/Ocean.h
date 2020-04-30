@@ -24,7 +24,7 @@ public:
 	void init();
 	void render(glm::mat4& M, glm::mat4& V, glm::mat4& P, glm::vec3& eye_world_pos, GLuint skybox_handle);
 	void reconfig(float amplitude, float windspeed, float alignment, glm::vec2& wind_dir);
-	void update  (int choppy_on, float choppy_factor);
+	void update  (int choppy_on, float choppy_factor, glm::vec3& sun_color, glm::vec3 & sun_dir);
 
 	GLuint get_h0_k_handle();
 	GLuint get_h0_minus_k_handle();
@@ -48,6 +48,9 @@ public:
 	int   get_choppy_status();
 	glm::vec2 get_wind_dir();
 
+	glm::vec3 get_sun_color();
+	glm::vec3 get_sun_dir();
+
 	vector<GLuint> noise_textures;
 
 	Ocean();
@@ -68,10 +71,13 @@ private:
 	
 	glm::vec2 wind_dir    = glm::vec2(1.0, 1.0);
 	glm::vec4 color   = glm::vec4(0.0056f, 0.0194f, 0.0331f, 1);
-	//glm::vec4 color = glm::vec4(0.056f, 0.194f, 0.331f, 1);
 	vector<float> h0data_r;      // real part of h0k
 	vector<float> h0data_i;      // imagine part of h0k
 	vector<float> wkdata;        // sqrt(k * g);
+
+	// shading parameters
+	glm::vec3 sun_color = glm::vec3(1.0, 1.0, 0.47);
+	glm::vec3 sun_dir   = glm::vec3(0.603, 0.240, -0.761);
 
 	// not used , just for debugging
 	CompOutputTexture h0_k_texture;     

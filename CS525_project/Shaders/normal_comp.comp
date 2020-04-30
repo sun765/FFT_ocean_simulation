@@ -18,7 +18,7 @@ void main (void){
 	vec3 n = central_normal();
 	float J = Jacobian();
 
-	imageStore(normal_map, loc, vec4(n, J));
+	imageStore(normal_map, loc, vec4(n, 1.0));
 	imageStore(Jacobian_map, loc, vec4(vec3(J), 1.0));
 }
 
@@ -37,7 +37,7 @@ vec3 central_normal(){
 
 	// central differnce normal equation from 
 	// direction may be changed
-	vec3 n = vec3( 2* (right_height - left_height), -4.0 , 2* (bot_height - top_height)     ) /4.0;
+	vec3 n = vec3( 2* (right_height - left_height), 0.0 , 2* (bot_height - top_height)     ) /4.0;
 
 	return normalize(n);
 }

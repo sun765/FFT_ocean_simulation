@@ -34,6 +34,8 @@ void Ocean::render(glm::mat4& M, glm::mat4& V, glm::mat4& P, glm::vec3& eye_worl
 	this->render_shader.set_uniform_mat4("P", P);
 	this->render_shader.set_uniform_vec4("ambient_color", this->color);
 	this->render_shader.set_uniform_vec3("eye_world_pos", eye_world_pos);
+	this->render_shader.set_uniform_vec3("sun_color", this->sun_color);
+	this->render_shader.set_uniform_vec3("sun_dir", this->sun_dir);
 
 	this->ocean_surface.render();
 }
@@ -47,10 +49,13 @@ void Ocean::reconfig(float amplitude, float windspeed, float alignment, glm::vec
 	render_precompute_textures();
 }
 
-void Ocean::update(int choppy_on, float choppy_factor)
+void Ocean::update(int choppy_on, float choppy_factor, glm::vec3& sun_color, glm::vec3& sun_dir)
 {
 	this->choppy_on = choppy_on;
 	this->choppy_factor = choppy_factor;
+
+	this->sun_color = sun_color;
+	this->sun_dir   = sun_dir;
 }
 
 GLuint Ocean::get_h0_k_handle()
@@ -146,6 +151,16 @@ int Ocean::get_choppy_status()
 glm::vec2 Ocean::get_wind_dir()
 {
 	return this->wind_dir;
+}
+
+glm::vec3 Ocean::get_sun_color()
+{
+	return this->sun_color;
+}
+
+glm::vec3 Ocean::get_sun_dir()
+{
+	return this->sun_dir;
 }
 
 Ocean::Ocean()

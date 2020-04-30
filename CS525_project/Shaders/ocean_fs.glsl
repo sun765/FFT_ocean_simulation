@@ -15,8 +15,8 @@ in float J;
 
 uniform vec4 ambient_color;
 
-const vec3 sunColor			= vec3(1.0, 1.0, 0.47);
-const vec3 sundir			= vec3(0.603, 0.240, -0.761);
+uniform vec3 sun_color;
+uniform vec3 sun_dir;
 
 void main(void)
 {
@@ -33,6 +33,7 @@ void main(void)
 
 	//vec3 refl = vec3(0.0,0.0,1.0);
 	vec3 refl = texture(envmap, l).rgb;
+	refl = vec3(0.0);
 
 	// tweaked from ARM/Mali's sample
 	float turbulence = max(1.6 - 0.05 *J, 0.0);
@@ -44,11 +45,11 @@ void main(void)
 	const float ax = 0.2;
 	const float ay = 0.1;
 
-	vec3 h = sundir + v;
-	vec3 x = cross(sundir, n);
+	vec3 h = sun_dir + v;
+	vec3 x = cross(sun_dir, n);
 	vec3 y = cross(x, n);
 
-	float mult = ((1.0/ (PI * 4.0)) * rho / (ax * ay * sqrt(max(1e-5, dot(sundir, n) * dot(v, n)))));
+	float mult = ((1.0/ (PI * 4.0)) * rho / (ax * ay * sqrt(max(1e-5, dot(sun_dir, n) * dot(v, n)))));
 	float hdotx = dot(h, x) / ax;
 	float hdoty = dot(h, y) / ay;
 	float hdotn = dot(h, n);
@@ -60,12 +61,14 @@ void main(void)
 	float spec = pow(clamp(dot(sundir, l), 0.0, 1.0), 400.0);
 	*/
 
-	spec = pow(clamp(dot(sundir, l), 0.0, 1.0), 400.0);
+	//spec = pow(clamp(dot(sun_dir, l), 0.0, 1.0), 400.0);
 
-	fragcolor = vec4(mix(ambient_color.xyz, refl * color_mod, F) + sunColor * spec, 1.0);
+	fragcolor = vec4(mix(ambient_color.xyz, refl * color_mod, F) + sun_color * spec, 1.0);
 	
 
 
-	fragcolor = vec4(sunColor * spec, 1.0);
+	fragcolor = vec4(mix(ambient_color.xyz, refl * color_mod, F), 1.0);
+
+	fragcolor = vec4(normal,  1.0);
 }
 

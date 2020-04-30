@@ -43,7 +43,6 @@
 
 // bool
 bool creating_mode  = false;
-//bool test_gui         = false;
 bool skybox_on      = false;
 bool renderScene    = true;
 bool is_recording   = false;
@@ -77,6 +76,12 @@ float amplitude;
 float windspeed;
 glm::vec2 wind_dir;
 float alignment;
+
+// shading parameters
+glm::vec3 sun_color;
+glm::vec3 sun_direction;
+
+
 /*
 Math::Color OceanColors[] = {
 	{ 0.0056f, 0.0194f, 0.0331f, 1 },	// deep blue

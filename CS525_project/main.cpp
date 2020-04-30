@@ -283,7 +283,7 @@ void update()
 {
 	main_water->update(clip_distance,&p, &f, &wP, &qP,&tP);
 	main_sun->update(&main_camera, &sP);
-	ocean->update(choppy_on, choppy_factor);
+	ocean->update(choppy_on, choppy_factor, sun_color, sun_direction);
 }
 
 void reload_shader()
@@ -338,6 +338,11 @@ void draw_gui()
 		{
 			choppy_on = 1 - choppy_on;
 		}
+	}
+
+	if (ImGui::CollapsingHeader("Shading ")) {
+		ImGui::ColorEdit3  ("sun color", glm::value_ptr(sun_color));
+		ImGui::SliderFloat3("sun dir", glm::value_ptr(sun_direction), -1.0f, +1.0f);
 	}
 
 
@@ -451,6 +456,9 @@ void init_render_class()
 	alignment     = ocean->get_alignment();
 	choppy_factor = ocean->get_choppy_factor();
 	choppy_on     = ocean->get_choppy_status();
+
+	sun_color     = ocean->get_sun_color();
+	sun_direction = ocean->get_sun_dir();
 
 }
 
