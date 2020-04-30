@@ -6,11 +6,11 @@ layout (binding = 1, rgba32f) writeonly  uniform image2D normal_map;
 layout (binding = 2, rgba32f) writeonly  uniform image2D Jacobian_map;
 
 uniform int FFT_dimension ;
+uniform float tile_size;
 
 vec3 central_normal();
 float Jacobian();
 
-const float tile_size = 1.0;
 
 void main (void){
 	ivec2 loc = ivec2(gl_GlobalInvocationID.xy);
@@ -18,7 +18,7 @@ void main (void){
 	vec3 n = central_normal();
 	float J = Jacobian();
 
-	imageStore(normal_map, loc, vec4(n, 1.0));
+	imageStore(normal_map, loc, vec4(n , 1.0));
 	imageStore(Jacobian_map, loc, vec4(vec3(J), 1.0));
 }
 
@@ -37,7 +37,7 @@ vec3 central_normal(){
 
 	// central differnce normal equation from 
 	// direction may be changed
-	vec3 n = vec3( 2* (right_height - left_height), 0.0 , 2* (bot_height - top_height)     ) /4.0;
+	vec3 n = vec3( (right_height - left_height), tile_size*2.0  ,  (bot_height - top_height)     ) ;
 
 	return normalize(n);
 }

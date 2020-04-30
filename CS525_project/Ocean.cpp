@@ -367,7 +367,9 @@ void Ocean::render_normal_map()
 	this->Jacobian_texture.bind(GL_WRITE_ONLY, 2);
 
 	// 3. bind uniform variable
+	float tile_size = this->patch_size / (float)FFT_DIMENSION;
 	this->normal_shader.set_uniform_int("FFT_dimension", FFT_DIMENSION);
+	this->normal_shader.set_uniform_float("tile_size", tile_size);
 
 	// 4. dispatch compute
 	glDispatchCompute(FFT_DIMENSION / 16, FFT_DIMENSION / 16, 1);
