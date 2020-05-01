@@ -17,7 +17,8 @@ uniform mat4 P;
 uniform vec3 eye_world_pos;
 //uniform float patch_size;
 
-float patch_size = 256;
+//float patch_size = 256;
+float patch_size = 512;
 out vec2 tex_coord;
 out vec3 view_dir;
 out vec3 test_color;

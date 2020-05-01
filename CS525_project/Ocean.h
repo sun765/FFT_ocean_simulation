@@ -1,7 +1,7 @@
 #ifndef  __OCEAN_H__
 #define  __OCEAN_H__
 
-#define FFT_DIMENSION 256
+#define FFT_DIMENSION 512
 #define PI 3.1415926
 #define G 9.81
 
