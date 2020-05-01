@@ -65,7 +65,7 @@ float time_sec       = 0.0f;   // global time
 float time_ms        = 0.0f;
 float angle          = 0.0f;
 float near_clip      = 0.1;
-float far_clip       = 10000.0;
+float far_clip       = 100000.0;
 float clip_distance  = far_clip - near_clip;
 float aspect_ratio   = 1;
 
@@ -73,6 +73,7 @@ float aspect_ratio   = 1;
 float patch_size;
 int   choppy_on;
 float choppy_factor;
+float ocean_height_factor;
 float amplitude;
 float windspeed;
 glm::vec2 wind_dir;

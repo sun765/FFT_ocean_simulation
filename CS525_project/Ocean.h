@@ -44,6 +44,7 @@ public:
 	float get_windspeed();
 	float get_alignment();
 	float get_choppy_factor();
+	float get_height_factor();
 
 	int   get_choppy_status();
 	int   get_patch_size();

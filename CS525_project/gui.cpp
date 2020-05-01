@@ -24,6 +24,7 @@ void myGUIStyle()
 	style.Colors[ImGuiCol_BorderShadow] = ImVec4(1.00f, 1.00f, 1.00f, 0.10f);
 	style.Colors[ImGuiCol_FrameBg] = ImVec4(1.00f, 1.00f, 1.00f, 0.30f);
 	style.Colors[ImGuiCol_FrameBgHovered] = ImVec4(0.298f, 0.603f, 0.164f, 0.65f);
+	//style.Colors[ImGuiCol_FrameBgHovered] = ImVec4(1.0f, 0.0f, 0.164f, 0.65f);
 	style.Colors[ImGuiCol_FrameBgActive] = ImVec4(0.298f, 0.603f, 0.164f, 1.00f);
 	style.Colors[ImGuiCol_TitleBg] = ImVec4(0.298f, 0.603f, 0.164f, 1.00f);
 	style.Colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.298f, 0.603f, 0.164f, 0.65f);
@@ -39,6 +40,7 @@ void myGUIStyle()
 	style.Colors[ImGuiCol_Button] = ImVec4(0.298f, 0.603f, 0.164f, 1.00f);
 	style.Colors[ImGuiCol_ButtonHovered] = ImVec4(0.419f, 0.819f, 0.231f, 0.80f);
 	style.Colors[ImGuiCol_ButtonActive] = ImVec4(0.419f, 0.819f, 0.231f, 1.00f);
+	//style.Colors[ImGuiCol_Header] = ImVec4(1.0f, 0.0f, 0.164f, 1.00f);
 	style.Colors[ImGuiCol_Header] = ImVec4(0.298f, 0.603f, 0.164f, 1.00f);
 	style.Colors[ImGuiCol_HeaderHovered] = ImVec4(0.419f, 0.819f, 0.231f, 0.80f);
 	style.Colors[ImGuiCol_HeaderActive] = ImVec4(0.419f, 0.819f, 0.231f, 1.00f);

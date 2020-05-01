@@ -63,10 +63,11 @@ void Ocean::reconfig(float amplitude, float windspeed, float alignment, glm::vec
 	render_precompute_textures();
 }
 
-void Ocean::update(int choppy_on, float choppy_factor, glm::vec3& sun_color, glm::vec3& sun_dir, glm::vec3& ocean_color, int shading_mode)
+void Ocean::update(int choppy_on, float choppy_factor, glm::vec3& sun_color, glm::vec3& sun_dir, glm::vec3& ocean_color, int shading_mode,  float height_factor)
 {
 	this->choppy_on    = choppy_on;
 	this->choppy_factor = choppy_factor;
+	this->height_factor = height_factor;
 
 	this->sun_color   = sun_color;
 	this->sun_dir     = sun_dir;
@@ -160,6 +161,11 @@ float Ocean::get_choppy_factor()
 	return this->choppy_factor;
 }
 
+float Ocean::get_height_factor()
+{
+	return this->height_factor;
+}
+
 int Ocean::get_choppy_status()
 {
 	return this->choppy_on;
@@ -204,7 +210,7 @@ Ocean::Ocean(int dimension)
 {
 	this->ocean_dimension = dimension;
 	this->init();
-	this->ocean_surface = QuadMesh(dimension *4 );
+	this->ocean_surface = QuadMesh(dimension * 5 );
 }
 
 void Ocean::render_hkt()
@@ -374,6 +380,7 @@ void Ocean::render_displacement()
 	this->displacement_texture.bind(GL_WRITE_ONLY, 3);
 
 	this->displacement_shader.set_uniform_int  ("FFT_dimension", FFT_DIMENSION);
+	this->displacement_shader.set_uniform_float("height_factor", this->height_factor);
 	this->displacement_shader.set_uniform_float("choppy_factor", this->choppy_factor);
 	this->displacement_shader.set_uniform_int("choppy_on",       this->choppy_on);
 

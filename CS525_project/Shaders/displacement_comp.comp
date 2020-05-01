@@ -8,6 +8,7 @@ layout (binding = 3, rgba32f) writeonly uniform image2D displacement_texture;
 
 uniform int FFT_dimension ;
 uniform float choppy_factor ;
+uniform float height_factor;
 uniform int choppy_on ;     // 1 on, 0 off
 
 
@@ -20,9 +21,9 @@ void main (void){
 	float x =  imageLoad(xt_texture, loc).r * sign ;
 	float z =  imageLoad(zt_texture, loc).r * sign ;
 
-	vec3 disp = vec3(0.0, h, 0.0);
+	vec3 disp = vec3(0.0, h * height_factor, 0.0);
 	if(choppy_on == 1){
-		disp = vec3(choppy_factor * x, h, choppy_factor * z);
+		disp = vec3(choppy_factor * x, h * height_factor, choppy_factor * z);
 	}
 	
 	imageStore(displacement_texture,  loc, vec4(disp,1.0));

@@ -283,7 +283,7 @@ void update()
 {
 	main_water->update(clip_distance,&p, &f, &wP, &qP,&tP);
 	main_sun->update(&main_camera, &sP);
-	ocean->update(choppy_on, choppy_factor, sun_color, sun_direction, ocean_color, ocean_shading_mode);
+	ocean->update(choppy_on, choppy_factor, sun_color, sun_direction, ocean_color, ocean_shading_mode, ocean_height_factor);
 }
 
 void reload_shader()
@@ -328,7 +328,8 @@ void draw_gui()
 	if (ImGui::CollapsingHeader("parameters (real time) "))
 	{
 
-		ImGui::SliderFloat("choppy factor", &choppy_factor, +1.0f, +5.0f);
+		ImGui::SliderFloat("choppy factor", &choppy_factor, 0.0f, +5.0f);
+		ImGui::SliderFloat("height factor", &ocean_height_factor, 0.0f, +5.0f);
 
 		if (ImGui::Button("switch render mode"))
 		{
@@ -464,6 +465,7 @@ void init_render_class()
 	sun_direction = ocean->get_sun_dir();
 	ocean_color   = ocean->get_ocean_color();
 	ocean_shading_mode = ocean->get_shading_mode();
+	ocean_height_factor = ocean->get_height_factor();
 
 }
 
