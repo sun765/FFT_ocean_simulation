@@ -17,6 +17,7 @@ uniform vec4 ambient_color;
 uniform vec3 sun_color;
 uniform vec3 sun_dir;
 uniform int  shading_mode; // 0 ward, 1, blin phong
+uniform int line_mode;     // 0 line, 1 mesh
 
 void main(void)
 {
@@ -63,6 +64,9 @@ void main(void)
 
 	//fragcolor = vec4(mix(ambient_color.xyz, refl * color_mod, F), 1.0);
 
-	//fragcolor = vec4(vec3(normal),  1.0);
+	if(line_mode == 0){
+		fragcolor = vec4(vec3(0.8),  1.0);
+	}
+	
 }
 

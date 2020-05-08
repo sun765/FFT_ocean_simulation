@@ -68,6 +68,7 @@ float near_clip      = 0.1;
 float far_clip       = 100000.0;
 float clip_distance  = far_clip - near_clip;
 float aspect_ratio   = 1;
+float frame_rate     = 0.0;
 
 // ocean parameters
 float patch_size;

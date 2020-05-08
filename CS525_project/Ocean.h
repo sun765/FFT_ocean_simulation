@@ -24,7 +24,7 @@ public:
 	void init();
 	void render(glm::mat4& M, glm::mat4& V, glm::mat4& P, glm::vec3& eye_world_pos, GLuint skybox_handle);
 	void reconfig(float amplitude, float windspeed, float alignment, glm::vec2& wind_dir, int patch_size);
-	void update  (int choppy_on, float choppy_factor, glm::vec3& sun_color, glm::vec3 & sun_dir, glm::vec3& ocean_color, int shading_mode, float height_factor);
+	void update  (int choppy_on, float choppy_factor, glm::vec3& sun_color, glm::vec3 & sun_dir, glm::vec3& ocean_color, int shading_mode, float height_factor, int line_mode);
 
 	GLuint get_h0_k_handle();
 	GLuint get_h0_minus_k_handle();
@@ -49,6 +49,7 @@ public:
 	int   get_choppy_status();
 	int   get_patch_size();
 	int   get_shading_mode();
+	int   get_line_mode();
 
 	glm::vec2 get_wind_dir();
 	glm::vec3 get_ocean_color();
@@ -70,6 +71,7 @@ private:
 	float patch_size      = 20.0f;
 
 	// parameters (real time)
+	int   line_mode = 1;                    // 0 mesh, 1. line
 	int   choppy_on = 1;                    // 1 on, 0 off
 	float choppy_factor   = 1.3f;           // how choppy the ocean is 
 	float height_factor   = 1.0f;

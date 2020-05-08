@@ -67,6 +67,7 @@ void idle()
     time_ms = float(glutGet(GLUT_ELAPSED_TIME));
     time_sec = 0.001f*time_ms;
 	time_per_frame = time_ms - last_time;
+	frame_rate = 1000.0 / time_per_frame;
 	last_time = time_ms;
 
 }
@@ -270,7 +271,7 @@ void render_scene(int pass, glm::vec4 plane, camera camera)
 
 	   //main_water->draw_water(shading_mode, test_gui, M_water, V, P, waterTexture_id, pass, float(time_ms), cameraPos);
 	   
-	   if (ocean_linemode) {
+	   if (!ocean_linemode) {
 		   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	   }
 	   ocean->render(M_water, V, P, cameraPos, skybox_id);
@@ -283,7 +284,8 @@ void update()
 {
 	main_water->update(clip_distance,&p, &f, &wP, &qP,&tP);
 	main_sun->update(&main_camera, &sP);
-	ocean->update(choppy_on, choppy_factor, sun_color, sun_direction, ocean_color, ocean_shading_mode, ocean_height_factor);
+	int mode = ocean_linemode ? 1 : 0;
+	ocean->update(choppy_on, choppy_factor, sun_color, sun_direction, ocean_color, ocean_shading_mode, ocean_height_factor, mode);
 }
 
 void reload_shader()
@@ -379,7 +381,7 @@ void draw_gui()
 		const int filename_len = 256;
 		static char video_filename[filename_len] = "capture.mp4";
 		ImGui::InputText("Video filename", video_filename, filename_len);
-		ImGui::SliderFloat("time per frame(ms)", &time_per_frame, 0.0f, +1000.0f);
+		ImGui::SliderFloat("frame_rates", &frame_rate, 0.0f, +1000.0f);
 		if (ImGui::Button("Reload_Shader"))
 		{
 			reload_shader();// does it do anything ?
@@ -466,6 +468,7 @@ void init_render_class()
 	ocean_color   = ocean->get_ocean_color();
 	ocean_shading_mode = ocean->get_shading_mode();
 	ocean_height_factor = ocean->get_height_factor();
+	ocean_linemode = ocean->get_line_mode() ==0 ? false : true;
 
 }
 

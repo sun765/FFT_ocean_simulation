@@ -49,6 +49,7 @@ void Ocean::render(glm::mat4& M, glm::mat4& V, glm::mat4& P, glm::vec3& eye_worl
 	this->render_shader.set_uniform_vec3("sun_dir", this->sun_dir);
 	this->render_shader.set_uniform_float("patch_size", this->patch_size);
 	this->render_shader.set_uniform_int("shading_mode", this->shading_mode);
+	this->render_shader.set_uniform_int("line_mode", this->line_mode);
 
 	this->ocean_surface.render();
 }
@@ -63,7 +64,7 @@ void Ocean::reconfig(float amplitude, float windspeed, float alignment, glm::vec
 	render_precompute_textures();
 }
 
-void Ocean::update(int choppy_on, float choppy_factor, glm::vec3& sun_color, glm::vec3& sun_dir, glm::vec3& ocean_color, int shading_mode,  float height_factor)
+void Ocean::update(int choppy_on, float choppy_factor, glm::vec3& sun_color, glm::vec3& sun_dir, glm::vec3& ocean_color, int shading_mode,  float height_factor,  int line_mode)
 {
 	this->choppy_on    = choppy_on;
 	this->choppy_factor = choppy_factor;
@@ -74,6 +75,7 @@ void Ocean::update(int choppy_on, float choppy_factor, glm::vec3& sun_color, glm
 	this->ocean_color = glm::vec4(ocean_color.r, ocean_color.g, ocean_color.b, 1.0);
 
 	this->shading_mode = shading_mode;
+	this->line_mode = line_mode;
 }
 
 GLuint Ocean::get_h0_k_handle()
@@ -179,6 +181,11 @@ int Ocean::get_patch_size()
 int Ocean::get_shading_mode()
 {
 	return this->shading_mode;
+}
+
+int Ocean::get_line_mode()
+{
+	return this->line_mode;
 }
 
 glm::vec2 Ocean::get_wind_dir()
